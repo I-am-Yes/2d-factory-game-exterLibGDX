@@ -19,7 +19,7 @@ apply plugin: 'io.github.fourlastor.construo'
 import io.github.fourlastor.construo.Target
 
 sourceSets.main.resources.srcDirs += [ rootProject.file('assets').path ]
-application.mainClass = 'io.github.I_am_Yes.lwjgl3.Lwjgl3Launcher'
+application.mainClass = 'core.lwjgl3.Lwjgl3Launcher'
 application.applicationName = appName
 eclipse.project.name = appName + '-lwjgl3'
 java.sourceCompatibility = 8
@@ -31,7 +31,7 @@ if (JavaVersion.current().isJava9Compatible()) {
 dependencies {
   //implementation "com.badlogicgames.gdx-controllers:gdx-controllers-desktop:$gdxControllersVersion"
   //implementation "com.badlogicgames.gdx:gdx-bullet-platform:$gdxVersion:natives-desktop"
-  //implementation("com.badlogicgames.gdx:gdx-tools:$gdxVersion"){exclude group: 'com.badlogicgames.gdx', module: 'gdx-backend-lwjgl'}
+  implementation("com.badlogicgames.gdx:gdx-tools:$gdxVersion"){exclude group: 'com.badlogicgames.gdx', module: 'gdx-backend-lwjgl'}
   implementation "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-desktop"
   implementation "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-desktop"
   implementation "com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVersion"
@@ -60,8 +60,8 @@ def os = System.properties['os.name'].toLowerCase(Locale.ROOT)
 
 run {
   workingDir = rootProject.file('assets').path
-// You can uncomment the next line if your IDE claims a build failure even when the app closed properly.
-  //setIgnoreExitValue(true)
+  // Ignore non-zero exit when the game window is closed normally.
+  setIgnoreExitValue(true)
   jvmArgs += "--enable-native-access=ALL-UNNAMED"
   if (os.contains('mac')) jvmArgs += "-XstartOnFirstThread"
 }
@@ -153,7 +153,7 @@ construo {
       architecture.set(Target.Architecture.AARCH64)
       jdkUrl.set("https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.10%2B7/OpenJDK21U-jdk_aarch64_mac_hotspot_21.0.10_7.tar.gz")
       // macOS needs an identifier
-      identifier.set("io.github.I_am_Yes." + appName)
+      identifier.set("core.factorygame")
       // Optional: icon for macOS, as an ICNS file
       macIcon.set(project.file("icons/logo.icns"))
     }
@@ -161,7 +161,7 @@ construo {
       architecture.set(Target.Architecture.X86_64)
       jdkUrl.set("https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.10%2B7/OpenJDK21U-jdk_x64_mac_hotspot_21.0.10_7.tar.gz")
       // macOS needs an identifier
-      identifier.set("io.github.I_am_Yes." + appName)
+      identifier.set("core.factorygame")
       // Optional: icon for macOS, as an ICNS file
       macIcon.set(project.file("icons/logo.icns"))
     }

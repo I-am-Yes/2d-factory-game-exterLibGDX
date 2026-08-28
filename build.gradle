@@ -58,6 +58,11 @@ configure(subprojects) {
 subprojects {
   version = "$projectVersion"
   ext.appName = '2D factory game'
+  plugins.withType(JavaPlugin).configureEach {
+    sourceSets.named('main') {
+      java.srcDirs = ['src/main']
+    }
+  }
   repositories {
     mavenCentral()
     // You may want to remove the following line if you have errors downloading dependencies.
