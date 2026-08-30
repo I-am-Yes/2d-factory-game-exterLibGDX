@@ -1,11 +1,16 @@
 package core;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.IntSet;
 
 public class InputHandler extends InputAdapter {
+
+    private boolean middleDragging;
+    private int lastPanX,  lastPanY;
+    private float panDeltaX, panDeltaY; // world units
 
 
     private final Vector2 mousePos = new Vector2();
@@ -38,8 +43,34 @@ public class InputHandler extends InputAdapter {
 
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+        if (button == Input.Buttons.MIDDLE) {
+            middleDragging = false;
+        }
+
         mouseJustReleased.add(button);
         return false;
+    }
+
+    @Override
+    public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+        if (button == Input.Buttons.MIDDLE) {
+            middleDragging = true;
+            lastPanX = screenX;
+            lastPanY = screenY;
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean touchDragged(int screenX, int screenY, int pointer) {
+        if (!middleDragging) return false;
+        panDeltaX += screenX - lastPanX;
+        panDeltaY += screenY - lastPanY;
+        lastPanX = screenX;
+        lastPanY = screenY;
+        return true;
+
     }
 
     public void endFrame() {
@@ -63,6 +94,9 @@ public class InputHandler extends InputAdapter {
         return false;
     }
 
+    public boolean isMiddleDragging() {
+        return middleDragging;
+    }
 
     public boolean isMousePressed(int button) {
         return Gdx.input.isButtonPressed(button);
@@ -84,6 +118,13 @@ public class InputHandler extends InputAdapter {
     public Vector2 getMousePos() {
         mousePos.set(Gdx.input.getX(), Gdx.input.getY());
         return mousePos;
+    }
+
+    public void consumePanDelta(int[] out) {
+        out[0] = (int) panDeltaX;
+        out[1] = (int) panDeltaY;
+        panDeltaX = 0;
+        panDeltaY = 0;
     }
 
 }

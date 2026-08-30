@@ -25,6 +25,7 @@ public class player {
 
     public void update(float delta, float WorldWidth, float worldHeight, InputHandler input) {
         controller.moveCharacter(sprite, delta, PLAYER_SPEED, WorldWidth, worldHeight, input);
+        controller.isMoving();
 
     }
 
@@ -32,5 +33,8 @@ public class player {
         sprite.draw(batch);
     }
 
+    public Controller getController() {
+        return controller;
+    }
 
 }

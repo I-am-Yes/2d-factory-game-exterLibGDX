@@ -31,5 +31,4 @@ public class PlayerData {
         PLAYER_SPEED = playerSpeed;
     }
 
-
 }

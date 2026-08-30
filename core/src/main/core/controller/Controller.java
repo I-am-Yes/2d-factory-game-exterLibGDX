@@ -28,4 +28,9 @@ public class Controller {
         sprite.translate(vx * delta, vy * delta);
 
     }
+
+    public boolean isMoving() {
+        return Math.abs(vx) > 0.01f || Math.abs(vy) > 0.01f;
+    }
+
 }
