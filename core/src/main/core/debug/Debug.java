@@ -1,16 +1,18 @@
-package core;
+package core.debug;
 
-import Data.DebugData;
-import Data.DebugData.*;
+import Data.debug.DebugConfig;
+import Data.debug.DebugType;
+import Data.map.FloorType;
+import Data.map.MapConfig;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.IntSet;
+import core.InputHandler;
 
-import java.util.EnumSet;
+import java.util.Map;
 
 public class Debug {
-
     private static final int[] TRACKED_KEYS = {
         Input.Keys.W, Input.Keys.A, Input.Keys.S, Input.Keys.D,
         Input.Keys.UP, Input.Keys.DOWN, Input.Keys.LEFT, Input.Keys.RIGHT,
@@ -25,32 +27,56 @@ public class Debug {
 
     };
 
+    private final DebugConfig debugConfig;
     private final IntSet heldKeys = new IntSet();
     private final IntSet heldMouseButtons = new IntSet();
     private float fpsLogTimer;
 
+    private boolean mapGenReportPending;
+    private MapConfig pendingMapConfig;
+    private FloorType[][] pendingGrid;
+
+    public Debug(DebugConfig debugConfig) {
+        this.debugConfig = debugConfig;
+    }
+
     public void enableDebugMode(DebugType debugMode) {
-        DebugData.enable(debugMode);
+        debugConfig.enable(debugMode);
     }
     public void disableDebugMode(DebugType debugMode) {
-        DebugData.disable(debugMode);
+        debugConfig.disable(debugMode);
     }
 
     public void update(InputHandler input) {
 
-        if (DebugData.isActive(DebugType.RENDER)) {
+        if (debugConfig.isEnabled(DebugType.RENDER)) {
             printFPStoConsole(0.5f);
         }
 
-        if (DebugData.isActive(DebugType.INPUT)) {
+        if (debugConfig.isEnabled(DebugType.INPUT)) {
             updateInput(input);
         }
+
+        if (mapGenReportPending && debugConfig.isEnabled(DebugType.MAP_GENERATION)) {
+            MapGenDebugger.printReport(pendingMapConfig,  pendingGrid);
+            mapGenReportPending = false;
+        }
+
+    }
+
+    //temporary helper method to call map report debug, update to event later
+    //TODO: update to event method.
+    public void onMapUpdate(MapConfig mapConfig, FloorType[][] grid) {
+        this.pendingMapConfig = mapConfig;
+        this.pendingGrid = grid;
+        this.mapGenReportPending = true;
     }
 
 
 
+
     private void updateInput(InputHandler input) {
-        if (!DebugData.isActive(DebugType.INPUT)) return;
+        if (!debugConfig.isEnabled(DebugType.INPUT)) return;
 
         for (int key : TRACKED_KEYS) {
             boolean held = input.isKeyPressed(key);
@@ -66,7 +92,7 @@ public class Debug {
     }
 
     private void updateMouseInput(InputHandler input) {
-        if (!DebugData.isActive(DebugType.INPUT)) return;
+        if (!debugConfig.isEnabled(DebugType.INPUT)) return;
         for (int button : TRACKED_MOUSEBUTTONS) {
             boolean held = input.isMousePressed(button);
             if (held && !heldMouseButtons.contains(button)) {

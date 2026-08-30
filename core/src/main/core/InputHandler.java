@@ -12,8 +12,22 @@ public class InputHandler extends InputAdapter {
     private final IntSet keyJustReleased = new IntSet();
     private final IntSet mouseJustReleased = new IntSet();
 
+    private float scrollAmountY = 0f;
+
     public InputHandler() {
         Gdx.input.setInputProcessor(this);
+    }
+
+    @Override
+    public boolean scrolled(float amountX, float amountY) {
+        scrollAmountY -= amountY;
+        return true;
+    }
+
+    public float consumeScrollY() {
+        float scroll = scrollAmountY;
+        scrollAmountY = 0f;
+        return scroll;
     }
 
     @Override

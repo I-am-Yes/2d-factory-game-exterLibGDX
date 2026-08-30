@@ -1,16 +1,17 @@
 package core;
 
+import Data.map.FloorType;
+import Data.map.MapConfig;
+import core.map.MapGenerator;
+
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
-import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 
 public class World {
 
-    private static final String MAP_PATH =  "maps/world.tmx";
-    private static final String FLOOR_LAYER_NAME = "Sand_tiles";
-    private static final float TILE_PIXELS = 18f;
+    private static final String FLOOR_LAYER_NAME = "Floor";
 
     private final TiledMap map;
     private final OrthogonalTiledMapRenderer mapRenderer;
@@ -23,21 +24,51 @@ public class World {
     private final float worldWidth;
     private final float worldHeight;
 
-    public World() {
-        map = new TmxMapLoader().load(MAP_PATH);
-        tileSize = 1f;
-        mapRenderer = new OrthogonalTiledMapRenderer(map, tileSize / TILE_PIXELS);
+    private final FloorType[][] floorGrid;
 
-        tileLayer = (TiledMapTileLayer) map.getLayers().get(FLOOR_LAYER_NAME);
-        if (tileLayer == null) {
-            throw new IllegalStateException("No \"tileLayer\" found: " + FLOOR_LAYER_NAME);
-        }
+    public World(TiledMap map, TiledMapTileLayer tileLayer, MapConfig mapConfig, FloorType[][] floorGrid) {
 
+        this.map = map;
+        this.tileLayer = tileLayer;
+        this.floorGrid = floorGrid;
 
-        tilesWidth = tileLayer.getWidth();
-        tilesHeight = tileLayer.getHeight();
-        worldWidth = tilesWidth * tileSize;
-        worldHeight = tilesHeight * tileSize;
+        this.tilesWidth = mapConfig.width;
+        this.tilesHeight = mapConfig.height;
+
+        this.tileSize = 1f;
+        this.worldWidth = tilesWidth * tileSize;
+        this.worldHeight = tilesHeight * tileSize;
+
+        float unitScale = 1f / mapConfig.tilePixel;
+        this.mapRenderer = new OrthogonalTiledMapRenderer(map,  unitScale);
+
+    }
+
+    public static World generateWorld(MapConfig mapConfig, BlockAssets assets) {
+        TiledMap map = new TiledMap();
+
+        map.getProperties().put("width", mapConfig.width);
+        map.getProperties().put("height", mapConfig.height);
+        map.getProperties().put("tilewidth", assets.getTileWidth());
+        map.getProperties().put("tileheight", assets.getTileHeight());
+
+        map.getTileSets().addTileSet(assets.buildTileSet());
+
+        TiledMapTileLayer floorLayer = new TiledMapTileLayer(
+            mapConfig.width,
+            mapConfig.height,
+            assets.getTileWidth(),
+            assets.getTileHeight()
+        );
+
+        floorLayer.setName(FLOOR_LAYER_NAME);
+        map.getLayers().add(floorLayer);
+
+        FloorType[][] grid = MapGenerator.generateTiledMap(mapConfig);
+        MapGenerator.applyToLayer(floorLayer, grid, assets);
+
+        return new World(map, floorLayer, mapConfig, grid);
+
 
     }
 
@@ -50,6 +81,11 @@ public class World {
         mapRenderer.dispose();
         map.dispose();
     }
+
+    public FloorType[][] getFloorGrid() {
+        return floorGrid;
+    }
+
 
     public boolean isInBounds(int tileX, int tileY) {
         return tileX >= 0 && tileX < tilesWidth && tileY >= 0 && tileY < tilesHeight;
@@ -70,10 +106,10 @@ public class World {
     public float getTileSize() {
         return tileSize;
     }
-    public float getTileWidth() {
+    public float getTilesWidth() {
         return tilesWidth;
     }
-    public float getTileHeight() {
+    public float getTilesHeight() {
         return tilesHeight;
     }
     public float getWorldWidth() {

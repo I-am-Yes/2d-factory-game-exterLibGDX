@@ -4,11 +4,12 @@ import Data.PlayerData;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.Texture;
+import core.controller.Controller;
 
 public class player {
-    private float PLAYER_WIDTH = PlayerData.PLAYER_WIDTH;
-    private float PLAYER_HEIGHT = PlayerData.PLAYER_HEIGHT;
-    private float PLAYER_SPEED = PlayerData.PLAYER_SPEED;
+    private final float PLAYER_WIDTH = PlayerData.getPlayerWidth();
+    private final float PLAYER_HEIGHT = PlayerData.getPlayerHeight();
+    private final float PLAYER_SPEED = PlayerData.getPlayerSpeed();
 
     public final Sprite sprite;
 
