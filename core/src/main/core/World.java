@@ -96,6 +96,23 @@ public class World {
         return tileLayer.getCell(tileX, tileY) != null;
     }
 
+    public FloorType getFloorAt(int tileX, int tileY) {
+        if (!isInBounds(tileX, tileY)) return null;
+        return floorGrid[tileX][tileY];
+    }
+
+    public FloorType getFloorName(int tileX, int tileY) {
+        if (!isInBounds(tileX, tileY)) return null;
+        //TODO: get floor name at x, y.
+        return floorGrid[tileX][tileY];
+    }
+
+    public boolean isWalkable(int tileX, int tileY) {
+        FloorType floor = getFloorAt(tileX, tileY);
+        return floor != null && floor != FloorType.WATER;
+    }
+
+
     public int worldToTileX(int worldX) {
         return (int) (worldX / tileSize);
     }
