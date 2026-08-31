@@ -46,7 +46,8 @@ public class Debug {
         if (debugConfig.isEnabled(DebugType.PERFORMANCE)) {
             if (!debugConfig.isEnabled(DebugType.PERFORMANCE)) return;
 
-            setPrintFPStoConsole(true, 0.5f);
+            performanceDebugger.setEnable("fps", true, 2f);
+            performanceDebugger.setEnable("ram", true, 2f);
 
             performanceDebugger.update();
         }
@@ -114,14 +115,6 @@ public class Debug {
         this.pendingGrid = grid;
         this.mapGenReportPending = true;
     }
-
-
-    public void setPrintFPStoConsole(boolean bool, float fpsLogInterval) {
-        performanceDebugger.setPrintFPStoConsole(bool, fpsLogInterval);
-    }
-
-
-
 
     public void isEnabled(DebugType debugMode) {
         debugConfig.isEnabled(debugMode);
