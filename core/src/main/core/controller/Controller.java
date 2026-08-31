@@ -33,4 +33,9 @@ public class Controller {
         return Math.abs(vx) > 0.01f || Math.abs(vy) > 0.01f;
     }
 
+    public float getSpeed() {
+        return vx;
+    }
+
+
 }

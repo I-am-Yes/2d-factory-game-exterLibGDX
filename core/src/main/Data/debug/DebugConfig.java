@@ -47,4 +47,12 @@ public class DebugConfig {
         return DebugType.values().length;
     }
 
+    public boolean isAllDebugDisabled() {
+        return getEnabledModes().isEmpty();
+    }
+
+    public boolean isAllDebugEnabled() {
+        return getEnabledModes().containsAll(getAllDebugModes());
+    }
+
 }

@@ -13,10 +13,10 @@ public class player {
 
     public final Sprite sprite;
 
-    private Controller controller;
+    private final Controller controller;
 
     public player(Texture texture, float worldWidth, float worldHeight, Controller controller) {
-        this.controller = new Controller();
+        this.controller = controller;
 
         sprite = new Sprite(texture);
         sprite.setSize(PLAYER_WIDTH, PLAYER_HEIGHT);
@@ -25,7 +25,6 @@ public class player {
 
     public void update(float delta, float WorldWidth, float worldHeight, InputHandler input) {
         controller.moveCharacter(sprite, delta, PLAYER_SPEED, WorldWidth, worldHeight, input);
-        controller.isMoving();
 
     }
 
