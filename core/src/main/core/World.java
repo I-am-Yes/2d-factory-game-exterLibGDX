@@ -39,7 +39,7 @@ public class World {
         this.worldWidth = tilesWidth * tileSize;
         this.worldHeight = tilesHeight * tileSize;
 
-        float unitScale = 1f / mapConfig.tilePixel;
+        float unitScale = 1f / mapConfig.getTilePixel();
         this.mapRenderer = new OrthogonalTiledMapRenderer(map,  unitScale);
 
     }
