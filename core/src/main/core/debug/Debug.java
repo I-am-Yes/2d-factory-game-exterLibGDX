@@ -10,7 +10,8 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import core.InputHandler;
 import core.World;
-import core.player;
+import core.Player;
+import core.event.*;
 
 public class Debug {
 
@@ -24,10 +25,16 @@ public class Debug {
     private final PerformanceDebugger performanceDebugger = new PerformanceDebugger();
     private final CameraDebugger      cameraDebugger      = new CameraDebugger();
     private final InputDebugger       inputDebugger       = new InputDebugger();
+    private final EventsDebugger      eventsDebugger      = new EventsDebugger();
 
     public Debug(DebugConfig debugConfig) {
         this.debugConfig = debugConfig;
 
+        Events.on(GameEvent.MapGenerated.class, e -> {
+            pendingMapConfig = e.mapConfig;
+            pendingGrid = e.floorGrid;
+            mapGenReportPending = true;
+        });
 
         if (isAllDebugDisabled()) printEnabledDebugMode();
     }
@@ -41,7 +48,19 @@ public class Debug {
         printEnabledDebugMode();
     }
 
-    public void update(InputHandler input, Viewport viewport, player player, World world) {
+    public void enableDebugModes(DebugType... debugModes) {
+        for (DebugType debugMode : debugModes) {
+            enableDebugMode(debugMode);
+        }
+    }
+
+    public void disableDebugModes(DebugType... debugModes) {
+        for (DebugType debugMode : debugModes) {
+            disableDebugMode(debugMode);
+        }
+    }
+
+    public void update(InputHandler input, Viewport viewport, Player player, World world) {
 
         if (debugConfig.isEnabled(DebugType.PERFORMANCE)) {
             if (!debugConfig.isEnabled(DebugType.PERFORMANCE)) return;
@@ -77,6 +96,12 @@ public class Debug {
             cameraDebugger.update(viewport, player, world);
         }
 
+        if (debugConfig.isEnabled(DebugType.EVENT)) {
+            if (!debugConfig.isEnabled(DebugType.EVENT)) return;
+
+            eventsDebugger.update();
+        }
+
     }
 
     public void render(World world, OrthographicCamera camera, ShapeRenderer shapeRenderer) {
@@ -106,14 +131,6 @@ public class Debug {
             shapeRenderer.end();
         }
 
-    }
-
-    //temporary helper method to call map report debug, update to event later
-    //TODO: update to event method.
-    public void onMapUpdate(MapConfig mapConfig, FloorType[][] grid) {
-        this.pendingMapConfig = mapConfig;
-        this.pendingGrid = grid;
-        this.mapGenReportPending = true;
     }
 
     public void isEnabled(DebugType debugMode) {

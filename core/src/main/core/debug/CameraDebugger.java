@@ -1,6 +1,5 @@
 package core.debug;
 
-import Data.debug.DebugType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -8,7 +7,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import core.World;
-import core.player;
+import core.Player;
 
 public final class CameraDebugger {
 
@@ -28,7 +27,7 @@ public final class CameraDebugger {
     public CameraDebugger() {}
 
 
-    public void update(Viewport viewport, player player, World world) {
+    public void update(Viewport viewport, Player player, World world) {
         capture(viewport, player, world);
         analyze(snapshot);
     }
@@ -39,7 +38,7 @@ public final class CameraDebugger {
 
 
     //private, internal methods for debugging camera
-    private void capture(Viewport viewport, player player, World world) {
+    private void capture(Viewport viewport, Player player, World world) {
         OrthographicCamera camera = (OrthographicCamera) viewport.getCamera();
 
         float followX = player.sprite.getX() + player.sprite.getWidth() / 2f;

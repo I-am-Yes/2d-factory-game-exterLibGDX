@@ -2,6 +2,8 @@ package core;
 
 import Data.map.FloorType;
 import Data.map.MapConfig;
+import com.badlogic.gdx.maps.Map;
+import core.event.GameEvent;
 import core.map.MapGenerator;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -24,11 +26,15 @@ public class World {
     private final float worldWidth;
     private final float worldHeight;
 
+    private final long seed;
+
     private final FloorType[][] floorGrid;
 
     public World(TiledMap map, TiledMapTileLayer tileLayer, MapConfig mapConfig, FloorType[][] floorGrid) {
 
         this.map = map;
+        this.seed = mapConfig.seed;
+
         this.tileLayer = tileLayer;
         this.floorGrid = floorGrid;
 
@@ -67,9 +73,10 @@ public class World {
         FloorType[][] grid = MapGenerator.generateTiledMap(mapConfig);
         MapGenerator.applyToLayer(floorLayer, grid, assets);
 
+
+        GameEvent.MapGenerated.fire(mapConfig, grid);
+
         return new World(map, floorLayer, mapConfig, grid);
-
-
     }
 
     public void render(OrthographicCamera camera) {
@@ -111,7 +118,6 @@ public class World {
         FloorType floor = getFloorAt(tileX, tileY);
         return floor != null && floor != FloorType.WATER;
     }
-
 
     public int worldToTileX(int worldX) {
         return (int) (worldX / tileSize);

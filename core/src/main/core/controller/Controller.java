@@ -4,6 +4,8 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.MathUtils;
 import core.InputHandler;
+import core.Player;
+import core.event.PlayerEvent.*;
 
 public class Controller {
 
@@ -11,14 +13,20 @@ public class Controller {
     private static final float ACCEL = 40f;   // how fast you speed up
     private static final float FRICTION = 25f; // how fast you slow down
 
-    public void moveCharacter(Sprite sprite, float delta, float speed, float worldW, float worldH, InputHandler input) {
+    private boolean playerMovingEventFired = false;
+    private float playerMovingEventTimer = 0f;
+    private static final float MOVE_NOTICE_DELAY = 0.2f;
+
+    public void moveCharacter(Player player, Sprite sprite, float delta, float speed, float worldW, float worldH, InputHandler input) {
         float inputX = 0f;
         float inputY = 0f;
 
-        if (input.isKeyPressed(Input.Keys.A, Input.Keys.LEFT))  inputX -= 1f;
-        if (input.isKeyPressed(Input.Keys.D, Input.Keys.RIGHT)) inputX += 1f;
-        if (input.isKeyPressed(Input.Keys.W, Input.Keys.UP))    inputY += 1f;
-        if (input.isKeyPressed(Input.Keys.S, Input.Keys.DOWN))  inputY -= 1f;
+        boolean wasMoving = isPlayerMoving();
+
+        if (input.isKeyPressed(Input.Keys.A)) inputX -= 1f;
+        if (input.isKeyPressed(Input.Keys.D)) inputX += 1f;
+        if (input.isKeyPressed(Input.Keys.W)) inputY += 1f;
+        if (input.isKeyPressed(Input.Keys.S)) inputY -= 1f;
 
         float rate = (inputX != 0f || inputY != 0f) ? ACCEL : FRICTION;
 
@@ -27,9 +35,32 @@ public class Controller {
 
         sprite.translate(vx * delta, vy * delta);
 
+        boolean nowMoving = isPlayerMoving();
+
+        if (!wasMoving && nowMoving) {
+            playerMovingEventTimer = 0;
+            playerMovingEventFired = false;
+            playerStartedMoving.fire(player);
+        }
+
+        if (nowMoving) {
+            playerMovingEventTimer += delta;
+            if (!playerMovingEventFired && playerMovingEventTimer >= MOVE_NOTICE_DELAY) {
+                playerIsMoving.fire(player);
+                playerMovingEventFired = true;
+            }
+        } else {
+            playerMovingEventTimer = 0f;
+            playerMovingEventFired = false;
+        }
+
+        if (wasMoving && !nowMoving) {
+            playerStoppedMoving.fire(player);
+        }
+
     }
 
-    public boolean isMoving() {
+    public boolean isPlayerMoving() {
         return Math.abs(vx) > 0.01f || Math.abs(vy) > 0.01f;
     }
 

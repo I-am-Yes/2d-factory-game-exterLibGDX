@@ -18,7 +18,7 @@ public class OverlayRenderer {
     private static final float SLIDE_SPEED = 24f;
     private static final float PADDING = 0.06f;
 
-    private float cornerBracketThickness = 8f;
+    private float cornerBracketThickness = 6f;
     private float cornerBracketGapRatio = 0.27f;
 
     public enum BracketPaddingMode {
@@ -48,7 +48,6 @@ public class OverlayRenderer {
     }
 
     public void render(World world, Viewport viewport, ShapeRenderer shapeRenderer) {
-
         OrthographicCamera camera = (OrthographicCamera) viewport.getCamera();
 
         shapeRenderer.setProjectionMatrix(camera.combined);
