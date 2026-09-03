@@ -14,12 +14,11 @@ import core.event.GameEvent;
 import core.event.PlayerEvent;
 
 import static com.badlogic.gdx.Input.Keys.*;
-import static core.helper.PrintConsoleHelper.*;
 
 public class PlayerAction {
 
     private final Vector3 tmp = new Vector3();
-    private FloorType selectedType;
+    public FloorType selectedType;
 
     public void update(InputHandler input, World world, Viewport viewport) {
 
@@ -67,6 +66,10 @@ public class PlayerAction {
 
     public FloorType getSelectedType() {
         return selectedType;
+    }
+
+    public void setSelectedType(FloorType selectedType) {
+        this.selectedType = selectedType;
     }
 
     private void selectingBlock(InputHandler input, int key, FloorType selectedType) {
