@@ -22,6 +22,8 @@ public final class CameraDebugger {
     private CameraDebugSnapshot previous;
     private float logTimer;
 
+    private static boolean printCameraDebugToConsole = false;
+
     private int cameraFrame;
 
     public CameraDebugger() {}
@@ -129,6 +131,7 @@ public final class CameraDebugger {
 
 
     private static void printDebugLine(String tag, CameraDebugSnapshot snapshot) {
+        if (!printCameraDebugToConsole) return;
         System.out.printf(
             "[CAMERA %s] frame=%d zoom=%.6f dZoom=%.6f pos=(%.4f, %.4f) dPos=%.4f " +
                 "inferredZoom=%s mouseWorld=(%.3f, %.3f)%n",

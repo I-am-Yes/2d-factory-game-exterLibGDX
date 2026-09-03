@@ -1,5 +1,6 @@
 package core.debug;
 
+import com.badlogic.gdx.Game;
 import core.event.Events;
 import core.event.GameEvent;
 import core.event.PlayerEvent;
@@ -23,6 +24,7 @@ public class EventsDebugger {
 
         Events.onAny(event -> {
             if (event == null) return;
+            if (event instanceof GameEvent.BlockPlaceRequest) return;
             firedEvents.add(event);
 
 
@@ -45,7 +47,19 @@ public class EventsDebugger {
                 println("PlayerStopped with pos: " + playerStopped.x + " x, " + playerStopped.y);
             }
 
+            if (event instanceof PlayerEvent.blockSelected blockSelected) {
+                println("Selected tile: "  + blockSelected.selectedType);
+            }
 
+//            if (event instanceof GameEvent.BlockPlaceRequest blockPlaceRequest) {
+//                println("BlockPlaceRequest: " + blockPlaceRequest.floorType.toString()
+//                    + " at x: " + blockPlaceRequest.tileX + " y: " + blockPlaceRequest.tileY);
+//            }
+
+            if (event instanceof GameEvent.BlockPlaced blockPlaced) {
+                println("BlockPlaced: " + blockPlaced.floorType.toString()
+                    + " at x: " + blockPlaced.tileX + " y: " + blockPlaced.tileY);
+            }
 
         });
     }

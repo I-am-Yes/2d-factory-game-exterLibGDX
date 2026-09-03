@@ -3,6 +3,7 @@ package core;
 import Data.map.FloorType;
 import Data.map.MapConfig;
 import com.badlogic.gdx.maps.Map;
+import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import core.event.GameEvent;
 import core.map.MapGenerator;
 
@@ -117,6 +118,20 @@ public class World {
     public boolean isWalkable(int tileX, int tileY) {
         FloorType floor = getFloorAt(tileX, tileY);
         return floor != null && floor != FloorType.WATER;
+    }
+
+    public boolean placeFloor(int tileX, int tileY, FloorType floorType, BlockAssets assets) {
+        if (!isInBounds(tileX, tileY)) return false;
+        if (floorType == FloorType.WATER) return false;
+
+        floorGrid[tileX][tileY] = floorType;
+
+        TiledMapTile tile = assets.getTile(floorType);
+        TiledMapTileLayer.Cell cell = new TiledMapTileLayer.Cell();
+        cell.setTile(tile);
+        tileLayer.setCell(tileX, tileY, cell);
+
+        return true;
     }
 
     public int worldToTileX(int worldX) {

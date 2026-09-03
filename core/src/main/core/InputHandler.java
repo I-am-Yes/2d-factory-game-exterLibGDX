@@ -75,6 +75,7 @@ public class InputHandler extends InputAdapter {
 
     public void endFrame() {
         keyJustReleased.clear();
+        mouseJustReleased.clear();
     }
 
     public boolean isKeyPressed(int... keys) {

@@ -15,7 +15,7 @@ public class OverlayRenderer {
     private final Vector3 tmp = new Vector3();
     private final Vector2 bracketAnimate = new Vector2();
 
-    private static final float SLIDE_SPEED = 24f;
+    private static final float SLIDE_SPEED = 32f;
     private static final float PADDING = 0.06f;
 
     private float cornerBracketThickness = 6f;
@@ -41,7 +41,7 @@ public class OverlayRenderer {
         if (!hoverVisible) return;
 
         if (isOverlayRenderAnimationEnabled) {
-            animateBracketMove(delta, targetX, targetY, SLIDE_SPEED, bracketAnimate);
+            animInitialized = AnimateRenderer.animateMove(delta, targetX, targetY, SLIDE_SPEED, bracketAnimate, animInitialized);
         } else {
             bracketAnimate.set(targetX, targetY);
         }
@@ -96,22 +96,6 @@ public class OverlayRenderer {
         sr.rect(x2 - gap, y2 - thick, gap, thick); sr.rect(x2 - thick, y2 - gap, thick, gap);
         sr.rect(x, y, gap, thick);               sr.rect(x, y, thick, gap);
         sr.rect(x2 - gap, y, gap, thick);        sr.rect(x2 - thick, y, thick, gap);
-    }
-
-    private void animateBracketMove(float delta, float endX, float endY, float speed, Vector2 anim) {
-
-        if (!animInitialized) {
-            anim.set(endX, endY);
-            animInitialized = true;
-            return;
-        }
-
-        float smooth = 1f - (float) Math.exp(-speed * delta);
-        anim.x = MathUtils.lerp(anim.x, endX, smooth);
-        anim.y = MathUtils.lerp(anim.y, endY, smooth);
-
-        if (Math.abs(anim.x - endX) < 0.001f) anim.x = endX;
-        if (Math.abs(anim.y - endY) < 0.001f) anim.y = endY;
     }
 
     private void applyBracketPadding(float wx, float wy, float tile) {

@@ -44,16 +44,37 @@ public class GameEvent {
     //     }
     // }
 
-    // /** Player confirmed building placement. */
-    // public static final class BlockPlaced {
-    //     public final int tileX, tileY;
-    //     public final String blockId;
-    //
-    //     public BlockPlaced(int tileX, int tileY, String blockId) {
-    //         this.tileX = tileX;
-    //         this.tileY = tileY;
-    //         this.blockId = blockId;
-    //     }
-    // }
+     public static final class BlockPlaceRequest extends CancellableEvent {
+         public final int tileX, tileY;
+         public final FloorType floorType;
+
+         public BlockPlaceRequest(int tileX, int tileY, FloorType floorType) {
+             this.tileX = tileX;
+             this.tileY = tileY;
+             this.floorType = floorType;
+         }
+
+         public static void fire(int tileX, int tileY, FloorType floorType) {
+             BlockPlaceRequest request = new BlockPlaceRequest(tileX, tileY, floorType);
+             Events.fire(request);
+             // handler runs synchronously during fire(); cancelled = placement blocked
+         }
+     }
+
+     public static final class BlockPlaced {
+        public final int tileX, tileY;
+        public final FloorType floorType;
+
+        public BlockPlaced(int tileX, int tileY, FloorType floorType) {
+            this.tileX = tileX;
+            this.tileY = tileY;
+            this.floorType = floorType;
+        }
+
+        public static void fire(int tileX, int tileY, FloorType floorType) {
+            Events.fire(new BlockPlaced(tileX, tileY, floorType));
+        }
+
+     }
 
 }

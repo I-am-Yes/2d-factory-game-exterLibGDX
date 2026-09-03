@@ -1,5 +1,7 @@
 package core.event;
 
+import Data.map.FloorType;
+import core.BlockAssets;
 import core.Player;
 
 public class PlayerEvent {
@@ -43,14 +45,27 @@ public class PlayerEvent {
 
         public playerStoppedMoving(Player player) {
             this.player = player;
-            this.x = player.sprite.getX();
-            this.y = player.sprite.getY();
+            this.x = player.getPlayerPositionX();
+            this.y = player.getPlayerPositionY();
         }
 
         public static void fire(Player player) {
             Events.fire(new playerStoppedMoving(player));
         }
     }
+
+    public static final class blockSelected {
+        public final FloorType selectedType;
+
+        public blockSelected(FloorType selectedType) {
+            this.selectedType = selectedType;
+        }
+
+        public static void fire(FloorType selectedType) {
+            Events.fire(new blockSelected(selectedType));
+        }
+    }
+
 
 
 
