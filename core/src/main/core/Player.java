@@ -24,7 +24,7 @@ public class Player {
     }
 
     public void update(float delta, float WorldWidth, float worldHeight, InputHandler input) {
-        controller.moveCharacter(getPlayer(), sprite, delta, PLAYER_SPEED, WorldWidth, worldHeight, input);
+        controller.moveCharacter(getPlayer(), sprite, delta, PLAYER_SPEED, WorldWidth, worldHeight);
 
     }
 

@@ -2,10 +2,8 @@ package ui;
 
 import Data.map.FloorType;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
-import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 import core.controller.PlayerAction;
@@ -16,6 +14,7 @@ public class GameUI {
     private final Skin skin;
     private final Label selectedLabel;
     private final Label FPSLabel;
+    private final Label VSyncLabel;
 
     public GameUI(PlayerAction playerAction) {
         skin = new Skin(Gdx.files.internal("ui/uiskin.json"));
@@ -27,9 +26,11 @@ public class GameUI {
 
         selectedLabel = new Label("Selected: none", skin);
         FPSLabel = new Label("FPS: 0", skin);
+        VSyncLabel = new Label("VSync: off", skin);
 
         selectedLabel.setFontScale(2f);
         FPSLabel.setFontScale(2f);
+
 
         TextButton sand = new TextButton("Sand (2)", skin, "toggle");
         TextButton stone = new TextButton("Stone (3)", skin, "toggle");
@@ -39,34 +40,18 @@ public class GameUI {
         group.setMaxCheckCount(1);
         group.setMinCheckCount(0);
 
-        sand.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                if (sand.isChecked()) playerAction.setSelectedType(FloorType.SAND);
-            }
-        });
-        stone.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                if (stone.isChecked()) playerAction.setSelectedType(FloorType.STONE);
-            }
-        });
-        rock.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                if (rock.isChecked()) playerAction.setSelectedType(FloorType.ROCK);
-            }
-        });
-
 
         Table hotbar = new Table();
-        hotbar.add(sand).pad(4);
-        hotbar.add(stone).pad(4);
-        hotbar.add(rock).pad(4);
+//        hotbar.add(sand).pad(4);
+//        hotbar.add(stone).pad(4);
+//        hotbar.add(rock).pad(4);
+
+        //hotbar.setBackground("ui/hotbar/Rectangle 1.png");
 
         root.top().left();
-        root.add(selectedLabel).pad(8).left();
-        root.add(FPSLabel).pad(16).left();
+//        root.add(selectedLabel).pad(8).left();
+//        root.add(FPSLabel).pad(16).left();
+//        root.add(VSyncLabel).pad(16).left();
         root.row();
         root.add(hotbar).expand().bottom().pad(12);
     }
@@ -104,6 +89,10 @@ public class GameUI {
 
     public void updateFPSLabel() {
         FPSLabel.setText("FPS: " + Gdx.graphics.getFramesPerSecond());
+    }
+
+    public void updateVSyncLabel() {
+        //VSyncLabel.setText("V-Sync: " + Gdx.graphics.get)
     }
 
 }

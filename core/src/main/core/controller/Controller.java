@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.MathUtils;
 import core.InputHandler;
 import core.Player;
+import core.Window;
 import core.event.PlayerEvent.*;
 
 public class Controller {
@@ -17,7 +18,22 @@ public class Controller {
     private float playerMovingEventTimer = 0f;
     private static final float MOVE_NOTICE_DELAY = 0.2f;
 
-    public void moveCharacter(Player player, Sprite sprite, float delta, float speed, float worldW, float worldH, InputHandler input) {
+    private final InputHandler input;
+    private final Window window;
+
+    public Controller(Window window, InputHandler input) {
+        this.input = input;
+        this.window = window;
+
+    }
+
+    public void setFullScreenByInput() {
+        if (input.isKeyJustPressed(Input.Keys.F11)) {
+            window.setWindowFullscreen(!window.isFullscreen());
+        }
+    }
+
+    public void moveCharacter(Player player, Sprite sprite, float delta, float speed, float worldW, float worldH) {
         float inputX = 0f;
         float inputY = 0f;
 
