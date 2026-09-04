@@ -77,4 +77,21 @@ public class GameEvent {
 
      }
 
+     public static final class BuildPlanRequest {
+        public final int planX, planY;
+        public final FloorType floorType;
+
+        public BuildPlanRequest(int planX, int planY, FloorType floorType) {
+            this.planX = planX;
+            this.planY = planY;
+            this.floorType = floorType;
+        }
+
+        public static void fire(int planX, int planY, FloorType floorType) {
+            Events.fire(new BuildPlanRequest(planX, planY, floorType));
+        }
+     }
+
+
+
 }

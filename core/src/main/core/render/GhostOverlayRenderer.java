@@ -11,7 +11,12 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import core.BlockAssets;
+import core.Player;
 import core.World;
+import core.controller.PlayerAction;
+import core.entities.BuildPlan;
+import core.event.Events;
+import core.event.GameEvent;
 
 public class GhostOverlayRenderer {
 
@@ -24,6 +29,14 @@ public class GhostOverlayRenderer {
     private boolean animInitialized;
     private boolean hoverVisible;
     private boolean hoverWalkable;
+
+    private final PlayerAction playerAction;
+    private final Player player;
+
+    public GhostOverlayRenderer(PlayerAction playerAction, Player player) {
+        this.playerAction = playerAction;
+        this.player = player;
+    }
 
     public void update(World world, Viewport viewport, float delta, FloorType floorType) {
         if (floorType == null) {
@@ -58,6 +71,13 @@ public class GhostOverlayRenderer {
     public void render(World world, Viewport viewport, SpriteBatch spriteBatch, FloorType floorType, BlockAssets blockAssets) {
         if (floorType == null || !hoverVisible) return;
         renderGhostOverlay(world, viewport, spriteBatch, floorType, blockAssets);
+
+        //render drag line plans
+        renderDragLinePlan(world, spriteBatch, blockAssets);
+
+        //render build queue
+        renderBuildQueue(world, spriteBatch, blockAssets);
+
     }
 
     private void renderGhostOverlay(World world, Viewport viewport, SpriteBatch spriteBatch, FloorType floorType, BlockAssets blockAssets) {
@@ -85,6 +105,49 @@ public class GhostOverlayRenderer {
         spriteBatch.draw(region, animate.x, animate.y, tile, tile);
         spriteBatch.setColor(oldColor);
     }
+
+    private void renderDragLinePlan(World world, SpriteBatch batch, BlockAssets blockAssets) {
+        if (playerAction == null) return;
+
+        Color oldColor = batch.getColor();
+        batch.setColor(1f, 1f, 1f, 0.6f);
+
+        float tile = world.getTileSize();
+        for (BuildPlan plan : playerAction.linePlans) {
+            if (!world.isInBounds(plan.x, plan.y)) continue;
+
+            TiledMapTile tiled = blockAssets.getTile(plan.floorType);
+            if (tiled == null) continue;
+
+            TextureRegion region = tiled.getTextureRegion();
+            batch.draw(region, plan.x * tile, plan.y * tile, tile, tile);
+        }
+
+        batch.setColor(oldColor);
+    }
+
+    private void renderBuildQueue(World world, SpriteBatch batch, BlockAssets blockAssets) {
+        if (player == null) return;
+
+        Color oldColor = batch.getColor();
+        float tile = world.getTileSize();
+
+        for (BuildPlan plan : player.getBuildQueue()) {
+            if (!world.isInBounds(plan.x, plan.y)) continue;
+
+            TiledMapTile tiled = blockAssets.getTile(plan.floorType);
+            if (tiled == null) continue;
+
+            TextureRegion region = tiled.getTextureRegion();
+
+            float alpha = 0.3f + (plan.progress * 0.4f);
+            batch.setColor(0.5f, 1f, 0.5f, alpha);
+            batch.draw(region, plan.x * tile, plan.y * tile, tile, tile);
+        }
+
+        batch.setColor(oldColor);
+    }
+
 
 
 
