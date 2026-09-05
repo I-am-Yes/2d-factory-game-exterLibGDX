@@ -93,8 +93,6 @@ public class GhostOverlayRenderer {
         if (tiled == null) return;
 
         TextureRegion region = tiled.getTextureRegion();
-        float x = tx  * tile;
-        float y = ty * tile;
 
         Color oldColor = spriteBatch.getColor();
         boolean walkAble = world.isWalkable(tx, ty);

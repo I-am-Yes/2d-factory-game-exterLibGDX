@@ -23,11 +23,9 @@ public class Player {
 
     private final World world;
     private final Controller controller;
-    private final BlockAssets blockAssets;
 
     public Player(Texture texture, World world, float worldWidth, float worldHeight, Controller controller, BlockAssets assets) {
         this.controller = controller;
-        this.blockAssets = assets;
         this.world = world;
 
         sprite = new Sprite(texture);

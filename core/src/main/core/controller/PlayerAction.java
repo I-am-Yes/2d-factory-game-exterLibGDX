@@ -2,6 +2,7 @@ package core.controller;
 
 import Data.map.FloorType;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
@@ -10,6 +11,7 @@ import core.BlockAssets;
 import core.InputHandler;
 import core.Player;
 import core.World;
+import core.entities.BuildGhostLine;
 import core.entities.BuildPlan;
 import core.event.Events;
 import core.event.GameEvent;
@@ -18,7 +20,12 @@ import core.event.PlayerEvent;
 import static com.badlogic.gdx.Input.Keys.*;
 
 public class PlayerAction {
+    private final World world;
     private final Player player;
+    private final InputHandler input;
+    private final ShapeRenderer shapeRenderer;
+    private final BuildGhostLine buildGhostLine;
+    private final Viewport viewport;
 
     private final Vector3 tmp = new Vector3();
     public FloorType selectedType;
@@ -31,14 +38,22 @@ public class PlayerAction {
     public final Array<BuildPlan> linePlans = new Array<>();
     private final Array<BuildPlan> selecPlans = new Array<>();
 
-    public PlayerAction(World world, Player player, BlockAssets assets) {
+    public PlayerAction(World world, Player player, Viewport viewport, InputHandler input, BlockAssets assets, ShapeRenderer shapeRenderer) {
+        this.world = world;
         this.player = player;
+        this.input = input;
+        this.viewport = viewport;
+        this.shapeRenderer = shapeRenderer;
+
+        this.buildGhostLine = new BuildGhostLine(world, player, viewport, input, shapeRenderer);
 
 
         registPlacement(world, assets);
     }
 
-    public void update(InputHandler input, World world, Viewport viewport) {
+    public void update() {
+
+        buildGhostLine.update();
 
         if (input.isKeyJustPressed(NUM_1)) clearSelection();
         selectingBlock(input, NUM_2, FloorType.SAND);
@@ -79,6 +94,17 @@ public class PlayerAction {
             linePlans.clear();
         }
 
+    }
+
+    public void render() {
+    }
+
+    public void draw() {
+        buildGhostLine.draw();
+    }
+
+    public void dispose() {
+        buildGhostLine.dispose();
     }
 
     public void registPlacement(World world, BlockAssets assets) {
@@ -148,6 +174,7 @@ public class PlayerAction {
             player.addBuildPlan(plan);
         }
     }
+
 
     private void selectingBlock(InputHandler input, int key, FloorType selectedType) {
         if (input.isKeyJustPressed(key)) {
