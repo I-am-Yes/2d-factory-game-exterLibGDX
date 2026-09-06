@@ -4,6 +4,7 @@ import Data.map.FloorType;
 import Data.map.MapConfig;
 import com.badlogic.gdx.maps.Map;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
+import com.badlogic.gdx.math.Vector2;
 import core.event.GameEvent;
 import core.map.MapGenerator;
 
@@ -107,6 +108,14 @@ public class World {
     public FloorType getFloorAt(int tileX, int tileY) {
         if (!isInBounds(tileX, tileY)) return null;
         return floorGrid[tileX][tileY];
+    }
+
+    public FloorType getFloorAt(float tileX, float tileY) {
+        return getFloorAt((int)tileX, (int)tileY);
+    }
+
+    public FloorType getFloorAt(Vector2 tile) {
+        return getFloorAt((int)tile.x, (int)tile.y);
     }
 
     public FloorType getFloorName(int tileX, int tileY) {

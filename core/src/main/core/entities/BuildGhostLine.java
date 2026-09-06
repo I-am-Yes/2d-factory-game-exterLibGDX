@@ -1,15 +1,19 @@
 package core.entities;
 
-import com.badlogic.gdx.Gdx;
+import Data.map.FloorType;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import core.InputHandler;
 import core.Player;
 import core.World;
+import core.event.GameEvent;
+import core.helper.TileAlgorithm;
 
 public class BuildGhostLine {
 
@@ -19,6 +23,8 @@ public class BuildGhostLine {
     private final Viewport viewport;
     private final ShapeRenderer shapeRenderer;
 
+    private final TileAlgorithm tileAlgorithm = new TileAlgorithm();
+
     private final Vector3 mouseScreenStart = new Vector3();
     private final Vector3 mouseScreenTarget = new Vector3();
 
@@ -26,6 +32,8 @@ public class BuildGhostLine {
     private Vector3 worldTarget = new Vector3();
 
     private final Vector3 tmp = new Vector3(); //temporary vector3 for calculations
+    private Array<Vector2> tiledLine;
+    private Array<FloorType> translatedTiledLine;
 
     private final float snapAngle = MathUtils.PI / 4f; //45, 90, ... degrees
 
@@ -40,12 +48,15 @@ public class BuildGhostLine {
         TILE_SNAP_LINE,
         ANGLE_SNAP_LINE
     }
+    private DrawLineMode drawLineMode = DrawLineMode.NONE;
 
-    private DrawLineMode drawLineMode = DrawLineMode.FREE_LINE;
-
-    private boolean isFreeLineDrawing;
-    private boolean isSnappedLineDrawing;
-    private boolean isAngleSnappedLineDrawing;
+    private enum PlacingAlgorithm {
+        NONE,
+        DDA_LINE,
+        BRESHENHAM_LINE,
+        THICK_LINE
+    }
+    private PlacingAlgorithm placingAlgorithm = PlacingAlgorithm.THICK_LINE;
 
     public BuildGhostLine(World world, Player player, Viewport viewport, InputHandler input, ShapeRenderer shapeRenderer) {
         this.world = world;
@@ -54,102 +65,86 @@ public class BuildGhostLine {
         this.viewport = viewport;
         this.shapeRenderer = shapeRenderer;
 
-        this.width = 1f;
+        this.width = 0.01f;
         this.color = Color.WHITE;
-        this.isSnappedLineDrawing = false;
-
         this.tileSize = world.getTileSize();
     }
 
     public void update() {
 
-        mouseScreenTarget.set(Gdx.input.getX(), Gdx.input.getY(), 0);
+        if (drawLineMode != DrawLineMode.NONE)
+            if (placingAlgorithm == PlacingAlgorithm.BRESHENHAM_LINE)
+                tiledLine = bresenhamTileArray();
+            else if (placingAlgorithm == PlacingAlgorithm.DDA_LINE)
+                tiledLine = DDATileArray();
+            else if (placingAlgorithm == PlacingAlgorithm.THICK_LINE)
+                tiledLine = thickLineTileArray();
 
-        //if holding shift/ctrl AND left mouse is clicked, start the line
-        if (input.isKeyPressed(Input.Keys.SHIFT_LEFT) && input.isKeyPressed(Input.Keys.CONTROL_LEFT)
-            && input.isMouseJustPressed(Input.Buttons.LEFT)) {
-
-            mouseScreenStart.set(Gdx.input.getX(), Gdx.input.getY(), 0);
-            worldStart.set(screenToWorld(mouseScreenStart));
-            return;
-        } else if ((input.isKeyPressed(Input.Keys.SHIFT_LEFT) || input.isKeyPressed(Input.Keys.CONTROL_LEFT))
-            && input.isMouseJustPressed(Input.Buttons.LEFT)) {
-
-            mouseScreenStart.set(Gdx.input.getX(), Gdx.input.getY(), 0);
-            //keep the start point in world at mouse drag started.
-            worldStart.set(screenToTile(mouseScreenStart));
-            worldStart = tileToMiddleTile(worldStart);
-            return;
-        }
-
-        //if ctrl AND shift AND left mouse is holding, then free the line
-        if (input.isKeyPressed(Input.Keys.CONTROL_LEFT)
-            && input.isKeyPressed(Input.Keys.SHIFT_LEFT)
-            && input.isMousePressed(Input.Buttons.LEFT)) {
-            if (!isFreeLineDrawing) {
-                isFreeLineDrawing = true;
-                isSnappedLineDrawing = false;
-                isAngleSnappedLineDrawing = false;
-            }
-
-            mouseScreenTarget.set(Gdx.input.getX(),  Gdx.input.getY(), 0);
-            return;
-        }
-
-        //if shift AND left mouse is holding, then angle snap the line
-        if (input.isKeyPressed(Input.Keys.SHIFT_LEFT) && input.isMousePressed(Input.Buttons.LEFT)) {
-            if (!isAngleSnappedLineDrawing) {
-                isAngleSnappedLineDrawing = true;
-                isSnappedLineDrawing = false;
-                isFreeLineDrawing = false;
-            }
-
-            mouseScreenTarget.set(Gdx.input.getX(),  Gdx.input.getY(), 0);
-            return;
-        }
-
-        //if ctrl AND left mouse is holding, then snap the line
-        if (input.isKeyPressed(Input.Keys.CONTROL_LEFT) && input.isMousePressed(Input.Buttons.LEFT)) {
-            if (!isSnappedLineDrawing) {
-                isSnappedLineDrawing = true;
-                isAngleSnappedLineDrawing = false;
-                isFreeLineDrawing = false;
-            }
-
-            mouseScreenTarget.set(Gdx.input.getX(),  Gdx.input.getY(), 0);
-            return;
-        }
-
-        //if left mouse is released, then clear the line
         if (input.isMouseReleased(Input.Buttons.LEFT)) {
-            isFreeLineDrawing = false;
-            isSnappedLineDrawing = false;
-            isAngleSnappedLineDrawing = false;
+            if (tiledLine != null) {
+                for (int i = 0; i < tiledLine.size; i++) {
+                    Vector2 tile = tiledLine.get(i);
+                    GameEvent.BlockPlaceRequest.fire((int) tile.x, (int) tile.y, FloorType.DIRT);
+                }
+
+                tiledLine.clear();
+            }
+            drawLineMode = DrawLineMode.NONE;
             return;
         }
+
+        if (!input.isMousePressed(Input.Buttons.LEFT)) {
+            return;
+        }
+
+        if (input.isMousePressed(Input.Buttons.LEFT)
+            && getCurrentLineMode() != DrawLineMode.NONE) {
+            drawLineMode = getCurrentLineMode();
+        }
+
+        mouseScreenTarget.set(input.getMousePos(), 0);
+
+        if (input.isMouseJustPressed(Input.Buttons.LEFT)
+            && getCurrentLineMode() != DrawLineMode.NONE) {
+            drawLineMode = getCurrentLineMode();
+
+            mouseScreenStart.set(input.getMousePos(), 0);
+
+            if (drawLineMode == DrawLineMode.FREE_LINE) {
+                worldStart.set(screenToWorld(mouseScreenStart));
+            } else {
+                worldStart.set(screenToTile(mouseScreenStart));
+                worldStart = tileToMiddleTile(worldStart);
+            }
+        }
+
 
         if (input.isKeyPressed(Input.Keys.F)) {
-            if (!isSnappedLineDrawing && !isAngleSnappedLineDrawing) {
+            if (getCurrentLineMode() == DrawLineMode.NONE) {
                 System.out.println("No line is being drawn");
             } else {
                 System.out.println("isDiagonalLine: " + isDiagonalLine());
             }
         }
+        if (input.isMouseJustPressed(Input.Buttons.RIGHT)) {
+            System.out.println("tiledLine: " + tiledLine);
+            System.out.println("tiledLine contents: " + translatedTiledLine);
+        }
 
     }
 
     public void draw() {
-        if (!isSnappedLineDrawing
-            && !isAngleSnappedLineDrawing
-                && !isFreeLineDrawing)
-            return;
+        if (drawLineMode == DrawLineMode.NONE) return;
 
         shapeRenderer.setProjectionMatrix(viewport.getCamera().combined);
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
 
-        if (isSnappedLineDrawing) drawSnappedLine();
-        else if (isAngleSnappedLineDrawing) drawAngleSnappedLine();
-        else if (isFreeLineDrawing) drawFreeLine();
+        if (drawLineMode == DrawLineMode.FREE_LINE)
+            drawFreeLine();
+        else if (drawLineMode == DrawLineMode.ANGLE_SNAP_LINE)
+            drawAngleSnappedLine();
+        else if (drawLineMode == DrawLineMode.TILE_SNAP_LINE)
+            drawTileSnappedLine();
 
         shapeRenderer.end();
     }
@@ -160,23 +155,69 @@ public class BuildGhostLine {
 
 
 
+    public Array<Vector2> getCurrentTiledLine() {
+        return tiledLine;
+    }
+
+    public Array<FloorType> getCurrentTranslatedTiledLine() {
+        return translateTiledLineToFloorType(tiledLine);
+    }
+
+    public DrawLineMode getCurrentPlayerLineMode() {
+        return drawLineMode;
+    }
+
+    private Array<Vector2> DDATileArray() {
+        return tileAlgorithm.DDATiles(
+            worldStart.x,
+            worldStart.y,
+            worldTarget.x,
+            worldTarget.y
+        );
+    }
+
+    private Array<Vector2> bresenhamTileArray() {
+        return new Array<>(
+            tileAlgorithm.bresenhamTiles(worldStart.x, worldStart.y,
+                worldTarget.x, worldTarget.y, tileSize));
+
+    }
+
+    private Array<Vector2> thickLineTileArray() {
+        return tileAlgorithm.thickLineTiles(
+            worldStart.x, worldStart.y,
+            worldTarget.x, worldTarget.y,
+            width, tileSize
+        );
+    }
+
+    private Array<FloorType> translateTiledLineToFloorType(Array<Vector2> tiledLine) {
+        if (tiledLine.isEmpty()) return null;
+        Array<FloorType> tileArray = new Array<>();
+        for (int i = 0; i < tiledLine.size; i++) {
+            tileArray.add(world.getFloorAt(tiledLine.get(i)));
+        }
+        translatedTiledLine = tileArray;
+        return translatedTiledLine;
+    }
+
     private void drawFreeLine() {
         shapeRenderer.setColor(new Color(color));
 
         worldTarget.set(screenToWorld(mouseScreenTarget));
         worldTarget = tileToWorld(worldTarget);
 
-        shapeRenderer.line(worldStart.x, worldStart.y, worldTarget.x, worldTarget.y);
+        shapeRenderer.rectLine(worldStart.x, worldStart.y, worldTarget.x, worldTarget.y, width);
     }
 
-    private void drawSnappedLine() {
+    private void drawTileSnappedLine() {
         shapeRenderer.setColor(new Color(color));
 
         worldTarget.set(screenToTile(mouseScreenTarget));
         worldTarget = tileToMiddleTile(worldTarget);
 
 
-        shapeRenderer.line(worldStart.x, worldStart.y, worldTarget.x, worldTarget.y);
+        shapeRenderer.rectLine(worldStart.x, worldStart.y, worldTarget.x, worldTarget.y, width);
     }
 
     private void drawAngleSnappedLine() {
@@ -186,7 +227,7 @@ public class BuildGhostLine {
         worldTarget = tileToMiddleTile(worldTarget);
         worldTarget = snapToAngleVector3(worldStart, worldTarget);
 
-        shapeRenderer.line(worldStart.x, worldStart.y, worldTarget.x, worldTarget.y);
+        shapeRenderer.rectLine(worldStart.x, worldStart.y, worldTarget.x, worldTarget.y, width);
     }
 
     private DrawLineMode getCurrentLineMode() {
@@ -226,7 +267,7 @@ public class BuildGhostLine {
 
     private Vector3 tileToMiddleTile(Vector3 temp) {
         Vector3 tempVec = tileToWorldTile(temp);
-        return new Vector3(tempVec.x + tileSize / 2, tempVec.y + tileSize / 2, 0);
+        return new Vector3(tempVec.x + tileSize / 2.1f, tempVec.y + tileSize / 2.1f, 0);
     }
 
     private Vector3 snapToAngleVector3(Vector3 start, Vector3 target) {
