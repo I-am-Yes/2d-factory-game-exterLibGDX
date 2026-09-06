@@ -47,7 +47,6 @@ public class PlayerAction {
 
         this.buildGhostLine = new BuildGhostLine(world, player, viewport, input, shapeRenderer);
 
-
         registPlacement(world, assets);
     }
 
@@ -78,18 +77,15 @@ public class PlayerAction {
             selectX = tx;
             selectY = ty;
             placeMode = PlaceMode.placing;
-            updateLine(selectX, selectY, tx, ty);
         }
 
         //handle mouse drag, update line
         if (input.isMousePressed(Input.Buttons.LEFT) && placeMode == PlaceMode.placing) {
-            updateLine(selectX, selectY, tx, ty);
         }
 
         //handle mouse release, end placement
         if (input.isMouseReleased(Input.Buttons.LEFT) && placeMode == PlaceMode.placing) {
-            updateLine(selectX, selectY, tx, ty);
-            flushPlans(linePlans);
+
             placeMode = PlaceMode.none;
             linePlans.clear();
         }
@@ -139,42 +135,9 @@ public class PlayerAction {
         this.selectedType = selectedType;
     }
 
-    private void updateLine(int startX, int startY, int endX, int endY) {
-        linePlans.clear();
-
-        int dx = Math.abs(endX - startX);
-        int dy = Math.abs(endY - startY);
-        int sx = startX < endX ? 1 : -1;
-        int sy = startY < endY ? 1 : -1;
-        int err = dx - dy;
-
-        int x = startX;
-        int y = startY;
-
-        while (true) {
-            linePlans.add(new BuildPlan(x, y, selectedType));
-
-            if (x == endX && y == endY) break;
-
-            int e2 = 2 * err;
-            if (e2 > -dy) {
-                err -= dy;
-                x += sx;
-            }
-            if (e2 < dx) {
-                err += dx;
-                y += sy;
-            }
-        }
+    public BuildGhostLine getBuildGhostLine() {
+        return buildGhostLine;
     }
-
-    private void flushPlans(Array<BuildPlan> plans) {
-        for (BuildPlan plan : plans) {
-            // add to player's build queue
-            player.addBuildPlan(plan);
-        }
-    }
-
 
     private void selectingBlock(InputHandler input, int key, FloorType selectedType) {
         if (input.isKeyJustPressed(key)) {

@@ -2,6 +2,7 @@ package core.event;
 
 import Data.map.FloorType;
 import Data.map.MapConfig;
+import core.entities.BuildPlan;
 
 /**
  * Event catalog for this game.
@@ -80,11 +81,13 @@ public class GameEvent {
      public static final class BuildPlanRequest {
         public final int planX, planY;
         public final FloorType floorType;
+        public final BuildPlan buildPlan;
 
         public BuildPlanRequest(int planX, int planY, FloorType floorType) {
             this.planX = planX;
             this.planY = planY;
             this.floorType = floorType;
+            this.buildPlan = new BuildPlan(planX, planY, floorType);
         }
 
         public static void fire(int planX, int planY, FloorType floorType) {

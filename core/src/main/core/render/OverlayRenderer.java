@@ -36,6 +36,12 @@ public class OverlayRenderer {
     private boolean animInitialized;
     private boolean isOverlayRenderAnimationEnabled = true; //true by default
 
+    public OverlayRenderer() {
+
+        setBracketPaddingMode(OverlayRenderer.BracketPaddingMode.CENTER);
+
+    }
+
     public void update(World world, Viewport viewport, float delta) {
         drawCornerBrackets(world, viewport, null, cornerBracketGapRatio, cornerBracketThickness);
         if (!hoverVisible) return;

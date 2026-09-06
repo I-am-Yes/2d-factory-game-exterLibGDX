@@ -8,6 +8,8 @@ public class Window {
     private int windowHeight = 720;
     private int foregroundFPS = 180;
 
+    private boolean vSync;
+
     public Window() {}
 
     public void createGameWindow(boolean VSync, int foregroundFPS, int windowWidth, int windowHeight) {
@@ -62,6 +64,15 @@ public class Window {
 
     public int getWindowHeight() {
         return windowHeight;
+    }
+
+    public void setVSync(boolean vSync) {
+        this.vSync = vSync;
+        Gdx.graphics.setVSync(vSync);
+    }
+
+    public boolean isVSync() {
+        return vSync;
     }
 
 }

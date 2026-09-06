@@ -15,8 +15,6 @@ import core.Player;
 import core.World;
 import core.controller.PlayerAction;
 import core.entities.BuildPlan;
-import core.event.Events;
-import core.event.GameEvent;
 
 public class GhostOverlayRenderer {
 
@@ -36,6 +34,8 @@ public class GhostOverlayRenderer {
     public GhostOverlayRenderer(PlayerAction playerAction, Player player) {
         this.playerAction = playerAction;
         this.player = player;
+
+        this.animate.set(player.getPos());
     }
 
     public void update(World world, Viewport viewport, float delta, FloorType floorType) {
@@ -76,7 +76,7 @@ public class GhostOverlayRenderer {
         renderDragLinePlan(world, spriteBatch, blockAssets);
 
         //render build queue
-        renderBuildQueue(world, spriteBatch, blockAssets);
+//        renderBuildQueue(world, spriteBatch, blockAssets);
 
     }
 
@@ -124,27 +124,7 @@ public class GhostOverlayRenderer {
         batch.setColor(oldColor);
     }
 
-    private void renderBuildQueue(World world, SpriteBatch batch, BlockAssets blockAssets) {
-        if (player == null) return;
 
-        Color oldColor = batch.getColor();
-        float tile = world.getTileSize();
-
-        for (BuildPlan plan : player.getBuildQueue()) {
-            if (!world.isInBounds(plan.x, plan.y)) continue;
-
-            TiledMapTile tiled = blockAssets.getTile(plan.floorType);
-            if (tiled == null) continue;
-
-            TextureRegion region = tiled.getTextureRegion();
-
-            float alpha = 0.3f + (plan.progress * 0.4f);
-            batch.setColor(0.5f, 1f, 0.5f, alpha);
-            batch.draw(region, plan.x * tile, plan.y * tile, tile, tile);
-        }
-
-        batch.setColor(oldColor);
-    }
 
 
 
