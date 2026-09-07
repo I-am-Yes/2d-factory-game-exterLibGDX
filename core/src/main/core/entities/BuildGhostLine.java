@@ -1,6 +1,6 @@
 package core.entities;
 
-import Data.map.FloorType;
+import Data.map.asset.FloorType;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -11,7 +11,7 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import core.InputHandler;
 import core.Player;
-import core.World;
+import core.world.World;
 import core.event.GameEvent;
 import core.helper.TileAlgorithm;
 

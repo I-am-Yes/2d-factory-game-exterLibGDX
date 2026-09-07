@@ -1,16 +1,16 @@
 package core.controller;
 
-import Data.map.FloorType;
+import Data.map.asset.FloorType;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import core.BlockAssets;
+import core.AssetsHandler;
 import core.InputHandler;
 import core.Player;
-import core.World;
+import core.world.World;
 import core.entities.BuildGhostLine;
 import core.entities.BuildPlan;
 import core.event.Events;
@@ -38,7 +38,7 @@ public class PlayerAction {
     public final Array<BuildPlan> linePlans = new Array<>();
     private final Array<BuildPlan> selecPlans = new Array<>();
 
-    public PlayerAction(World world, Player player, Viewport viewport, InputHandler input, BlockAssets assets, ShapeRenderer shapeRenderer) {
+    public PlayerAction(World world, Player player, Viewport viewport, InputHandler input, AssetsHandler assets, ShapeRenderer shapeRenderer) {
         this.world = world;
         this.player = player;
         this.input = input;
@@ -103,7 +103,7 @@ public class PlayerAction {
         buildGhostLine.dispose();
     }
 
-    public void registPlacement(World world, BlockAssets assets) {
+    public void registPlacement(World world, AssetsHandler assets) {
         Events.on(GameEvent.BlockPlaceRequest.class, request -> {
 
             if (request.isCancelled()) return;

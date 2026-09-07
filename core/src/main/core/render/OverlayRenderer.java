@@ -8,7 +8,7 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import core.World;
+import core.world.World;
 
 public class OverlayRenderer {
 
@@ -38,6 +38,7 @@ public class OverlayRenderer {
 
     public OverlayRenderer() {
 
+        //TODO: change bracket color to light blue when hovering overlay on ghost tile
         setBracketPaddingMode(OverlayRenderer.BracketPaddingMode.CENTER);
 
     }

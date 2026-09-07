@@ -1,13 +1,13 @@
 package core.render;
 
-import Data.map.FloorType;
+import Data.map.asset.FloorType;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import core.BlockAssets;
+import core.AssetsHandler;
 import core.InputHandler;
 import core.Player;
-import core.World;
+import core.world.World;
 import core.controller.PlayerAction;
 import core.entities.BuildPlan;
 
@@ -16,7 +16,7 @@ public class Renderer {
     private final World world;
     private final Player player;
     private final Viewport viewport;
-    private final BlockAssets blockAssets;
+    private final AssetsHandler assetsHandler;
     private final SpriteBatch spriteBatch;
     private final PlayerAction playerAction;
     private final ShapeRenderer shapeRenderer;
@@ -27,7 +27,7 @@ public class Renderer {
 
     private float delta;
 
-    public Renderer(World world, float delta, Viewport viewport, SpriteBatch spriteBatch, Player player, InputHandler input, PlayerAction playerAction , ShapeRenderer shapeRenderer, BlockAssets blockAssets) {
+    public Renderer(World world, float delta, Viewport viewport, SpriteBatch spriteBatch, Player player, InputHandler input, PlayerAction playerAction , ShapeRenderer shapeRenderer, AssetsHandler assetsHandler) {
         this.world = world;
         this.delta = delta;
         this.viewport = viewport;
@@ -35,8 +35,8 @@ public class Renderer {
         this.player = player;
         this.playerAction = playerAction;
         this.shapeRenderer = shapeRenderer;
-        this.blockAssets = blockAssets;
-        this.ghostBlockRenderer = new GhostLineRenderer(world, viewport, player, input, playerAction, spriteBatch, shapeRenderer, null, blockAssets);
+        this.assetsHandler = assetsHandler;
+        this.ghostBlockRenderer = new GhostLineRenderer(world, viewport, player, input, playerAction, spriteBatch, shapeRenderer, null, assetsHandler);
 
 
     }
@@ -48,7 +48,7 @@ public class Renderer {
 
     public void render() {
         ghostBlockRenderer.render();
-        buildPlan.renderBuildQueue(world, player, spriteBatch, blockAssets);
+        buildPlan.renderBuildQueue(world, player, spriteBatch, assetsHandler);
     }
 
     public void draw() {

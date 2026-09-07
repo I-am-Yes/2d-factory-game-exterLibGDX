@@ -1,14 +1,14 @@
 package core.entities;
 
-import Data.map.FloorType;
+import Data.map.asset.FloorType;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.utils.Queue;
-import core.BlockAssets;
+import core.AssetsHandler;
 import core.Player;
-import core.World;
+import core.world.World;
 import core.event.GameEvent;
 
 public class BuildPlan {
@@ -66,7 +66,7 @@ public class BuildPlan {
         }
     }
 
-    public void renderBuildQueue(World world, Player player, SpriteBatch batch, BlockAssets blockAssets) {
+    public void renderBuildQueue(World world, Player player, SpriteBatch batch, AssetsHandler assetsHandler) {
         if (player == null) return;
 
         Color oldColor = batch.getColor();
@@ -75,7 +75,7 @@ public class BuildPlan {
         for (BuildPlan plan : getBuildQueue()) {
             if (!world.isInBounds(plan.x, plan.y)) continue;
 
-            TiledMapTile tiled = blockAssets.getTile(plan.floorType);
+            TiledMapTile tiled = assetsHandler.getTile(plan.floorType);
             if (tiled == null) continue;
 
             TextureRegion region = tiled.getTextureRegion();

@@ -1,6 +1,6 @@
 package core.event;
 
-import Data.map.FloorType;
+import Data.map.asset.FloorType;
 import Data.map.MapConfig;
 import core.entities.BuildPlan;
 

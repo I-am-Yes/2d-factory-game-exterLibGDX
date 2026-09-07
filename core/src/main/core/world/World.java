@@ -1,10 +1,10 @@
-package core;
+package core.world;
 
-import Data.map.FloorType;
+import Data.map.asset.FloorType;
 import Data.map.MapConfig;
-import com.badlogic.gdx.maps.Map;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.math.Vector2;
+import core.AssetsHandler;
 import core.event.GameEvent;
 import core.map.MapGenerator;
 
@@ -15,11 +15,22 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 
 public class World {
 
-    private static final String FLOOR_LAYER_NAME = "Floor";
+    private static final String FLOOR_LAYER_NAME = "Floor Layer";
+    private static final String BUILDING_LAYER_NAME = "Building Layer";
+    private static final String GHOST_LAYER_NAME = "Ghost Layer";
 
     private final TiledMap map;
     private final OrthogonalTiledMapRenderer mapRenderer;
-    private final TiledMapTileLayer tileLayer;
+
+    // tile map layer variables
+    private final TiledMapTileLayer floorLayer;
+    private final TiledMapTileLayer buildingLayer;
+    private final TiledMapTileLayer ghostLayer;
+
+    // grid for tile map layers
+    private final FloorType[][] floorGrid;
+    private final FloorType[][] buildingGrid;
+    private final FloorType[][] ghostGrid;
 
     private final int tilesWidth;
     private final int tilesHeight;
@@ -28,17 +39,32 @@ public class World {
     private final float worldWidth;
     private final float worldHeight;
 
+
     private final long seed;
 
-    private final FloorType[][] floorGrid;
 
-    public World(TiledMap map, TiledMapTileLayer tileLayer, MapConfig mapConfig, FloorType[][] floorGrid) {
+    public World(
+        TiledMap map, MapConfig mapConfig,
+        //pass layers in
+        TiledMapTileLayer floorLayer,
+        TiledMapTileLayer buildingLayer,
+        TiledMapTileLayer ghostLayer,
+        //pass grids in
+        FloorType[][] floorGrid,
+        FloorType[][] buildingGrid,
+        FloorType[][] ghostGrid
+    ) {
 
         this.map = map;
         this.seed = mapConfig.seed;
 
-        this.tileLayer = tileLayer;
+        this.floorLayer = floorLayer;
+        this.buildingLayer = buildingLayer;
+        this.ghostLayer = ghostLayer;
+
         this.floorGrid = floorGrid;
+        this.buildingGrid = buildingGrid;
+        this.ghostGrid = ghostGrid;
 
         this.tilesWidth = mapConfig.width;
         this.tilesHeight = mapConfig.height;
@@ -52,7 +78,7 @@ public class World {
 
     }
 
-    public static World generateWorld(MapConfig mapConfig, BlockAssets assets) {
+    public static World generateWorld(MapConfig mapConfig, AssetsHandler assets) {
         TiledMap map = new TiledMap();
 
         map.getProperties().put("width", mapConfig.width);
@@ -62,23 +88,44 @@ public class World {
 
         map.getTileSets().addTileSet(assets.buildTileSet());
 
+        //create layers
         TiledMapTileLayer floorLayer = new TiledMapTileLayer(
-            mapConfig.width,
-            mapConfig.height,
-            assets.getTileWidth(),
-            assets.getTileHeight()
+            mapConfig.width, mapConfig.height,
+            assets.getTileWidth(), assets.getTileHeight()
+        );
+        TiledMapTileLayer buildingLayer = new TiledMapTileLayer(
+            mapConfig.width, mapConfig.height,
+            assets.getTileWidth(), assets.getTileHeight()
+        );
+        TiledMapTileLayer ghostLayer = new TiledMapTileLayer(
+            mapConfig.width, mapConfig.height,
+            assets.getTileWidth(), assets.getTileHeight()
         );
 
+        //set layer name
         floorLayer.setName(FLOOR_LAYER_NAME);
+        buildingLayer.setName(BUILDING_LAYER_NAME);
+        ghostLayer.setName(GHOST_LAYER_NAME);
+
+        //add layer to map
         map.getLayers().add(floorLayer);
+        map.getLayers().add(buildingLayer);
+        map.getLayers().add(ghostLayer);
 
-        FloorType[][] grid = MapGenerator.generateTiledMap(mapConfig);
-        MapGenerator.applyToLayer(floorLayer, grid, assets);
+        //generate layer grid
+        FloorType[][] floorGrid = MapGenerator.generateTiledMap(mapConfig);
+        FloorType[][] buildingGrid = new FloorType[mapConfig.width][mapConfig.height];
+        FloorType[][] ghostGrid = new FloorType[mapConfig.width][mapConfig.height];
+
+        MapGenerator.applyToLayer(floorLayer, floorGrid, assets);
 
 
-        GameEvent.MapGenerated.fire(mapConfig, grid);
+        GameEvent.MapGenerated.fire(mapConfig, floorGrid);
 
-        return new World(map, floorLayer, mapConfig, grid);
+        return new World(map, mapConfig,
+            floorLayer, buildingLayer, ghostLayer,
+            floorGrid, buildingGrid, ghostGrid
+        );
     }
 
     public void render(OrthographicCamera camera) {
@@ -89,6 +136,30 @@ public class World {
     public void dispose() {
         mapRenderer.dispose();
         map.dispose();
+    }
+
+    public FloorType getBuildingAt(int tileX, int tileY) {
+        return buildingGrid[tileX][tileY];
+    }
+
+    public boolean hasBuildingAt(int tileX, int tileY) {
+        return getBuildingAt(tileX, tileY) != null;
+    }
+
+    public boolean canPlaceBuildingAt(int tileX, int tileY) {
+        return isWalkable(tileX, tileY)
+            && isInBounds(tileX, tileY)
+            && !hasBuildingAt(tileX, tileY);
+    }
+
+    public boolean placeBuildingAt(int tileX, int tileY, FloorType floorType, AssetsHandler assets) {
+        if (!canPlaceBuildingAt(tileX, tileY)) return false;
+        //buildingGrid[tileX][tileY] = ;
+        return true;
+    }
+
+    public FloorType getGhostTileAt(int tileX, int tileY) {
+        return ghostGrid[tileX][tileY];
     }
 
     public FloorType[][] getFloorGrid() {
@@ -102,7 +173,7 @@ public class World {
 
     public boolean hasTile(int tileX, int tileY) {
         if (!isInBounds(tileX, tileY)) return false;
-        return tileLayer.getCell(tileX, tileY) != null;
+        return floorLayer.getCell(tileX, tileY) != null;
     }
 
     public FloorType getFloorAt(int tileX, int tileY) {
@@ -129,7 +200,7 @@ public class World {
         return floor != null && floor != FloorType.WATER;
     }
 
-    public boolean placeFloor(int tileX, int tileY, FloorType floorType, BlockAssets assets) {
+    public boolean placeFloor(int tileX, int tileY, FloorType floorType, AssetsHandler assets) {
         if (!isInBounds(tileX, tileY)) return false;
         if (floorType == FloorType.WATER) return false;
 
@@ -138,7 +209,7 @@ public class World {
         TiledMapTile tile = assets.getTile(floorType);
         TiledMapTileLayer.Cell cell = new TiledMapTileLayer.Cell();
         cell.setTile(tile);
-        tileLayer.setCell(tileX, tileY, cell);
+        floorLayer.setCell(tileX, tileY, cell);
 
         return true;
     }

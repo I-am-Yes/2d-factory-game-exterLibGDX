@@ -2,14 +2,14 @@ package core.debug;
 
 import Data.debug.DebugConfig;
 import Data.debug.DebugType;
-import Data.map.FloorType;
+import Data.map.asset.FloorType;
 import Data.map.MapConfig;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import core.InputHandler;
-import core.World;
+import core.world.World;
 import core.Player;
 import core.event.*;
 

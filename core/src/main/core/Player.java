@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 import core.controller.Controller;
+import core.world.World;
 
 public class Player {
     private final float PLAYER_WIDTH = PlayerData.getPlayerWidth();
@@ -19,7 +20,7 @@ public class Player {
     private final World world;
     private final Controller controller;
 
-    public Player(Texture texture, World world, float worldWidth, float worldHeight, Controller controller, BlockAssets assets) {
+    public Player(Texture texture, World world, float worldWidth, float worldHeight, Controller controller, AssetsHandler assets) {
         this.controller = controller;
         this.world = world;
 

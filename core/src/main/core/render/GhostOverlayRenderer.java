@@ -1,6 +1,6 @@
 package core.render;
 
-import Data.map.FloorType;
+import Data.map.asset.FloorType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -10,9 +10,9 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import core.BlockAssets;
+import core.AssetsHandler;
 import core.Player;
-import core.World;
+import core.world.World;
 import core.controller.PlayerAction;
 import core.entities.BuildPlan;
 
@@ -68,19 +68,19 @@ public class GhostOverlayRenderer {
 
     }
 
-    public void render(World world, Viewport viewport, SpriteBatch spriteBatch, FloorType floorType, BlockAssets blockAssets) {
+    public void render(World world, Viewport viewport, SpriteBatch spriteBatch, FloorType floorType, AssetsHandler assetsHandler) {
         if (floorType == null || !hoverVisible) return;
-        renderGhostOverlay(world, viewport, spriteBatch, floorType, blockAssets);
+        renderGhostOverlay(world, viewport, spriteBatch, floorType, assetsHandler);
 
         //render drag line plans
-        renderDragLinePlan(world, spriteBatch, blockAssets);
+        renderDragLinePlan(world, spriteBatch, assetsHandler);
 
         //render build queue
 //        renderBuildQueue(world, spriteBatch, blockAssets);
 
     }
 
-    private void renderGhostOverlay(World world, Viewport viewport, SpriteBatch spriteBatch, FloorType floorType, BlockAssets blockAssets) {
+    private void renderGhostOverlay(World world, Viewport viewport, SpriteBatch spriteBatch, FloorType floorType, AssetsHandler assetsHandler) {
         tmp.set(Gdx.input.getX(), Gdx.input.getY(), 0);
         viewport.unproject(tmp);
 
@@ -89,7 +89,7 @@ public class GhostOverlayRenderer {
         int ty = MathUtils.floor(tmp.y / tile);
         if (!world.isInBounds(tx, ty)) return;
 
-        TiledMapTile tiled = blockAssets.getTile(floorType);
+        TiledMapTile tiled = assetsHandler.getTile(floorType);
         if (tiled == null) return;
 
         TextureRegion region = tiled.getTextureRegion();
@@ -104,7 +104,7 @@ public class GhostOverlayRenderer {
         spriteBatch.setColor(oldColor);
     }
 
-    private void renderDragLinePlan(World world, SpriteBatch batch, BlockAssets blockAssets) {
+    private void renderDragLinePlan(World world, SpriteBatch batch, AssetsHandler assetsHandler) {
         if (playerAction == null) return;
 
         Color oldColor = batch.getColor();
@@ -114,7 +114,7 @@ public class GhostOverlayRenderer {
         for (BuildPlan plan : playerAction.linePlans) {
             if (!world.isInBounds(plan.x, plan.y)) continue;
 
-            TiledMapTile tiled = blockAssets.getTile(plan.floorType);
+            TiledMapTile tiled = assetsHandler.getTile(plan.floorType);
             if (tiled == null) continue;
 
             TextureRegion region = tiled.getTextureRegion();

@@ -1,20 +1,18 @@
 package core.render;
 
-import Data.map.FloorType;
+import Data.map.asset.FloorType;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import core.BlockAssets;
+import core.AssetsHandler;
 import core.InputHandler;
 import core.Player;
-import core.World;
+import core.world.World;
 import core.controller.PlayerAction;
 import core.entities.BuildGhostLine;
 import core.entities.BuildPlan;
-import core.event.Events;
-import core.event.GameEvent;
 
 public class GhostLineRenderer {
 
@@ -23,7 +21,7 @@ public class GhostLineRenderer {
     private final SpriteBatch spriteBatch;
     private final ShapeRenderer shapeRenderer;
     private final FloorType floorType;
-    private final BlockAssets blockAssets;
+    private final AssetsHandler assetsHandler;
     private final PlayerAction playerAction;
 
     private BuildPlan buildPlan;
@@ -33,14 +31,14 @@ public class GhostLineRenderer {
 
     private float delta;
 
-    public GhostLineRenderer(World world, Viewport viewport, Player player, InputHandler input, PlayerAction playerAction, SpriteBatch spriteBatch, ShapeRenderer shapeRenderer, FloorType floorType, BlockAssets blockAssets) {
+    public GhostLineRenderer(World world, Viewport viewport, Player player, InputHandler input, PlayerAction playerAction, SpriteBatch spriteBatch, ShapeRenderer shapeRenderer, FloorType floorType, AssetsHandler assetsHandler) {
         this.world = world;
         this.viewport = viewport;
         this.playerAction = playerAction;
         this.spriteBatch = spriteBatch;
         this.shapeRenderer = shapeRenderer;
         this.floorType = floorType;
-        this.blockAssets = blockAssets;
+        this.assetsHandler = assetsHandler;
 
         this.buildGhostLine = playerAction.getBuildGhostLine();
     }
