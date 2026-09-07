@@ -61,4 +61,8 @@ public class Renderer {
         ghostBlockRenderer.dispose();
     }
 
+    private void renderGhostLineOverlay() {
+
+    }
+
 }

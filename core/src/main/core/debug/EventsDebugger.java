@@ -52,12 +52,12 @@ public class EventsDebugger {
             }
 
 //            if (event instanceof GameEvent.BlockPlaceRequest blockPlaceRequest) {
-//                println("BlockPlaceRequest: " + blockPlaceRequest.floorType.toString()
+//                println("BlockPlaceRequest: " + blockPlaceRequest.type.toString()
 //                    + " at x: " + blockPlaceRequest.tileX + " y: " + blockPlaceRequest.tileY);
 //            }
 
             if (event instanceof GameEvent.BlockPlaced blockPlaced) {
-                println("BlockPlaced: " + blockPlaced.floorType.toString()
+                println("BlockPlaced: " + blockPlaced.getClass().getSimpleName()
                     + " at x: " + blockPlaced.tileX + " y: " + blockPlaced.tileY);
             }
 

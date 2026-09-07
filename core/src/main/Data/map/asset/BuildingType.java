@@ -1,7 +1,5 @@
 package Data.map.asset;
 
-import Data.map.asset.helperInterface.AssetType;
-
 public enum BuildingType implements AssetType {
     HAZARD_BLOCK("blocks/industrial", "hazard block"),
     HAZARD_BLOCK2("blocks/industrial", "hazard block2");

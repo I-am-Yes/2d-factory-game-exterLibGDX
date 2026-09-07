@@ -2,7 +2,11 @@ package core.event;
 
 import Data.map.asset.FloorType;
 import Data.map.MapConfig;
-import core.entities.BuildPlan;
+import Data.map.asset.AssetType;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Array;
+import core.entities.plan.PlanBuilder;
+import core.entities.plan.PlanContructor;
 
 /**
  * Event catalog for this game.
@@ -30,68 +34,89 @@ public class GameEvent {
 
     }
 
-
-
-
-    // /** Mouse/tile hover changed (from OverlayRenderer). */
-    // public static final class TileHovered {
-    //     public final int tileX, tileY;
-    //     public final boolean walkable;
-    //
-    //     public TileHovered(int tileX, int tileY, boolean walkable) {
-    //         this.tileX = tileX;
-    //         this.tileY = tileY;
-    //         this.walkable = walkable;
-    //     }
-    // }
-
      public static final class BlockPlaceRequest extends CancellableEvent {
          public final int tileX, tileY;
-         public final FloorType floorType;
+         public final AssetType type;
 
-         public BlockPlaceRequest(int tileX, int tileY, FloorType floorType) {
+         public BlockPlaceRequest(int tileX, int tileY, AssetType type) {
              this.tileX = tileX;
              this.tileY = tileY;
-             this.floorType = floorType;
+             this.type = type;
          }
 
-         public static void fire(int tileX, int tileY, FloorType floorType) {
-             BlockPlaceRequest request = new BlockPlaceRequest(tileX, tileY, floorType);
-             Events.fire(request);
+         public static void fire(int tileX, int tileY, AssetType type) {
+             Events.fire(new BlockPlaceRequest(tileX, tileY, type));
              // handler runs synchronously during fire(); cancelled = placement blocked
          }
      }
 
      public static final class BlockPlaced {
         public final int tileX, tileY;
-        public final FloorType floorType;
+        public final AssetType type;
 
-        public BlockPlaced(int tileX, int tileY, FloorType floorType) {
+        public BlockPlaced(int tileX, int tileY, AssetType type) {
             this.tileX = tileX;
             this.tileY = tileY;
-            this.floorType = floorType;
+            this.type = type;
         }
 
-        public static void fire(int tileX, int tileY, FloorType floorType) {
-            Events.fire(new BlockPlaced(tileX, tileY, floorType));
+        public static void fire(int tileX, int tileY, AssetType type) {
+            Events.fire(new BlockPlaced(tileX, tileY, type));
         }
 
      }
 
-     public static final class BuildPlanRequest {
-        public final int planX, planY;
-        public final FloorType floorType;
-        public final BuildPlan buildPlan;
+     public static final class PlanBuilderRequest<T extends AssetType> {
+        public final PlanBuilder<T> planBuilder;
 
-        public BuildPlanRequest(int planX, int planY, FloorType floorType) {
-            this.planX = planX;
-            this.planY = planY;
-            this.floorType = floorType;
-            this.buildPlan = new BuildPlan(planX, planY, floorType);
+        public PlanBuilderRequest(PlanBuilder<T> planBuilder) {
+            this.planBuilder = planBuilder;
         }
 
-        public static void fire(int planX, int planY, FloorType floorType) {
-            Events.fire(new BuildPlanRequest(planX, planY, floorType));
+        public static <T extends AssetType> void fire(PlanBuilder<T> planBuilder) {
+            Events.fire(new PlanBuilderRequest<>(planBuilder));
+        }
+     }
+
+     public static final class PlanBuilderFinished<T extends AssetType> {
+         public final PlanBuilder<T> planBuilder;
+         public final PlanContructor<T> finishedPlan;
+
+         public PlanBuilderFinished(PlanBuilder<T> planBuilder, PlanContructor<T> finishedPlan) {
+            this.planBuilder = planBuilder;
+            this.finishedPlan = finishedPlan;
+         }
+
+         public static <T extends AssetType> void fire(PlanBuilder<T> planBuilder, PlanContructor<T> finishedPlan) {
+            Events.fire(new PlanBuilderFinished<>(planBuilder, finishedPlan));
+         }
+     }
+
+     public static final class PlanConstructRequest {
+         public final PlanBuilder<? extends AssetType> planBuilder;
+
+         public PlanConstructRequest(PlanBuilder<? extends AssetType> planBuilder) {
+            this.planBuilder = planBuilder;
+         }
+
+         public static <T extends AssetType> void fire(PlanBuilder<? extends AssetType> planBuilder) {
+            Events.fire(new PlanConstructRequest(planBuilder));
+         }
+     }
+
+     public static final class PlanConstructFinished<T extends AssetType> {
+        public final PlanBuilder<T> planBuilder;
+        public final PlanContructor<?> planContructor;
+        public final Array<Vector2> finishedPlan;
+
+        public PlanConstructFinished(PlanBuilder<T> planBuilder, PlanContructor<?> planContructor, Array<Vector2> finishedPlan) {
+            this.planBuilder = planBuilder;
+            this.planContructor = planContructor;
+            this.finishedPlan = finishedPlan;
+        }
+
+        public static <T extends AssetType> void fire(PlanBuilder<T> planBuilder, PlanContructor<? extends AssetType> planContructor, Array<Vector2> finishedPlan) {
+            Events.fire(new PlanConstructFinished<>(planBuilder, planContructor, finishedPlan));
         }
      }
 

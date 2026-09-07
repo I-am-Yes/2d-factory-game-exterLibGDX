@@ -45,13 +45,7 @@ public class GhostLineRenderer {
 
     public void update() {
 
-        this.buildPlan = new BuildPlan(0, 0, null);
 
-        Array<Vector2> tiledLine = buildGhostLine.getCurrentTiledLine();
-
-        if (addLinePlan(tiledLine)) {
-            System.out.println("ghost line updated");
-        }
 
 
     }
@@ -71,9 +65,9 @@ public class GhostLineRenderer {
         return true;
     }
 
-    public void render() {
-        //this.buildPlan.renderBuildQueue(world, player, spriteBatch, blockAssets);
-    }
+    public void render() {}
+
+    public void draw() {}
 
     public void dispose() {}
 

@@ -1,13 +1,13 @@
-package core.entities;
+package core.entities.plan;
 
-import Data.map.asset.helperInterface.AssetType;
+import Data.map.asset.AssetType;
 import Data.map.asset.GhostType;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Queue;
 
 public class PlanBuilder<T extends AssetType> {
 
-    private Queue<PlanEntity<T>> planQueue = new Queue<>();
+    private final Queue<PlanEntity<T>> planQueue = new Queue<>();
 
     public void addPlan(int x, int y, T currentPlan) {
         planQueue.addLast(

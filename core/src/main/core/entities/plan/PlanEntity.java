@@ -1,6 +1,6 @@
-package core.entities;
+package core.entities.plan;
 
-import Data.map.asset.helperInterface.AssetType;
+import Data.map.asset.AssetType;
 import Data.map.asset.GhostType;
 import com.badlogic.gdx.math.Vector2;
 

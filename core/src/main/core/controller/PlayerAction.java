@@ -1,7 +1,9 @@
 package core.controller;
 
+import Data.map.asset.AssetType;
 import Data.map.asset.FloorType;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
@@ -26,9 +28,11 @@ public class PlayerAction {
     private final ShapeRenderer shapeRenderer;
     private final BuildGhostLine buildGhostLine;
     private final Viewport viewport;
+    private final SpriteBatch spriteBatch;
+    private final AssetsHandler assets;
 
     private final Vector3 tmp = new Vector3();
-    public FloorType selectedType;
+    private AssetType selectedType;
 
     public enum PlaceMode {
         none, placing, breaking,
@@ -38,21 +42,21 @@ public class PlayerAction {
     public final Array<BuildPlan> linePlans = new Array<>();
     private final Array<BuildPlan> selecPlans = new Array<>();
 
-    public PlayerAction(World world, Player player, Viewport viewport, InputHandler input, AssetsHandler assets, ShapeRenderer shapeRenderer) {
+    public PlayerAction(World world, Player player, Viewport viewport, InputHandler input, AssetsHandler assets, ShapeRenderer shapeRenderer, SpriteBatch spriteBatch) {
         this.world = world;
         this.player = player;
         this.input = input;
         this.viewport = viewport;
         this.shapeRenderer = shapeRenderer;
+        this.spriteBatch = spriteBatch;
+        this.assets = assets;
 
-        this.buildGhostLine = new BuildGhostLine(world, player, viewport, input, shapeRenderer);
-
-        registPlacement(world, assets);
+        this.buildGhostLine = new BuildGhostLine(world, player, viewport, input, spriteBatch, shapeRenderer, assets);
     }
 
     public void update() {
 
-        buildGhostLine.update();
+        buildGhostLine.update(getSelectedType());
 
         if (input.isKeyJustPressed(NUM_1)) clearSelection();
         selectingBlock(input, NUM_2, FloorType.SAND);
@@ -103,35 +107,11 @@ public class PlayerAction {
         buildGhostLine.dispose();
     }
 
-    public void registPlacement(World world, AssetsHandler assets) {
-        Events.on(GameEvent.BlockPlaceRequest.class, request -> {
-
-            if (request.isCancelled()) return;
-
-            if (!world.isWalkable(request.tileX, request.tileY)) {
-                request.cancel();
-                return;
-            }
-
-            //floor tile type already there
-            if (world.getFloorAt(request.tileX,  request.tileY) == request.floorType) {
-                request.cancel();
-                return;
-            }
-
-            if (world.placeFloor(request.tileX, request.tileY, request.floorType, assets)) {
-                GameEvent.BlockPlaced.fire(request.tileX, request.tileY, request.floorType);
-            } else  {
-                request.cancel();
-            }
-        });
-    }
-
-    public FloorType getSelectedType() {
+    public AssetType getSelectedType() {
         return selectedType;
     }
 
-    public void setSelectedType(FloorType selectedType) {
+    public void setSelectedType(AssetType selectedType) {
         this.selectedType = selectedType;
     }
 
@@ -161,5 +141,7 @@ public class PlayerAction {
         //no need duplicate tmp.set(...);
         return MathUtils.floor(tmp.y / world.getTileSize());
     }
-
+    public SpriteBatch getSpriteBatch() {
+        return this.spriteBatch;
+    }
 }

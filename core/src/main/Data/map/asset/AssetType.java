@@ -1,15 +1,13 @@
-package Data.map.asset.helperInterface;
+package Data.map.asset;
 
 public interface AssetType {
 
-    //we can use this interface include all enum asset types
-
+    //we can use this interface to include all enum asset types
 
     String getNamePNG();
 
     String getAssetFolder();
 
     String getTexturePath();
-
 
 }

@@ -1,5 +1,6 @@
 package core.render;
 
+import Data.map.asset.AssetType;
 import Data.map.asset.FloorType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -9,9 +10,11 @@ import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import core.AssetsHandler;
 import core.Player;
+import core.entities.BuildGhostLine;
 import core.world.World;
 import core.controller.PlayerAction;
 import core.entities.BuildPlan;
@@ -30,16 +33,20 @@ public class GhostOverlayRenderer {
 
     private final PlayerAction playerAction;
     private final Player player;
+    private final BuildGhostLine buildGhostLine;
+    private final SpriteBatch spriteBatch;
 
     public GhostOverlayRenderer(PlayerAction playerAction, Player player) {
         this.playerAction = playerAction;
         this.player = player;
+        this.spriteBatch = playerAction.getSpriteBatch();
 
         this.animate.set(player.getPos());
+        this.buildGhostLine = playerAction.getBuildGhostLine();
     }
 
-    public void update(World world, Viewport viewport, float delta, FloorType floorType) {
-        if (floorType == null) {
+    public void update(World world, Viewport viewport, float delta, AssetType type) {
+        if (type == null) {
             animInitialized = false;
             hoverVisible = false;
             return;
@@ -68,19 +75,23 @@ public class GhostOverlayRenderer {
 
     }
 
-    public void render(World world, Viewport viewport, SpriteBatch spriteBatch, FloorType floorType, AssetsHandler assetsHandler) {
-        if (floorType == null || !hoverVisible) return;
-        renderGhostOverlay(world, viewport, spriteBatch, floorType, assetsHandler);
+    public void render(World world, Viewport viewport, SpriteBatch spriteBatch, AssetType type, AssetsHandler assetsHandler) {
+        if (type == null || !hoverVisible) return;
+        renderGhostOverlay(world, viewport, spriteBatch, type, assetsHandler);
 
         //render drag line plans
-        renderDragLinePlan(world, spriteBatch, assetsHandler);
+//        renderDragLinePlan(world, spriteBatch, assetsHandler);
 
         //render build queue
 //        renderBuildQueue(world, spriteBatch, blockAssets);
 
     }
 
-    private void renderGhostOverlay(World world, Viewport viewport, SpriteBatch spriteBatch, FloorType floorType, AssetsHandler assetsHandler) {
+    public void draw() {
+        buildGhostLine.drawTilePreview(spriteBatch, buildGhostLine.getCurrentTiledLine(), playerAction.getSelectedType());
+    }
+
+    private void renderGhostOverlay(World world, Viewport viewport, SpriteBatch spriteBatch, AssetType type, AssetsHandler assetsHandler) {
         tmp.set(Gdx.input.getX(), Gdx.input.getY(), 0);
         viewport.unproject(tmp);
 
@@ -89,7 +100,7 @@ public class GhostOverlayRenderer {
         int ty = MathUtils.floor(tmp.y / tile);
         if (!world.isInBounds(tx, ty)) return;
 
-        TiledMapTile tiled = assetsHandler.getTile(floorType);
+        TiledMapTile tiled = assetsHandler.getTile(type);
         if (tiled == null) return;
 
         TextureRegion region = tiled.getTextureRegion();
@@ -102,26 +113,6 @@ public class GhostOverlayRenderer {
 
         spriteBatch.draw(region, animate.x, animate.y, tile, tile);
         spriteBatch.setColor(oldColor);
-    }
-
-    private void renderDragLinePlan(World world, SpriteBatch batch, AssetsHandler assetsHandler) {
-        if (playerAction == null) return;
-
-        Color oldColor = batch.getColor();
-        batch.setColor(1f, 1f, 1f, 0.6f);
-
-        float tile = world.getTileSize();
-        for (BuildPlan plan : playerAction.linePlans) {
-            if (!world.isInBounds(plan.x, plan.y)) continue;
-
-            TiledMapTile tiled = assetsHandler.getTile(plan.floorType);
-            if (tiled == null) continue;
-
-            TextureRegion region = tiled.getTextureRegion();
-            batch.draw(region, plan.x * tile, plan.y * tile, tile, tile);
-        }
-
-        batch.setColor(oldColor);
     }
 
 

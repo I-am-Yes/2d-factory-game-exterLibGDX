@@ -1,5 +1,6 @@
 package core.entities;
 
+import Data.map.asset.AssetType;
 import Data.map.asset.FloorType;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -15,7 +16,7 @@ public class BuildPlan {
     private World world;
 
     public int x, y;
-    public FloorType floorType;
+    public AssetType type;
     public float progress;
     public boolean initialized;
     private final Queue<BuildPlan> buildQueue = new Queue<>();
@@ -23,10 +24,10 @@ public class BuildPlan {
     private float buildCounter = 0f;
     private boolean updateBuilding = true;
 
-    public BuildPlan(int x, int y, FloorType floorType) {
+    public BuildPlan(int x, int y, AssetType type) {
         this.x = x;
         this.y = y;
-        this.floorType = floorType;
+        this.type = type;
         this.progress = 0f;
         this.initialized = false;
     }
@@ -58,8 +59,8 @@ public class BuildPlan {
             current.progress += delta * buildSpeed;
 
             if (current.isDone()) {
-                if (world != null && current.floorType != null) {
-                    GameEvent.BlockPlaceRequest.fire(current.x, current.y, current.floorType);
+                if (world != null && current.type != null) {
+                    GameEvent.BlockPlaceRequest.fire(current.x, current.y, current.type);
                 }
                 buildQueue.removeFirst();
             }
@@ -75,7 +76,7 @@ public class BuildPlan {
         for (BuildPlan plan : getBuildQueue()) {
             if (!world.isInBounds(plan.x, plan.y)) continue;
 
-            TiledMapTile tiled = assetsHandler.getTile(plan.floorType);
+            TiledMapTile tiled = assetsHandler.getTile(plan.type);
             if (tiled == null) continue;
 
             TextureRegion region = tiled.getTextureRegion();

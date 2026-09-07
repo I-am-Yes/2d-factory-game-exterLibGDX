@@ -1,14 +1,14 @@
 package core.render;
 
-import Data.map.asset.helperInterface.AssetType;
+import Data.map.asset.AssetType;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import core.AssetsHandler;
-import core.entities.PlanBuilder;
-import core.entities.PlanEntity;
+import core.entities.plan.PlanBuilder;
+import core.entities.plan.PlanEntity;
 import core.world.World;
 
 public class PlanRenderer<T extends AssetType> {
@@ -17,14 +17,24 @@ public class PlanRenderer<T extends AssetType> {
     private final SpriteBatch spriteBatch;
     private final AssetsHandler assetsHandler;
 
-    private PlanBuilder<AssetType> planBuilder;
+    private final float tileSize;
 
-    public PlanRenderer(World world, Viewport viewport, SpriteBatch spriteBatch, PlanBuilder planBuilder, AssetsHandler assetsHandler) {
+    private final Color PLAN_DEFAULT_COLOR = new Color(0.5f, 0.5f, 0.8f, 0.4f);
+    private final Color PLAN_ACCEPTED_COLOR = new Color(0.5f, 1f, 0.5f, 0.3f);
+    private final Color PLAN_REJECTED_COLOR = new Color(1f, 0.5f, 0.5f, 0.3f);
+
+    private final PlanBuilder<AssetType> planBuilder;
+
+    public PlanRenderer(World world, Viewport viewport, SpriteBatch spriteBatch, PlanBuilder<AssetType> planBuilder, AssetsHandler assetsHandler) {
         this.world = world;
         this.viewport = viewport;
         this.spriteBatch = spriteBatch;
         this.planBuilder = planBuilder;
         this.assetsHandler = assetsHandler;
+
+        this.tileSize = world.getTileSize();
+
+
     }
 
     public void update() {}
@@ -38,20 +48,21 @@ public class PlanRenderer<T extends AssetType> {
     public void dispose() {}
 
 
-    private <T extends AssetType> void renderPlan(PlanBuilder planBuilder) {
+    private <Type extends AssetType> void renderPlan(PlanBuilder<Type> planBuilder) {
         Color oldColor = new Color(spriteBatch.getColor());
-        float tileSize = world.getTileSize();
 
+        //TODO: placing plan entities on the ghost layer not current world layer
         for (int i = 0; i < planBuilder.getPlanQueue().size; i++) {
-            PlanEntity<T> planEntity = planBuilder.getPlanEntityAt(i);
-            TiledMapTile tiledTile =
-                assetsHandler.getTile( planEntity.getGhostType().getSourceType());
-
-            TiledMapTile tile = assetsHandler.getTile(planEntity.getGhostType().getSourceType());
-            TextureRegion region = tile.getTextureRegion();
-            spriteBatch.setColor(0.5f, 1f, 0.5f, 0.3f);
-            spriteBatch.draw(region, planEntity.getX() * tileSize, planEntity.getY() * tileSize, tileSize, tileSize);
+            PlanEntity<Type> planEntity = planBuilder.getPlanEntityAt(i);
+            renderPlanEntity(planEntity, tileSize, PLAN_DEFAULT_COLOR);
         }
+    }
+
+    private <Type extends AssetType> void renderPlanEntity(PlanEntity<Type> planEntity, float tileSize, Color color) {
+        TiledMapTile tiledTile = assetsHandler.getTile(planEntity.getGhostType().getSourceType());
+        TextureRegion region = tiledTile.getTextureRegion();
+        spriteBatch.setColor(color);
+        spriteBatch.draw(region, planEntity.getX() * tileSize, planEntity.getY() * tileSize, tileSize, tileSize);
     }
 
 }

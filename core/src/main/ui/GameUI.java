@@ -1,5 +1,6 @@
 package ui;
 
+import Data.map.asset.AssetType;
 import Data.map.asset.FloorType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -56,9 +57,9 @@ public class GameUI {
         root.add(hotbar).expand().bottom().pad(12);
     }
 
-    public void update(float deltaTime, FloorType floorType) {
+    public void update(float deltaTime, AssetType type) {
         act(deltaTime);
-        updateSelected(floorType);
+        updateSelected(type);
         updateFPSLabel();
     }
 
@@ -83,8 +84,8 @@ public class GameUI {
         return stage;
     }
 
-    public void updateSelected(FloorType floorType) {
-        selectedLabel.setText(floorType == null ? "Selected: none" : "Selected: " + floorType);
+    public void updateSelected(AssetType assetType) {
+        selectedLabel.setText(assetType == null ? "Selected: none" : "Selected: " + assetType);
     }
 
     public void updateFPSLabel() {

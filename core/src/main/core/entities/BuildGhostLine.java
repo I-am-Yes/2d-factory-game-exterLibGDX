@@ -1,16 +1,22 @@
 package core.entities;
 
+import Data.map.asset.AssetType;
 import Data.map.asset.FloorType;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import core.AssetsHandler;
 import core.InputHandler;
 import core.Player;
+import core.entities.plan.PlanBuilder;
 import core.world.World;
 import core.event.GameEvent;
 import core.helper.TileAlgorithm;
@@ -22,6 +28,8 @@ public class BuildGhostLine {
     private final InputHandler input;
     private final Viewport viewport;
     private final ShapeRenderer shapeRenderer;
+    private final SpriteBatch spriteBatch;
+    private final AssetsHandler assetsHandler;
 
     private final TileAlgorithm tileAlgorithm = new TileAlgorithm();
 
@@ -33,7 +41,7 @@ public class BuildGhostLine {
 
     private final Vector3 tmp = new Vector3(); //temporary vector3 for calculations
     private Array<Vector2> tiledLine;
-    private Array<FloorType> translatedTiledLine;
+    private Array<AssetType> translatedTiledLine;
 
     private final float snapAngle = MathUtils.PI / 4f; //45, 90, ... degrees
 
@@ -58,19 +66,28 @@ public class BuildGhostLine {
     }
     private PlacingAlgorithm placingAlgorithm = PlacingAlgorithm.THICK_LINE;
 
-    public BuildGhostLine(World world, Player player, Viewport viewport, InputHandler input, ShapeRenderer shapeRenderer) {
+    public BuildGhostLine(World world, Player player, Viewport viewport, InputHandler input, SpriteBatch spriteBatch, ShapeRenderer shapeRenderer, AssetsHandler assetsHandler) {
         this.world = world;
         this.player = player;
         this.input = input;
         this.viewport = viewport;
         this.shapeRenderer = shapeRenderer;
+        this.spriteBatch = spriteBatch;
+        this.assetsHandler = assetsHandler;
 
         this.width = 0.01f;
         this.color = Color.WHITE;
         this.tileSize = world.getTileSize();
     }
 
-    public void update() {
+    public void update(AssetType selectedType) {
+
+        if (input.isMousePressed(Input.Buttons.LEFT)
+            && input.isMousePressed(Input.Buttons.RIGHT)) {
+            drawLineMode = DrawLineMode.NONE;
+            tiledLine.clear();
+            return;
+        }
 
         if (drawLineMode != DrawLineMode.NONE)
             if (placingAlgorithm == PlacingAlgorithm.BRESHENHAM_LINE)
@@ -84,7 +101,10 @@ public class BuildGhostLine {
             if (tiledLine != null) {
                 for (int i = 0; i < tiledLine.size; i++) {
                     Vector2 tile = tiledLine.get(i);
-                    GameEvent.BlockPlaceRequest.fire((int) tile.x, (int) tile.y, FloorType.DIRT);
+                    //TODO: nothing listen to event: PlanBuilderRequest
+                    GameEvent.PlanBuilderRequest.fire(
+                        registLinePlan(tiledLine, selectedType)
+                    );
                 }
 
                 tiledLine.clear();
@@ -153,18 +173,45 @@ public class BuildGhostLine {
         shapeRenderer.dispose();
     }
 
+    public void drawTilePreview(SpriteBatch spriteBatch, Array<Vector2> tiledLine, AssetType selectedType) {
+        if (tiledLine == null || selectedType == null) return;
 
+        TiledMapTile tiledTile = assetsHandler.getTile(selectedType);
+        if (tiledTile == null) return;
+
+        Color oldColor = new Color(spriteBatch.getColor());
+        TextureRegion region = tiledTile.getTextureRegion();
+
+        spriteBatch.setColor(0.8f, 0.8f, 0.8f, 0.5f);
+
+        for (Vector2 tile : tiledLine) {
+            spriteBatch.draw(
+                region, tile.x * tileSize, tile.y * tileSize, tileSize, tileSize);
+        }
+        spriteBatch.setColor(oldColor);
+
+    }
 
     public Array<Vector2> getCurrentTiledLine() {
         return tiledLine;
     }
 
-    public Array<FloorType> getCurrentTranslatedTiledLine() {
+    public Array<AssetType> getCurrentTranslatedTiledLine() {
         return translateTiledLineToFloorType(tiledLine);
     }
 
     public DrawLineMode getCurrentPlayerLineMode() {
         return drawLineMode;
+    }
+
+    private PlanBuilder<AssetType> registLinePlan(Array<Vector2> tiledLine, AssetType type) {
+        if (tiledLine == null || type == null) return null;
+        PlanBuilder<AssetType> plan = new PlanBuilder<>();
+        for (int i = 0; i < tiledLine.size; i++) {
+            Vector2 tile = tiledLine.get(i);
+            plan.addPlan((int) tile.x, (int) tile.y, type);
+        }
+        return plan;
     }
 
     private Array<Vector2> DDATileArray() {
@@ -191,9 +238,9 @@ public class BuildGhostLine {
         );
     }
 
-    private Array<FloorType> translateTiledLineToFloorType(Array<Vector2> tiledLine) {
+    private Array<AssetType> translateTiledLineToFloorType(Array<Vector2> tiledLine) {
         if (tiledLine.isEmpty()) return null;
-        Array<FloorType> tileArray = new Array<>();
+        Array<AssetType> tileArray = new Array<>();
         for (int i = 0; i < tiledLine.size; i++) {
             tileArray.add(world.getFloorAt(tiledLine.get(i)));
         }

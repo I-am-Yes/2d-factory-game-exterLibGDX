@@ -1,10 +1,14 @@
 package core.world;
 
+import Data.map.asset.BuildingType;
 import Data.map.asset.FloorType;
 import Data.map.MapConfig;
+import Data.map.asset.GhostType;
+import Data.map.asset.AssetType;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.math.Vector2;
 import core.AssetsHandler;
+import core.event.Events;
 import core.event.GameEvent;
 import core.map.MapGenerator;
 
@@ -20,6 +24,8 @@ public class World {
     private static final String GHOST_LAYER_NAME = "Ghost Layer";
 
     private final TiledMap map;
+    private final MapConfig mapConfig;
+    private final AssetsHandler assets;
     private final OrthogonalTiledMapRenderer mapRenderer;
 
     // tile map layer variables
@@ -29,8 +35,8 @@ public class World {
 
     // grid for tile map layers
     private final FloorType[][] floorGrid;
-    private final FloorType[][] buildingGrid;
-    private final FloorType[][] ghostGrid;
+    private final BuildingType[][] buildingGrid;
+    private final GhostType<AssetType>[][] ghostGrid;
 
     private final int tilesWidth;
     private final int tilesHeight;
@@ -44,18 +50,20 @@ public class World {
 
 
     public World(
-        TiledMap map, MapConfig mapConfig,
+        TiledMap map, MapConfig mapConfig, AssetsHandler assets,
         //pass layers in
         TiledMapTileLayer floorLayer,
         TiledMapTileLayer buildingLayer,
         TiledMapTileLayer ghostLayer,
         //pass grids in
         FloorType[][] floorGrid,
-        FloorType[][] buildingGrid,
-        FloorType[][] ghostGrid
+        BuildingType[][] buildingGrid,
+        GhostType<AssetType>[][] ghostGrid
     ) {
 
         this.map = map;
+        this.mapConfig = mapConfig;
+        this.assets = assets;
         this.seed = mapConfig.seed;
 
         this.floorLayer = floorLayer;
@@ -76,6 +84,7 @@ public class World {
         float unitScale = 1f / mapConfig.getTilePixel();
         this.mapRenderer = new OrthogonalTiledMapRenderer(map,  unitScale);
 
+        registPlacement();
     }
 
     public static World generateWorld(MapConfig mapConfig, AssetsHandler assets) {
@@ -114,18 +123,18 @@ public class World {
 
         //generate layer grid
         FloorType[][] floorGrid = MapGenerator.generateTiledMap(mapConfig);
-        FloorType[][] buildingGrid = new FloorType[mapConfig.width][mapConfig.height];
-        FloorType[][] ghostGrid = new FloorType[mapConfig.width][mapConfig.height];
+        BuildingType[][] buildingGrid = new BuildingType[mapConfig.width][mapConfig.height];
+        GhostType<AssetType>[][] ghostGrid = new GhostType[mapConfig.width][mapConfig.height];
 
         MapGenerator.applyToLayer(floorLayer, floorGrid, assets);
 
 
         GameEvent.MapGenerated.fire(mapConfig, floorGrid);
 
-        return new World(map, mapConfig,
-            floorLayer, buildingLayer, ghostLayer,
-            floorGrid, buildingGrid, ghostGrid
-        );
+        return new World(map, mapConfig, assets,
+            floorLayer, buildingLayer,
+            ghostLayer, floorGrid, buildingGrid,
+            ghostGrid);
     }
 
     public void render(OrthographicCamera camera) {
@@ -138,7 +147,7 @@ public class World {
         map.dispose();
     }
 
-    public FloorType getBuildingAt(int tileX, int tileY) {
+    public BuildingType getBuildingAt(int tileX, int tileY) {
         return buildingGrid[tileX][tileY];
     }
 
@@ -152,13 +161,7 @@ public class World {
             && !hasBuildingAt(tileX, tileY);
     }
 
-    public boolean placeBuildingAt(int tileX, int tileY, FloorType floorType, AssetsHandler assets) {
-        if (!canPlaceBuildingAt(tileX, tileY)) return false;
-        //buildingGrid[tileX][tileY] = ;
-        return true;
-    }
-
-    public FloorType getGhostTileAt(int tileX, int tileY) {
+    public GhostType<AssetType> getGhostTileAt(int tileX, int tileY) {
         return ghostGrid[tileX][tileY];
     }
 
@@ -189,9 +192,10 @@ public class World {
         return getFloorAt((int)tile.x, (int)tile.y);
     }
 
-    public FloorType getFloorName(int tileX, int tileY) {
+    public AssetType getFloorName(int tileX, int tileY) {
         if (!isInBounds(tileX, tileY)) return null;
         //TODO: get floor name at x, y.
+        //TODO: fix generic types.
         return floorGrid[tileX][tileY];
     }
 
@@ -200,18 +204,70 @@ public class World {
         return floor != null && floor != FloorType.WATER;
     }
 
-    public boolean placeFloor(int tileX, int tileY, FloorType floorType, AssetsHandler assets) {
-        if (!isInBounds(tileX, tileY)) return false;
-        if (floorType == FloorType.WATER) return false;
+    public boolean placeBlock(
+        int tileX, int tileY,
+        AssetType type
+    ) {
+        if (!isInBounds(tileX, tileY) || type == null) return false;
 
-        floorGrid[tileX][tileY] = floorType;
+        TiledMapTile tile = assets.getTile(type);
+        if (tile == null) return false;
 
-        TiledMapTile tile = assets.getTile(floorType);
         TiledMapTileLayer.Cell cell = new TiledMapTileLayer.Cell();
         cell.setTile(tile);
-        floorLayer.setCell(tileX, tileY, cell);
 
-        return true;
+        if (type instanceof FloorType floorType) {
+            if (floorGrid[tileX][tileY] == floorType) return false;
+            //if (type == FloorType.WATER) return false;
+
+            floorGrid[tileX][tileY] = floorType;
+            floorLayer.setCell(tileX, tileY, cell);
+            return true;
+        }
+
+        if (type instanceof BuildingType buildingType) {
+            if (buildingGrid[tileX][tileY] == buildingType) return false;
+            if (!canPlaceBuildingAt(tileX, tileY)) return false;
+
+            buildingGrid[tileX][tileY] = buildingType;
+            buildingLayer.setCell(tileX, tileY, cell);
+            return true;
+        }
+
+        return false;
+    }
+
+    public void registPlacement() {
+        Events.on(GameEvent.BlockPlaceRequest.class, request -> {
+
+            if (request.isCancelled()) return;
+
+            if (!isWalkable(request.tileX, request.tileY)) {
+                request.cancel();
+                return;
+            }
+
+            //floor tile type already there
+            if (getFloorAt(request.tileX,  request.tileY) == request.type) {
+                request.cancel();
+                return;
+            }
+
+            if (placeBlock(request.tileX, request.tileY, request.type)) {
+                GameEvent.BlockPlaced.fire(request.tileX, request.tileY, request.type);
+            } else  {
+                request.cancel();
+            }
+        });
+    }
+
+
+    public boolean placeFloor(int tileX, int tileY, FloorType floorType) {
+        return placeBlock(tileX, tileY, floorType);
+    }
+
+    public boolean placeBuilding(int tileX, int tileY, BuildingType buildingType) {
+        return placeBlock(tileX, tileY, buildingType);
     }
 
     public int worldToTileX(int worldX) {
