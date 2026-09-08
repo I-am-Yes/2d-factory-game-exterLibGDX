@@ -1,7 +1,6 @@
 package core.entities;
 
 import Data.map.asset.AssetType;
-import Data.map.asset.FloorType;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -61,7 +60,7 @@ public class BuildGhostLine {
     private enum PlacingAlgorithm {
         NONE,
         DDA_LINE,
-        BRESHENHAM_LINE,
+        BRESENHAM_LINE,
         THICK_LINE
     }
     private PlacingAlgorithm placingAlgorithm = PlacingAlgorithm.THICK_LINE;
@@ -82,32 +81,37 @@ public class BuildGhostLine {
 
     public void update(AssetType selectedType) {
 
-        if (input.isMousePressed(Input.Buttons.LEFT)
-            && input.isMousePressed(Input.Buttons.RIGHT)) {
+        if (selectedType == null) {
+            clearTiledLine(tiledLine);
             drawLineMode = DrawLineMode.NONE;
-            tiledLine.clear();
+            worldStart.set(0, 0, 0);
             return;
         }
 
-        if (drawLineMode != DrawLineMode.NONE)
-            if (placingAlgorithm == PlacingAlgorithm.BRESHENHAM_LINE)
+        if (input.isMousePressed(Input.Buttons.LEFT)
+            && input.isMousePressed(Input.Buttons.RIGHT)) {
+            drawLineMode = DrawLineMode.NONE;
+            clearTiledLine(tiledLine);
+            return;
+        }
+
+        if (drawLineMode != DrawLineMode.NONE) {
+            if (placingAlgorithm == PlacingAlgorithm.BRESENHAM_LINE)
                 tiledLine = bresenhamTileArray();
             else if (placingAlgorithm == PlacingAlgorithm.DDA_LINE)
                 tiledLine = DDATileArray();
             else if (placingAlgorithm == PlacingAlgorithm.THICK_LINE)
                 tiledLine = thickLineTileArray();
+        }
 
         if (input.isMouseReleased(Input.Buttons.LEFT)) {
             if (tiledLine != null) {
-                for (int i = 0; i < tiledLine.size; i++) {
-                    Vector2 tile = tiledLine.get(i);
-                    //TODO: nothing listen to event: PlanBuilderRequest
-                    GameEvent.PlanBuilderRequest.fire(
-                        registLinePlan(tiledLine, selectedType)
-                    );
-                }
+                //request place current tiledLine to ghost layer
+                GameEvent.PlanBuilderRequest.fire(
+                    registLinePlan(tiledLine, selectedType)
+                );
 
-                tiledLine.clear();
+                clearTiledLine(tiledLine);
             }
             drawLineMode = DrawLineMode.NONE;
             return;
@@ -286,6 +290,11 @@ public class BuildGhostLine {
         if (shift) return DrawLineMode.ANGLE_SNAP_LINE;
 
         return DrawLineMode.NONE;
+    }
+
+    private void clearTiledLine(Array<Vector2> tiledLine) {
+        if (tiledLine == null) return;
+        tiledLine.clear();
     }
 
     private boolean isDiagonalLine() {

@@ -10,7 +10,7 @@ public class CursorController {
     private Cursor defaultCursor;
 
     public void loadCursor() {
-        Pixmap source = new Pixmap(Gdx.files.internal("cursor/cursor2.png"));
+        Pixmap source = new Pixmap(Gdx.files.internal("unpacked/cursor/cursor2.png"));
 
         int size = 32; // only 16, 32, 64 etc... works
         Pixmap scaled = new Pixmap(size, size, source.getFormat());

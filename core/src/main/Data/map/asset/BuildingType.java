@@ -1,8 +1,8 @@
 package Data.map.asset;
 
 public enum BuildingType implements AssetType {
-    HAZARD_BLOCK("blocks/industrial", "hazard block"),
-    HAZARD_BLOCK2("blocks/industrial", "hazard block2");
+    HAZARD_BLOCK("unpacked/blocks/industrial", "hazard block"),
+    HAZARD_BLOCK2("unpacked/blocks/industrial", "hazard block2");
 
     private final String assetFolder;
     private final String namePNG;

@@ -5,6 +5,7 @@ import Data.map.MapConfig;
 import Data.map.asset.AssetType;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.Queue;
 import core.entities.plan.PlanBuilder;
 import core.entities.plan.PlanContructor;
 
@@ -64,6 +65,24 @@ public class GameEvent {
             Events.fire(new BlockPlaced(tileX, tileY, type));
         }
 
+     }
+
+     public static final class PlanBuilderRenderRequest<T extends AssetType> {
+        public final PlanBuilder<T> planBuilder;
+
+        public PlanBuilderRenderRequest(PlanBuilder<T> planBuilder) {
+            this.planBuilder = planBuilder;
+        }
+
+        public static <T extends AssetType> void fire(PlanBuilder<T> planBuilder) {
+            Events.fire(new PlanBuilderRenderRequest<>(planBuilder));
+        }
+
+        public static <T extends AssetType> void fire(Queue<PlanBuilder<T>> planBuilders) {
+            for (PlanBuilder<T> planBuilder : planBuilders) {
+                fire(planBuilder);
+            }
+        }
      }
 
      public static final class PlanBuilderRequest<T extends AssetType> {

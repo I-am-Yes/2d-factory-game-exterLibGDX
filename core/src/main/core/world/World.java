@@ -5,6 +5,7 @@ import Data.map.asset.FloorType;
 import Data.map.MapConfig;
 import Data.map.asset.GhostType;
 import Data.map.asset.AssetType;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.math.Vector2;
 import core.AssetsHandler;
@@ -15,7 +16,6 @@ import core.map.MapGenerator;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
-import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 
 public class World {
 
@@ -26,7 +26,7 @@ public class World {
     private final TiledMap map;
     private final MapConfig mapConfig;
     private final AssetsHandler assets;
-    private final OrthogonalTiledMapRenderer mapRenderer;
+    private final ColoredTiledMapRenderer mapRenderer;
 
     // tile map layer variables
     private final TiledMapTileLayer floorLayer;
@@ -82,9 +82,21 @@ public class World {
         this.worldHeight = tilesHeight * tileSize;
 
         float unitScale = 1f / mapConfig.getTilePixel();
-        this.mapRenderer = new OrthogonalTiledMapRenderer(map,  unitScale);
+        this.mapRenderer = new ColoredTiledMapRenderer(map,  unitScale);
 
         registPlacement();
+    }
+
+    public static class ColoredCell extends TiledMapTileLayer.Cell {
+        private Color color = new Color(Color.WHITE);
+
+        public ColoredCell(Color color) {
+            this.color.set(color);
+        }
+
+        public Color getColor() {
+            return color;
+        }
     }
 
     public static World generateWorld(MapConfig mapConfig, AssetsHandler assets) {
@@ -204,11 +216,55 @@ public class World {
         return floor != null && floor != FloorType.WATER;
     }
 
+    public boolean placeFloor(int tileX, int tileY, FloorType floorType) {
+        return placeBlock(tileX, tileY, floorType);
+    }
+
+    public boolean placeBuilding(int tileX, int tileY, BuildingType buildingType) {
+        return placeBlock(tileX, tileY, buildingType);
+    }
+
+    public boolean placeGhost(int tileX, int tileY, GhostType<? extends AssetType> ghostType) {
+        return placeGhostBlock(tileX, tileY, ghostType);
+    }
+
     public boolean placeBlock(
         int tileX, int tileY,
         AssetType type
     ) {
+        if (type instanceof FloorType floorType) {
+            //if (type == FloorType.WATER) return false;
+
+            return placeInLayer(tileX, tileY, floorType, floorGrid, floorLayer);
+        }
+
+        if (type instanceof BuildingType buildingType) {
+
+            return placeInLayer(tileX, tileY, buildingType, buildingGrid, buildingLayer);
+        }
+
+        return false;
+    }
+
+    private boolean placeGhostBlock(
+        int tileX, int tileY,
+        GhostType<? extends AssetType> ghostType
+    ) {
+        if (ghostType != null) {
+
+            return placeInGhostLayer(tileX, tileY, ghostType, ghostGrid, ghostLayer);
+        }
+
+        return false;
+    }
+
+    private <T extends AssetType> boolean placeInLayer(
+        int tileX, int tileY,
+        T type, T[][] grid, TiledMapTileLayer layer
+    ) {
         if (!isInBounds(tileX, tileY) || type == null) return false;
+
+        if (grid[tileX][tileY] == type) return false;
 
         TiledMapTile tile = assets.getTile(type);
         if (tile == null) return false;
@@ -216,25 +272,30 @@ public class World {
         TiledMapTileLayer.Cell cell = new TiledMapTileLayer.Cell();
         cell.setTile(tile);
 
-        if (type instanceof FloorType floorType) {
-            if (floorGrid[tileX][tileY] == floorType) return false;
-            //if (type == FloorType.WATER) return false;
+        grid[tileX][tileY] = type;
+        layer.setCell(tileX, tileY, cell);
 
-            floorGrid[tileX][tileY] = floorType;
-            floorLayer.setCell(tileX, tileY, cell);
-            return true;
-        }
+        return true;
+    }
 
-        if (type instanceof BuildingType buildingType) {
-            if (buildingGrid[tileX][tileY] == buildingType) return false;
-            if (!canPlaceBuildingAt(tileX, tileY)) return false;
+    private boolean placeInGhostLayer(
+        int tileX, int tileY,
+        GhostType<? extends AssetType> ghostType,
+        GhostType<? extends AssetType>[][] grid,
+        TiledMapTileLayer ghostLayer
+    ) {
+        if (!isInBounds(tileX, tileY) || ghostType == null) return false;
+        if (grid[tileX][tileY] == ghostType) return false;
+        TiledMapTile tile = assets.getTile(ghostType.getSourceType());
 
-            buildingGrid[tileX][tileY] = buildingType;
-            buildingLayer.setCell(tileX, tileY, cell);
-            return true;
-        }
 
-        return false;
+        if (tile == null) return false;
+
+        ColoredCell cell = new ColoredCell(ghostType.getState().getColor());
+        cell.setTile(tile);
+        grid[tileX][tileY] = ghostType;
+        ghostLayer.setCell(tileX, tileY, cell);
+        return true;
     }
 
     public void registPlacement() {
@@ -259,15 +320,6 @@ public class World {
                 request.cancel();
             }
         });
-    }
-
-
-    public boolean placeFloor(int tileX, int tileY, FloorType floorType) {
-        return placeBlock(tileX, tileY, floorType);
-    }
-
-    public boolean placeBuilding(int tileX, int tileY, BuildingType buildingType) {
-        return placeBlock(tileX, tileY, buildingType);
     }
 
     public int worldToTileX(int worldX) {

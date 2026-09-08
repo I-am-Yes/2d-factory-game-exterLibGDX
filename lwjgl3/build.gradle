@@ -213,3 +213,14 @@ tasks.withType(JavaExec.class).configureEach {
 if(enableGraalNative == 'true') {
   apply from: file("nativeimage.gradle")
 }
+
+
+// packing current game assets
+tasks.register("packTextures", JavaExec) {
+  group = "assets"
+  description = "Packs game textures into texture atlases"
+
+  dependsOn classes
+  classpath = sourceSets.main.runtimeClasspath
+  mainClass = "core.lwjgl3.AssetPacker"
+}
