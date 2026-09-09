@@ -14,6 +14,8 @@ public final class AssetPacker {
         settings.filterMin = Texture.TextureFilter.Nearest;
         settings.filterMag = Texture.TextureFilter.Nearest;
 
+        settings.duplicatePadding = true;
+        settings.bleed = true;
         settings.combineSubdirectories = true;
         settings.flattenPaths = false;
 
@@ -37,9 +39,9 @@ public final class AssetPacker {
 
         TexturePacker.process(
             settings,
-            "../assets/unpacked",
-            "../assets/packed",
-            "game assets"
+            "../assets/unpacked/tiles/tiles",
+            "../assets/packed/tiles/tiles",
+            "tile assets"
         );
     }
 }

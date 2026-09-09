@@ -8,15 +8,26 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import core.AssetsHandler;
+import core.InputHandler;
+import core.Window;
+import core.controller.PlayerAction;
 import core.world.World;
 
 public class OverlayRenderer {
+    private final World world;
+    private final Window window;
+    private final Viewport viewport;
+    private final InputHandler input;
+    private final PlayerAction playerAction;
+    private final AssetsHandler assetsHandler;
 
     private final Vector3 tmp = new Vector3();
     private final Vector2 bracketAnimate = new Vector2();
 
-    private static final float SLIDE_SPEED = 32f;
-    private static final float PADDING = 0.06f;
+    private float SLIDE_SPEED = 32f;
+    private float PADDING = 0.06f;
+    private float BRACKET_RESIZE_SPEED = 8f;
 
     private float cornerBracketThickness = 6f;
     private float cornerBracketGapRatio = 0.27f;
@@ -26,9 +37,16 @@ public class OverlayRenderer {
         INSIDE,    // bracket sits inside tile
         CENTER       // centered on tile edge (half in, half out)
     }
-    private BracketPaddingMode bracketPaddingMode = BracketPaddingMode.CENTER;
-    private float bracketSize;
+    private BracketPaddingMode defaultPaddingMode = BracketPaddingMode.CENTER;
+    private BracketPaddingMode bracketPaddingMode = defaultPaddingMode;
 
+    private float bracketSize;
+    private float targetBracketSize;
+
+    private final float defaultPadding = 0.06f;
+    private final float defaultSpeed = 32f;
+
+    private float delta;
     private float targetX;
     private float targetY;
     private boolean hoverVisible;
@@ -36,22 +54,50 @@ public class OverlayRenderer {
     private boolean animInitialized;
     private boolean isOverlayRenderAnimationEnabled = true; //true by default
 
-    public OverlayRenderer() {
+    public OverlayRenderer(World world, Window window, Viewport viewport, InputHandler inputHandler, PlayerAction playerAction, AssetsHandler assetsHandler) {
+        this.world = world;
+        this.window = window;
+        this.viewport = viewport;
+        this.input = inputHandler;
+        this.playerAction = playerAction;
+        this.assetsHandler = assetsHandler;
 
         //TODO: change bracket color to light blue when hovering overlay on ghost tile
-        setBracketPaddingMode(OverlayRenderer.BracketPaddingMode.CENTER);
+        setBracketPaddingMode(defaultPaddingMode);
 
     }
 
-    public void update(World world, Viewport viewport, float delta) {
+    public void update() {
+        delta = window.getDeltaTime();
+
+        //TODO: change overlay bracket to render, resize, update base on current tile, not player mouse
         drawCornerBrackets(world, viewport, null, cornerBracketGapRatio, cornerBracketThickness);
+        animateBracketSize();
         if (!hoverVisible) return;
+
 
         if (isOverlayRenderAnimationEnabled) {
             animInitialized = AnimateRenderer.animateMove(delta, targetX, targetY, SLIDE_SPEED, bracketAnimate, animInitialized);
         } else {
             bracketAnimate.set(targetX, targetY);
         }
+
+        if (world.isGhostAtWorld(input.getMouseWorldPos(viewport))) {
+            setExpandBracket(true, 0.1f);
+        } else {
+            setExpandBracket(false, 0.1f);
+        }
+
+        if (playerAction != null && playerAction.getSelectedType() != null) {
+            Gdx.app.log(
+                "OverlayRenderer",
+                "Selected Type: " + playerAction.getSelectedType()
+            );
+            setExpandBracket(true,
+                (float) assetsHandler.getTextureHeight(playerAction.getSelectedType())
+                    / world.getMapConfig().getTilePixel() / 4f );
+        }
+
     }
 
     public void render(World world, Viewport viewport, ShapeRenderer shapeRenderer) {
@@ -63,6 +109,11 @@ public class OverlayRenderer {
         drawCornerBrackets(world, viewport, shapeRenderer, cornerBracketGapRatio, cornerBracketThickness);
 
         shapeRenderer.end();
+    }
+
+    private void setExpandBracket(boolean bool, float expandSize) {
+        setBracketPaddingMode(bool ? BracketPaddingMode.OUTSIDE : defaultPaddingMode);
+        setBracketPadding(bool ? +expandSize : defaultPadding);
     }
 
     private void drawCornerBrackets(World world, Viewport viewport, ShapeRenderer sr, float gapRatio, float thicknessPx) {
@@ -90,7 +141,9 @@ public class OverlayRenderer {
         OrthographicCamera cam = (OrthographicCamera) viewport.getCamera();
         float wpp = (cam.viewportWidth * cam.zoom) / Gdx.graphics.getWidth();
 
-        drawBracketShape(sr, bracketAnimate.x, bracketAnimate.y,
+        float drawX = bracketAnimate.x - bracketSize * 0.5f;
+        float drawY = bracketAnimate.y - bracketSize * 0.5f;
+        drawBracketShape(sr, drawX, drawY,
             bracketSize, tile * gapRatio, thicknessPx * wpp, hoverWalkable);
     }
 
@@ -105,27 +158,35 @@ public class OverlayRenderer {
         sr.rect(x2 - gap, y, gap, thick);        sr.rect(x2 - thick, y, thick, gap);
     }
 
+    private void animateBracketSize() {
+        float alpha = 1f -
+            (float) Math.exp(-BRACKET_RESIZE_SPEED * delta);
+
+        bracketSize = MathUtils.lerp(
+            bracketSize,
+            targetBracketSize,
+            alpha
+        );
+
+    }
+
     private void applyBracketPadding(float wx, float wy, float tile) {
         float pad = PADDING;
-
+        float centerX = wx + tile * 0.5f;
+        float centerY = wy + tile * 0.5f;
         switch (bracketPaddingMode) {
             case OUTSIDE -> {
-                targetX = wx - pad;
-                targetY = wy - pad;
-                bracketSize = tile + pad * 2f;
+                targetBracketSize = tile + pad * 2f;
             }
             case INSIDE -> {
-                targetX = wx + pad;
-                targetY = wy + pad;
-                bracketSize = tile - pad * 2f;
+                targetBracketSize = Math.max(0f, tile - pad * 2f);
             }
             case CENTER -> {
-                float half = pad * 0.5f;
-                targetX = wx - half;
-                targetY = wy - half;
-                bracketSize = tile + pad;
+                targetBracketSize = tile + pad;
             }
         }
+        targetX = centerX;
+        targetY = centerY;
     }
 
     public float getCornerBracketGapRatio() {
@@ -158,6 +219,14 @@ public class OverlayRenderer {
 
     public void setBracketPaddingMode(BracketPaddingMode bracketPaddingMode) {
         this.bracketPaddingMode = bracketPaddingMode;
+    }
+
+    public void setBracketPadding(float padding) {
+        this.PADDING = padding;
+    }
+
+    public void setBracketSlideSpeed(float speed) {
+        this.SLIDE_SPEED = speed;
     }
 
 }

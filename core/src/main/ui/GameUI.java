@@ -1,95 +1,84 @@
 package ui;
 
-import Data.map.asset.AssetType;
-import Data.map.asset.FloorType;
+import com.badlogic.gdx.utils.Align;
+import core.Window;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
-import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
-import core.controller.PlayerAction;
 
 public class GameUI {
-
+    private final Window window;
     private final Stage stage;
     private final Skin skin;
-    private final Label selectedLabel;
-    private final Label FPSLabel;
+    private final Style style;
+
+    private final Label.LabelStyle textStyle1;
+
     private final Label VSyncLabel;
+    private final Label FPSLabel;
+    private final Label avgFPSLabel;
 
-    public GameUI(PlayerAction playerAction) {
-        skin = new Skin(Gdx.files.internal("ui/uiskin.json"));
-        stage = new Stage(new ScreenViewport());
+    private final Label usedMemoryLabel;
+    private final Label totalMemoryLabel;
+    private final Label maxMemoryLabel;
 
-        Table root = new Table();
-        root.setFillParent(true);
-        stage.addActor(root);
+    private final int memoryUpdateDelay = 1000;
 
-        selectedLabel = new Label("Selected: none", skin);
-        FPSLabel = new Label("FPS: 0", skin);
-        VSyncLabel = new Label("VSync: off", skin);
+    public GameUI(Window window, Stage stage, Skin skin, Style style) {
+        this.window = window;
+        this.stage = stage;
+        this.style = style;
+        this.skin = skin;
 
-        selectedLabel.setFontScale(2f);
-        FPSLabel.setFontScale(2f);
+        textStyle1 = style.getTextStyle(Style.textStyle.TEXT_STYLE_1);
+
+        Table PerformanceList = new Table();
+        PerformanceList.setFillParent(true);
+        stage.addActor(PerformanceList);
+
+        VSyncLabel = new Label("VSync: off", textStyle1);
+        FPSLabel = new Label("FPS: ", textStyle1);
+        avgFPSLabel = new Label("Avg FPS: ", textStyle1);
+
+        usedMemoryLabel = new Label("Used Mem: ", textStyle1);
+        totalMemoryLabel = new Label("Total Mem: ", textStyle1);
+        maxMemoryLabel = new Label("Max Mem: ", textStyle1);
+
+        stage.addActor(VSyncLabel);
+        stage.addActor(FPSLabel);
+        stage.addActor(avgFPSLabel);
+
+        stage.addActor(usedMemoryLabel);
+        stage.addActor(totalMemoryLabel);
+        stage.addActor(maxMemoryLabel);
 
 
-        TextButton sand = new TextButton("Sand (2)", skin, "toggle");
-        TextButton stone = new TextButton("Stone (3)", skin, "toggle");
-        TextButton rock = new TextButton("Rock (4)", skin, "toggle");
+        PerformanceList.top().left();
+        PerformanceList.add(VSyncLabel).align(Align.left).padLeft(10).padTop(10).row();
+        PerformanceList.add(FPSLabel).align(Align.left).padLeft(10).padTop(10).row();
+        PerformanceList.add(avgFPSLabel).align(Align.left).padLeft(10).padTop(10).row();
 
-        ButtonGroup<TextButton> group = new ButtonGroup<>(sand, stone, rock);
-        group.setMaxCheckCount(1);
-        group.setMinCheckCount(0);
+        PerformanceList.add(usedMemoryLabel).align(Align.left).padLeft(10).padTop(10).row();
+        PerformanceList.add(totalMemoryLabel).align(Align.left).padLeft(10).padTop(10).row();
+        PerformanceList.add(maxMemoryLabel).align(Align.left).padLeft(10).padTop(10).row();
 
-
-        Table hotbar = new Table();
-//        hotbar.add(sand).pad(4);
-//        hotbar.add(stone).pad(4);
-//        hotbar.add(rock).pad(4);
-
-        //hotbar.setBackground("ui/hotbar/Rectangle 1.png");
-
-        root.top().left();
-//        root.add(selectedLabel).pad(8).left();
-//        root.add(FPSLabel).pad(16).left();
-//        root.add(VSyncLabel).pad(16).left();
-        root.row();
-        root.add(hotbar).expand().bottom().pad(12);
     }
 
-    public void update(float deltaTime, AssetType type) {
-        act(deltaTime);
-        updateSelected(type);
+    public void update(float deltaTime) {
         updateFPSLabel();
+        updateMemoriesLabel();
     }
 
-    public void act(float delta) {
-        stage.act(delta);
+    private void updateFPSLabel() {
+        FPSLabel.setText("FPS: " + window.getLatestFrameRateAfterDelay(100));
+        avgFPSLabel.setText("Avg FPS: " + (int) window.getAverageFrameRate(1000));
     }
 
-    public void draw() {
-        stage.draw();
-    }
-
-    public void resize(int width, int height) {
-        stage.getViewport().update(width, height, true);
-    }
-
-    public void dispose() {
-        stage.dispose();
-        skin.dispose();
-    }
-
-    public Stage getStage() {
-        return stage;
-    }
-
-    public void updateSelected(AssetType assetType) {
-        selectedLabel.setText(assetType == null ? "Selected: none" : "Selected: " + assetType);
-    }
-
-    public void updateFPSLabel() {
-        FPSLabel.setText("FPS: " + Gdx.graphics.getFramesPerSecond());
+    private void updateMemoriesLabel() {
+        usedMemoryLabel.setText("Used Mem: " + window.getUsedMemory());
+        totalMemoryLabel.setText("Total Mem: " + window.getTotalMemory());
+        maxMemoryLabel.setText("Max Mem: " + window.getMaxMemory());
     }
 
     public void updateVSyncLabel() {

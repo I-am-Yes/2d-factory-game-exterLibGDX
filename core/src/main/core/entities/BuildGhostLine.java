@@ -15,6 +15,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import core.AssetsHandler;
 import core.InputHandler;
 import core.Player;
+import core.controller.PlayerAction;
 import core.entities.plan.PlanBuilder;
 import core.world.World;
 import core.event.GameEvent;
@@ -29,6 +30,7 @@ public class BuildGhostLine {
     private final ShapeRenderer shapeRenderer;
     private final SpriteBatch spriteBatch;
     private final AssetsHandler assetsHandler;
+    private final PlayerAction playerAction;
 
     private final TileAlgorithm tileAlgorithm = new TileAlgorithm();
 
@@ -65,7 +67,7 @@ public class BuildGhostLine {
     }
     private PlacingAlgorithm placingAlgorithm = PlacingAlgorithm.THICK_LINE;
 
-    public BuildGhostLine(World world, Player player, Viewport viewport, InputHandler input, SpriteBatch spriteBatch, ShapeRenderer shapeRenderer, AssetsHandler assetsHandler) {
+    public BuildGhostLine(World world, Player player, Viewport viewport, PlayerAction playerAction, InputHandler input, SpriteBatch spriteBatch, ShapeRenderer shapeRenderer, AssetsHandler assetsHandler) {
         this.world = world;
         this.player = player;
         this.input = input;
@@ -73,6 +75,7 @@ public class BuildGhostLine {
         this.shapeRenderer = shapeRenderer;
         this.spriteBatch = spriteBatch;
         this.assetsHandler = assetsHandler;
+        this.playerAction = playerAction;
 
         this.width = 0.01f;
         this.color = Color.WHITE;
@@ -81,7 +84,44 @@ public class BuildGhostLine {
 
     public void update(AssetType selectedType) {
 
-        if (selectedType == null) {
+
+        //TODO: fix this, change to shift + left click in playerAction to place ghost too
+        if ((selectedType != null
+            && playerAction.getPlacingMode() == PlayerAction.PlaceMode.placing
+            && drawLineMode == DrawLineMode.NONE)
+            && input.isMousePressed(Input.Buttons.LEFT)
+        ) {
+            clearTiledLine(tiledLine);
+            worldStart.set(viewport.unproject(input.getMousePos()), 0);
+                if (input.isKeyPressed(Input.Keys.SHIFT_LEFT)) {
+                    drawLineMode = DrawLineMode.ANGLE_SNAP_LINE;
+                }
+                if (input.isKeyPressed(Input.Keys.CONTROL_LEFT)) {
+                    drawLineMode = DrawLineMode.TILE_SNAP_LINE;
+                }
+                if (input.isKeyPressed(Input.Keys.CONTROL_RIGHT)
+                && input.isKeyPressed(Input.Keys.SHIFT_RIGHT)) {
+                    drawLineMode = DrawLineMode.FREE_LINE;
+                }
+            return;
+        }
+
+
+
+        if (selectedType != null
+            && playerAction.getPlacingMode() != PlayerAction.PlaceMode.none
+            && !input.isMousePressed(Input.Buttons.LEFT)
+        ) {
+            playerAction.setPlaceMode(PlayerAction.PlaceMode.none);
+        }
+
+        if (selectedType != null && input.isKeyPressed(Input.Keys.SHIFT_LEFT)) {
+            playerAction.setPlaceMode(PlayerAction.PlaceMode.ghost);
+        }
+
+        if (selectedType == null
+            || playerAction.getPlacingMode() == PlayerAction.PlaceMode.placing
+        ) {
             clearTiledLine(tiledLine);
             drawLineMode = DrawLineMode.NONE;
             worldStart.set(0, 0, 0);
@@ -113,6 +153,7 @@ public class BuildGhostLine {
 
                 clearTiledLine(tiledLine);
             }
+            playerAction.setPlaceMode(PlayerAction.PlaceMode.none);
             drawLineMode = DrawLineMode.NONE;
             return;
         }

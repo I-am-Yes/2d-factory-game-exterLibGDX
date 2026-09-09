@@ -1,5 +1,6 @@
 package core.event;
 
+import Data.map.asset.AssetType;
 import Data.map.asset.FloorType;
 import core.Player;
 
@@ -54,13 +55,13 @@ public class PlayerEvent {
     }
 
     public static final class blockSelected {
-        public final FloorType selectedType;
+        public final AssetType selectedType;
 
-        public blockSelected(FloorType selectedType) {
+        public blockSelected(AssetType selectedType) {
             this.selectedType = selectedType;
         }
 
-        public static void fire(FloorType selectedType) {
+        public static void fire(AssetType selectedType) {
             Events.fire(new blockSelected(selectedType));
         }
     }

@@ -6,6 +6,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -35,12 +36,10 @@ public class PlayerAction {
     private AssetType selectedType;
 
     public enum PlaceMode {
-        none, placing, breaking,
+        none, ghost, placing, breaking,
     }
     private PlaceMode placeMode = PlaceMode.none;
     private int selectX = -1, selectY = -1;
-    public final Array<BuildPlan> linePlans = new Array<>();
-    private final Array<BuildPlan> selecPlans = new Array<>();
 
     public PlayerAction(World world, Player player, Viewport viewport, InputHandler input, AssetsHandler assets, ShapeRenderer shapeRenderer, SpriteBatch spriteBatch) {
         this.world = world;
@@ -51,7 +50,7 @@ public class PlayerAction {
         this.spriteBatch = spriteBatch;
         this.assets = assets;
 
-        this.buildGhostLine = new BuildGhostLine(world, player, viewport, input, spriteBatch, shapeRenderer, assets);
+        this.buildGhostLine = new BuildGhostLine(world, player, viewport, this, input, spriteBatch, shapeRenderer, assets);
     }
 
     public void update() {
@@ -63,6 +62,9 @@ public class PlayerAction {
         selectingBlock(input, NUM_3, FloorType.STONE);
         selectingBlock(input, NUM_4, FloorType.ROCK);
 
+        if (placeMode == PlaceMode.ghost) {
+            return;
+        }
         if (selectedType == null) return; //block placing when selectedType = null
 
         if (input.isMousePressed(Input.Buttons.MIDDLE)) return; //panning = no place block
@@ -75,23 +77,26 @@ public class PlayerAction {
             return;
         }
 
-
         //handle mouse press, start placement
         if (input.isMouseJustPressed(Input.Buttons.LEFT) && selectedType != null) {
             selectX = tx;
             selectY = ty;
             placeMode = PlaceMode.placing;
+            GameEvent.BlockPlaceRequest.fire(selectX, selectY, selectedType);
+
         }
 
         //handle mouse drag, update line
         if (input.isMousePressed(Input.Buttons.LEFT) && placeMode == PlaceMode.placing) {
+            selectX = tx;
+            selectY = ty;
+            GameEvent.BlockPlaceRequest.fire(selectX, selectY, selectedType);
         }
 
         //handle mouse release, end placement
         if (input.isMouseReleased(Input.Buttons.LEFT) && placeMode == PlaceMode.placing) {
 
             placeMode = PlaceMode.none;
-            linePlans.clear();
         }
 
     }
@@ -107,6 +112,14 @@ public class PlayerAction {
         buildGhostLine.dispose();
     }
 
+    public PlaceMode getPlacingMode() {
+        return placeMode;
+    }
+
+    public void setPlaceMode(PlaceMode placeMode) {
+        this.placeMode = placeMode;
+    }
+
     public AssetType getSelectedType() {
         return selectedType;
     }
@@ -119,7 +132,7 @@ public class PlayerAction {
         return buildGhostLine;
     }
 
-    private void selectingBlock(InputHandler input, int key, FloorType selectedType) {
+    private void selectingBlock(InputHandler input, int key, AssetType selectedType) {
         if (input.isKeyJustPressed(key)) {
             this.selectedType = selectedType;
             PlayerEvent.blockSelected.fire(selectedType);

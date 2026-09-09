@@ -7,6 +7,7 @@ import Data.map.asset.GhostType;
 import Data.map.asset.AssetType;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import core.AssetsHandler;
 import core.event.Events;
@@ -191,6 +192,28 @@ public class World {
         return floorLayer.getCell(tileX, tileY) != null;
     }
 
+    public boolean isGhostTile(int tileX, int tileY) {
+        if (!isInBounds(tileX, tileY)) return false;
+        return ghostLayer.getCell(tileX, tileY) != null;
+    }
+    public boolean isGhostTile(float tileX, float tileY) {
+        return isGhostTile((int)tileX, (int)tileY);
+    }
+    public boolean isGhostTile(Vector2 tile) {
+        return isGhostTile((int)tile.x, (int)tile.y);
+    }
+    public boolean isGhostAtWorld(Vector2 worldPosition) {
+        int tileX = MathUtils.floor(
+            worldPosition.x / getTileSize()
+        );
+
+        int tileY = MathUtils.floor(
+            worldPosition.y / getTileSize()
+        );
+
+        return isGhostTile(tileX, tileY);
+    }
+
     public FloorType getFloorAt(int tileX, int tileY) {
         if (!isInBounds(tileX, tileY)) return null;
         return floorGrid[tileX][tileY];
@@ -343,6 +366,10 @@ public class World {
     }
     public float getWorldHeight() {
         return worldHeight;
+    }
+
+    public MapConfig getMapConfig() {
+        return mapConfig;
     }
 
 }

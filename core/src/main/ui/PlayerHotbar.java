@@ -6,38 +6,38 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import core.Window;
 import core.world.World;
 import core.controller.PlayerAction;
 
-public class PlayerHotbar {
+import java.awt.*;
+import java.time.format.TextStyle;
 
+public class PlayerHotbar {
+    private final Window window;
     private final Stage stage;
     private final Skin skin;
-    private final BitmapFont font;
+    private final Style style;
     private final Table hotbar;
     private final Label textLabel;
     private final TextButton[] hotbarItemButtons;
     private final ButtonGroup<TextButton> hotbarItemGroup;
 
-    public PlayerHotbar (Window window, World world, PlayerAction playerAction) {
-        skin = new Skin(Gdx.files.internal("ui/uiskin.json"));
-        stage = new Stage(new FitViewport(1280, 720));
+    private final Label.LabelStyle textStyle1;
 
-        //create font
-        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("ui/fonts/Aldrich/Aldrich-Regular.ttf"));
-        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        parameter.size = 16;
-        parameter.color = Color.WHITE;
-        font = generator.generateFont(parameter);
-        generator.dispose();
+    public PlayerHotbar (Window window, Stage stage, Skin skin, Style style) {
+        this.window = window;
+        this.stage = stage;
+        this.skin = skin;
+        this.style = style;
 
-        //create style
-        Label.LabelStyle textStyle = new Label.LabelStyle();
-        textStyle.font = font;
-        textStyle.fontColor = Color.WHITE;
+        textStyle1 = style.getTextStyle(Style.textStyle.TEXT_STYLE_1);
+
+
+
 
         //create texture
 //        TextureRegionDrawable normalDrawable = new TextureRegionDrawable(hotbarSkin.getRegion("hotbar-normal"));
@@ -52,7 +52,8 @@ public class PlayerHotbar {
 //        hotbarStyle.fontColor = Color.WHITE;
 
         //create actors
-        textLabel = new Label("text label", textStyle);
+        textLabel = new Label("text label", textStyle1);
+
         hotbar = new Table();
         hotbarItemButtons = new TextButton[9];
         hotbarItemGroup = new ButtonGroup<>();
@@ -86,39 +87,6 @@ public class PlayerHotbar {
 
     }
 
-    public void update(float delta) {
-        act(delta);
-    }
-
-    public void act(float delta) {
-        stage.act(delta);
-    }
-
-    public void resize(int width, int height) {
-//        hotbar.setSize((float) width / 2, (float) height / 10);
-//        hotbar.setPosition((float) width / 2 - hotbar.getWidth() / 2, 0);
-//
-//        for (int i = 0; i < hotbarItemButtons.length; i++) {
-//            hotbarItemButtons[i].setSize(50, 50);
-//            hotbarItemButtons[i].setPosition((float) width / 2 - hotbar.getWidth() / 2 + i * 40, 0);
-//        }
-
-        stage.getViewport().update(width, height, false);
-    }
-
-    public void draw() {
-        stage.draw();
-    }
-
-    public void dispose() {
-        font.dispose();
-        skin.dispose();
-        stage.dispose();
-    }
-
-    public Stage getStage() {
-        return stage;
-    }
-
+    public void update() {}
 
 }

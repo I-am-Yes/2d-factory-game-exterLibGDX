@@ -4,7 +4,9 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.IntSet;
+import com.badlogic.gdx.utils.viewport.Viewport;
 
 public class InputHandler extends InputAdapter {
 
@@ -12,7 +14,7 @@ public class InputHandler extends InputAdapter {
     private int lastPanX,  lastPanY;
     private float panDeltaX, panDeltaY; // world units
 
-
+    private final Vector3 mouseWorld3 = new Vector3();
     private final Vector2 mousePos = new Vector2();
     private final IntSet keyJustReleased = new IntSet();
     private final IntSet mouseJustReleased = new IntSet();
@@ -118,6 +120,13 @@ public class InputHandler extends InputAdapter {
 
     public Vector2 getMousePos() {
         mousePos.set(Gdx.input.getX(), Gdx.input.getY());
+        return mousePos;
+    }
+
+    public Vector2 getMouseWorldPos(Viewport viewport) {
+        mouseWorld3.set(Gdx.input.getX(), Gdx.input.getY(), 0);
+        viewport.unproject(mouseWorld3);
+        mousePos.set(mouseWorld3.x, mouseWorld3.y);
         return mousePos;
     }
 

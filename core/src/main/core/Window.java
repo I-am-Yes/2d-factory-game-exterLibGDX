@@ -75,4 +75,116 @@ public class Window {
         return vSync;
     }
 
+    public float getLatestFrameRate() {
+        float deltaTime = Gdx.graphics.getDeltaTime();
+        // Prevent division by zero if a frame finishes instantly
+        return (deltaTime > 0) ? (1.0f / deltaTime) : 0;
+    }
+
+    private float delayTimer;
+    private float currentFPS;
+    public float getLatestFrameRateAfterDelay(float delay) {
+        float deltaTime = Gdx.graphics.getDeltaTime();
+
+        if (delay <= 0f) return deltaTime > 0f ? 1f / deltaTime : 0f;
+
+        delayTimer += deltaTime;
+        if (delayTimer >= delay / 1000f) {
+            currentFPS = deltaTime > 0f ? 1f / deltaTime : 0f;
+            delayTimer %= delay / 1000f;
+        }
+        return currentFPS;
+    }
+
+    public int getLatestFrameRateAfterDelay(int delay) {
+        return (int) getLatestFrameRateAfterDelay((float) delay);
+    }
+
+    private float averageTimer;
+    private float totalDeltaTime;
+    private int frameCount;
+    private float averageFPS;
+    public float getAverageFrameRate(float avgTime) {
+        float deltaTime = Gdx.graphics.getDeltaTime();
+
+        if (avgTime <= 0f) {
+            return deltaTime > 0f ? 1f / deltaTime : 0f;
+        }
+
+        float avgTimeSeconds = avgTime / 1000f;
+
+        averageTimer += deltaTime;
+        totalDeltaTime += deltaTime;
+        frameCount++;
+
+        if (averageTimer >= avgTimeSeconds) {
+            averageFPS = totalDeltaTime > 0f
+                ? frameCount / totalDeltaTime
+                : 0f;
+
+            averageTimer %= avgTimeSeconds;
+            totalDeltaTime = 0f;
+            frameCount = 0;
+        }
+
+        return averageFPS;
+    }
+
+    public float getDeltaTime() {
+        return Gdx.graphics.getDeltaTime();
+    }
+
+    public int getTotalMemory(float delay) {
+        if (delayHelper(delay)) {
+            return getTotalMemory();
+        }
+        return 0;
+    }
+    public int getUsedMemory(float delay) {
+        if (delayHelper(delay)) {
+            return getUsedMemory();
+        }
+        return 0;
+    }
+    public String getUsedMemoryWithTotal(float delay) {
+        if (delayHelper(delay)) {
+            return getUsedMemoryWithTotal();
+        }
+        return "0/0";
+    }
+    public int getMaxMemory(float delay) {
+        if (delayHelper(delay)) {
+            return getMaxMemory();
+        }
+        return 0;
+    }
+
+    public int getTotalMemory() {
+        return Math.toIntExact(Runtime.getRuntime().totalMemory() / (1024 * 1024));
+    }
+
+    public int getUsedMemory() {
+        return Math.toIntExact((Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / (1024 * 1024));
+    }
+    public String getUsedMemoryWithTotal() {
+        return getUsedMemory() + "/" + getTotalMemory();
+    }
+    public int getMaxMemory() {
+        return Math.toIntExact(Runtime.getRuntime().maxMemory() / (1024 * 1024));
+    }
+
+    private float delayHelperTimer;
+    private boolean delayHelper(float delay) {
+        if (delay <= 0f) {
+            return true;
+        }
+        delayHelperTimer += Gdx.graphics.getDeltaTime();
+        float delaySec = delay / 1000f;
+        if (delayHelperTimer >= delaySec) {
+            delayHelperTimer %= delaySec;
+            return true;
+        }
+        return false;
+    }
+
 }
