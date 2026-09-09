@@ -1,4 +1,4 @@
-package Data.map.asset;
+package data.map.asset;
 
 public enum BuildingType implements AssetType {
     HAZARD_BLOCK("packed/blocks/industrial", "hazard block"),

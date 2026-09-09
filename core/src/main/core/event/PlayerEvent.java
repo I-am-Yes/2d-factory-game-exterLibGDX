@@ -1,7 +1,6 @@
 package core.event;
 
-import Data.map.asset.AssetType;
-import Data.map.asset.FloorType;
+import data.map.asset.AssetType;
 import core.Player;
 
 public class PlayerEvent {

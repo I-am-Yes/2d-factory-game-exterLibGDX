@@ -1,4 +1,4 @@
-package Data.map.asset;
+package data.map.asset;
 
 import com.badlogic.gdx.graphics.Color;
 

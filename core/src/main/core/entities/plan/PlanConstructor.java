@@ -1,17 +1,17 @@
 package core.entities.plan;
 
-import Data.map.asset.AssetType;
+import data.map.asset.AssetType;
 import core.event.GameEvent;
 import core.world.World;
 
-public class PlanContructor<T extends AssetType> {
+public class PlanConstructor<T extends AssetType> {
 
     private final World world;
     private final PlanBuilder<T> planBuilder;
     private boolean isConstructing;
     private boolean disposed;
 
-    public PlanContructor(World world, PlanBuilder<T> planBuilder) {
+    public PlanConstructor(World world, PlanBuilder<T> planBuilder) {
         this.world = world;
         this.planBuilder = planBuilder;
     }

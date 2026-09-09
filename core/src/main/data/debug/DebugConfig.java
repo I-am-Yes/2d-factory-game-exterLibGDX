@@ -1,4 +1,4 @@
-package Data.debug;
+package data.debug;
 
 import java.util.EnumSet;
 

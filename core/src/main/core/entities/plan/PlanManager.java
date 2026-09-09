@@ -1,7 +1,6 @@
 package core.entities.plan;
 
-import Data.map.asset.AssetType;
-import Data.map.asset.GhostType;
+import data.map.asset.AssetType;
 import com.badlogic.gdx.utils.Queue;
 import core.event.Events;
 import core.event.GameEvent;
@@ -33,8 +32,8 @@ public class PlanManager {
         });
 
         Events.on(GameEvent.PlanConstructRequest.class, request -> {
-            PlanContructor<?> constructor =
-                new PlanContructor<>(world, request.planBuilder);
+            PlanConstructor<?> constructor =
+                new PlanConstructor<>(world, request.planBuilder);
 
             isConstructing = constructor.construct();
         });

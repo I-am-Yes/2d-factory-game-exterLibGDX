@@ -1,4 +1,4 @@
-package Data.map.asset;
+package data.map.asset;
 
 public final class GhostType<T extends AssetType> {
 

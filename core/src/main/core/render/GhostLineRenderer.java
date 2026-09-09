@@ -1,6 +1,7 @@
 package core.render;
 
-import Data.map.asset.FloorType;
+import core.app.GameContext;
+import data.map.asset.FloorType;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
@@ -20,49 +21,23 @@ public class GhostLineRenderer {
     private final Viewport viewport;
     private final SpriteBatch spriteBatch;
     private final ShapeRenderer shapeRenderer;
-    private final FloorType floorType;
-    private final AssetsHandler assetsHandler;
     private final PlayerAction playerAction;
 
-    private BuildPlan buildPlan;
-    private BuildGhostLine buildGhostLine;
-    private BuildPlan buildLinePlan;
     private int x, y;
 
     private float delta;
 
-    public GhostLineRenderer(World world, Viewport viewport, Player player, InputHandler input, PlayerAction playerAction, SpriteBatch spriteBatch, ShapeRenderer shapeRenderer, FloorType floorType, AssetsHandler assetsHandler) {
-        this.world = world;
-        this.viewport = viewport;
-        this.playerAction = playerAction;
-        this.spriteBatch = spriteBatch;
-        this.shapeRenderer = shapeRenderer;
-        this.floorType = floorType;
-        this.assetsHandler = assetsHandler;
+    public GhostLineRenderer(GameContext context) {
+        this.world = context.world;
+        this.viewport = context.viewport;
+        this.playerAction = context.playerAction;
+        this.spriteBatch = context.spriteBatch;
+        this.shapeRenderer = context.shapeRenderer;
 
-        this.buildGhostLine = playerAction.getBuildGhostLine();
     }
 
     public void update() {
 
-
-
-
-    }
-
-    public boolean addLinePlan(Array<Vector2> array) {
-        if (array == null) return false;
-        for (int i = 0; i < array.size; i++) {
-            this.buildLinePlan = new BuildPlan ((int) array.get(i).x, (int) array.get(i).y, playerAction.getSelectedType());
-            this.buildPlan.addBuildPlan(this.buildLinePlan);
-            if (!clearLinePlan()) return false;
-        }
-        return clearLinePlan();
-    }
-
-    public boolean clearLinePlan() {
-        this.buildLinePlan = null;
-        return true;
     }
 
     public void render() {}

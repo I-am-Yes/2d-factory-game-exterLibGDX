@@ -1,7 +1,6 @@
 package core.entities;
 
-import Data.map.asset.AssetType;
-import Data.map.asset.FloorType;
+import data.map.asset.AssetType;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;

@@ -1,7 +1,7 @@
 package core.render;
 
-import Data.map.asset.AssetType;
-import Data.map.asset.FloorType;
+import core.app.GameContext;
+import data.map.asset.AssetType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -10,16 +10,25 @@ import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import core.AssetsHandler;
 import core.Player;
 import core.entities.BuildGhostLine;
 import core.world.World;
 import core.controller.PlayerAction;
-import core.entities.BuildPlan;
+
+import javax.swing.text.View;
 
 public class GhostOverlayRenderer {
+
+    private final Viewport viewport;
+    private final World world;
+    private final PlayerAction playerAction;
+    private final Player player;
+    private final BuildGhostLine buildGhostLine;
+    private final SpriteBatch spriteBatch;
+    private final AssetsHandler assetsHandler;
+
 
     private static final float SLIDE_SPEED = 24f;
 
@@ -31,22 +40,25 @@ public class GhostOverlayRenderer {
     private boolean hoverVisible;
     private boolean hoverWalkable;
 
-    private final PlayerAction playerAction;
-    private final Player player;
-    private final BuildGhostLine buildGhostLine;
-    private final SpriteBatch spriteBatch;
 
-    public GhostOverlayRenderer(PlayerAction playerAction, Player player) {
-        this.playerAction = playerAction;
-        this.player = player;
-        this.spriteBatch = playerAction.getSpriteBatch();
+    private AssetType type;
+
+    public GhostOverlayRenderer(GameContext context) {
+        this.playerAction = context.playerAction;
+        this.player = context.player;
+        this.spriteBatch = context.spriteBatch;
+        this.viewport = context.viewport;
+        this.world = context.world;
+        this.assetsHandler = context.assets;
 
         this.animate.set(player.getPos());
         this.buildGhostLine = playerAction.getBuildGhostLine();
     }
 
-    public void update(World world, Viewport viewport, float delta, AssetType type) {
+    public void update(float delta) {
+
         if (type == null) {
+            this.type = playerAction.getSelectedType();
             animInitialized = false;
             hoverVisible = false;
             return;
@@ -75,7 +87,7 @@ public class GhostOverlayRenderer {
 
     }
 
-    public void render(World world, Viewport viewport, SpriteBatch spriteBatch, AssetType type, AssetsHandler assetsHandler) {
+    public void render() {
         if (type == null || !hoverVisible) return;
         renderGhostOverlay(world, viewport, spriteBatch, type, assetsHandler);
 

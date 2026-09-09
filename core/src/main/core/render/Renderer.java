@@ -1,6 +1,7 @@
 package core.render;
 
-import Data.map.asset.FloorType;
+import core.app.GameContext;
+import data.map.asset.FloorType;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -27,16 +28,16 @@ public class Renderer {
 
     private float delta;
 
-    public Renderer(World world, float delta, Viewport viewport, SpriteBatch spriteBatch, Player player, InputHandler input, PlayerAction playerAction , ShapeRenderer shapeRenderer, AssetsHandler assetsHandler) {
-        this.world = world;
-        this.delta = delta;
-        this.viewport = viewport;
-        this.spriteBatch = spriteBatch;
-        this.player = player;
-        this.playerAction = playerAction;
-        this.shapeRenderer = shapeRenderer;
-        this.assetsHandler = assetsHandler;
-        this.ghostBlockRenderer = new GhostLineRenderer(world, viewport, player, input, playerAction, spriteBatch, shapeRenderer, null, assetsHandler);
+    public Renderer(GameContext context) {
+        this.world = context.world;
+        this.delta = context.getDeltaTime();
+        this.viewport = context.viewport;
+        this.spriteBatch = context.spriteBatch;
+        this.player = context.player;
+        this.playerAction = context.playerAction;
+        this.shapeRenderer = context.shapeRenderer;
+        this.assetsHandler = context.assets;
+        this.ghostBlockRenderer = new GhostLineRenderer(context);
 
 
     }

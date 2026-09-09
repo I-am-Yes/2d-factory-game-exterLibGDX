@@ -1,22 +1,19 @@
 package core.controller;
 
-import Data.map.asset.AssetType;
-import Data.map.asset.FloorType;
+import core.app.GameContext;
+import data.map.asset.AssetType;
+import data.map.asset.FloorType;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import core.AssetsHandler;
 import core.InputHandler;
 import core.Player;
 import core.world.World;
 import core.entities.BuildGhostLine;
-import core.entities.BuildPlan;
-import core.event.Events;
 import core.event.GameEvent;
 import core.event.PlayerEvent;
 
@@ -41,14 +38,14 @@ public class PlayerAction {
     private PlaceMode placeMode = PlaceMode.none;
     private int selectX = -1, selectY = -1;
 
-    public PlayerAction(World world, Player player, Viewport viewport, InputHandler input, AssetsHandler assets, ShapeRenderer shapeRenderer, SpriteBatch spriteBatch) {
-        this.world = world;
-        this.player = player;
-        this.input = input;
-        this.viewport = viewport;
-        this.shapeRenderer = shapeRenderer;
-        this.spriteBatch = spriteBatch;
-        this.assets = assets;
+    public PlayerAction(GameContext context) {
+        this.world = context.world;
+        this.player = context.player;
+        this.input = context.input;
+        this.viewport = context.viewport;
+        this.shapeRenderer = context.shapeRenderer;
+        this.spriteBatch = context.spriteBatch;
+        this.assets = context.assets;
 
         this.buildGhostLine = new BuildGhostLine(world, player, viewport, this, input, spriteBatch, shapeRenderer, assets);
     }

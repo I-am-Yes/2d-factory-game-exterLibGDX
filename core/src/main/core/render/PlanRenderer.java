@@ -1,7 +1,7 @@
 package core.render;
 
-import Data.map.asset.AssetType;
-import Data.map.asset.GhostType;
+import core.app.GameContext;
+import data.map.asset.AssetType;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -26,15 +26,15 @@ public class PlanRenderer<T extends AssetType> {
     private PlanBuilder<AssetType> planBuilder;
     private Queue<PlanBuilder<?>> planRenderQueue;
 
-    public PlanRenderer(World world, Viewport viewport, SpriteBatch spriteBatch, PlanManager planManager, AssetsHandler assetsHandler) {
-        this.world = world;
-        this.viewport = viewport;
-        this.spriteBatch = spriteBatch;
-        this.assetsHandler = assetsHandler;
+    public PlanRenderer(GameContext context) {
+        this.world = context.world;
+        this.viewport = context.viewport;
+        this.spriteBatch = context.spriteBatch;
+        this.assetsHandler = context.assets;
 
         this.tileSize = world.getTileSize();
 
-        this.planManager = planManager;
+        this.planManager = context.planManager;
     }
 
     public void update() {}

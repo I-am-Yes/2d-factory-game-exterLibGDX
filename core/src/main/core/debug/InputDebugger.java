@@ -1,6 +1,5 @@
 package core.debug;
 
-import Data.debug.DebugType;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.IntSet;

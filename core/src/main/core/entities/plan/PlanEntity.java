@@ -1,7 +1,7 @@
 package core.entities.plan;
 
-import Data.map.asset.AssetType;
-import Data.map.asset.GhostType;
+import data.map.asset.AssetType;
+import data.map.asset.GhostType;
 import com.badlogic.gdx.math.Vector2;
 
 public class PlanEntity<T extends AssetType> {

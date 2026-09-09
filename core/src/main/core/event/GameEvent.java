@@ -1,13 +1,13 @@
 package core.event;
 
-import Data.map.asset.FloorType;
-import Data.map.MapConfig;
-import Data.map.asset.AssetType;
+import data.map.asset.FloorType;
+import data.map.MapConfig;
+import data.map.asset.AssetType;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Queue;
 import core.entities.plan.PlanBuilder;
-import core.entities.plan.PlanContructor;
+import core.entities.plan.PlanConstructor;
 
 /**
  * Event catalog for this game.
@@ -99,14 +99,14 @@ public class GameEvent {
 
      public static final class PlanBuilderFinished<T extends AssetType> {
          public final PlanBuilder<T> planBuilder;
-         public final PlanContructor<T> finishedPlan;
+         public final PlanConstructor<T> finishedPlan;
 
-         public PlanBuilderFinished(PlanBuilder<T> planBuilder, PlanContructor<T> finishedPlan) {
+         public PlanBuilderFinished(PlanBuilder<T> planBuilder, PlanConstructor<T> finishedPlan) {
             this.planBuilder = planBuilder;
             this.finishedPlan = finishedPlan;
          }
 
-         public static <T extends AssetType> void fire(PlanBuilder<T> planBuilder, PlanContructor<T> finishedPlan) {
+         public static <T extends AssetType> void fire(PlanBuilder<T> planBuilder, PlanConstructor<T> finishedPlan) {
             Events.fire(new PlanBuilderFinished<>(planBuilder, finishedPlan));
          }
      }
@@ -125,16 +125,16 @@ public class GameEvent {
 
      public static final class PlanConstructFinished<T extends AssetType> {
         public final PlanBuilder<T> planBuilder;
-        public final PlanContructor<?> planContructor;
+        public final PlanConstructor<?> planContructor;
         public final Array<Vector2> finishedPlan;
 
-        public PlanConstructFinished(PlanBuilder<T> planBuilder, PlanContructor<?> planContructor, Array<Vector2> finishedPlan) {
+        public PlanConstructFinished(PlanBuilder<T> planBuilder, PlanConstructor<?> planContructor, Array<Vector2> finishedPlan) {
             this.planBuilder = planBuilder;
             this.planContructor = planContructor;
             this.finishedPlan = finishedPlan;
         }
 
-        public static <T extends AssetType> void fire(PlanBuilder<T> planBuilder, PlanContructor<? extends AssetType> planContructor, Array<Vector2> finishedPlan) {
+        public static <T extends AssetType> void fire(PlanBuilder<T> planBuilder, PlanConstructor<? extends AssetType> planContructor, Array<Vector2> finishedPlan) {
             Events.fire(new PlanConstructFinished<>(planBuilder, planContructor, finishedPlan));
         }
      }

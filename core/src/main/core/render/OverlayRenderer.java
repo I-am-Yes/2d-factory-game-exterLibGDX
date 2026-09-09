@@ -11,6 +11,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import core.AssetsHandler;
 import core.InputHandler;
 import core.Window;
+import core.app.GameContext;
 import core.controller.PlayerAction;
 import core.world.World;
 
@@ -21,6 +22,7 @@ public class OverlayRenderer {
     private final InputHandler input;
     private final PlayerAction playerAction;
     private final AssetsHandler assetsHandler;
+    private final ShapeRenderer shapeRenderer;
 
     private final Vector3 tmp = new Vector3();
     private final Vector2 bracketAnimate = new Vector2();
@@ -54,13 +56,14 @@ public class OverlayRenderer {
     private boolean animInitialized;
     private boolean isOverlayRenderAnimationEnabled = true; //true by default
 
-    public OverlayRenderer(World world, Window window, Viewport viewport, InputHandler inputHandler, PlayerAction playerAction, AssetsHandler assetsHandler) {
-        this.world = world;
-        this.window = window;
-        this.viewport = viewport;
-        this.input = inputHandler;
-        this.playerAction = playerAction;
-        this.assetsHandler = assetsHandler;
+    public OverlayRenderer(GameContext context) {
+        this.world = context.world;
+        this.window = context.window;
+        this.viewport = context.viewport;
+        this.input = context.input;
+        this.playerAction = context.playerAction;
+        this.assetsHandler = context.assets;
+        this.shapeRenderer = context.shapeRenderer;
 
         //TODO: change bracket color to light blue when hovering overlay on ghost tile
         setBracketPaddingMode(defaultPaddingMode);
@@ -100,7 +103,7 @@ public class OverlayRenderer {
 
     }
 
-    public void render(World world, Viewport viewport, ShapeRenderer shapeRenderer) {
+    public void render() {
         OrthographicCamera camera = (OrthographicCamera) viewport.getCamera();
 
         shapeRenderer.setProjectionMatrix(camera.combined);

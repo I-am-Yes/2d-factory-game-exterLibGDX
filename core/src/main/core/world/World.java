@@ -1,10 +1,10 @@
 package core.world;
 
-import Data.map.asset.BuildingType;
-import Data.map.asset.FloorType;
-import Data.map.MapConfig;
-import Data.map.asset.GhostType;
-import Data.map.asset.AssetType;
+import data.map.asset.BuildingType;
+import data.map.asset.FloorType;
+import data.map.MapConfig;
+import data.map.asset.GhostType;
+import data.map.asset.AssetType;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.math.MathUtils;

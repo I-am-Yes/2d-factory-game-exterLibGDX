@@ -1,9 +1,11 @@
 package core.debug;
 
-import Data.debug.DebugConfig;
-import Data.debug.DebugType;
-import Data.map.asset.FloorType;
-import Data.map.MapConfig;
+import com.badlogic.gdx.graphics.Camera;
+import core.app.GameContext;
+import data.debug.DebugConfig;
+import data.debug.DebugType;
+import data.map.asset.FloorType;
+import data.map.MapConfig;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -15,20 +17,35 @@ import core.event.*;
 
 public class Debug {
 
+    private final GameContext context;
     private final DebugConfig debugConfig;
-
+    private final InputHandler input;
+    private final World world;
+    private final Viewport viewport;
+    private final Player player;
+    private final ShapeRenderer shapeRenderer;
 
     private boolean mapGenReportPending;
     private MapConfig pendingMapConfig;
     private FloorType[][] pendingGrid;
+
+    private final OrthographicCamera camera;
 
     private final PerformanceDebugger performanceDebugger = new PerformanceDebugger();
     private final CameraDebugger      cameraDebugger      = new CameraDebugger();
     private final InputDebugger       inputDebugger       = new InputDebugger();
     private final EventsDebugger      eventsDebugger      = new EventsDebugger();
 
-    public Debug(DebugConfig debugConfig) {
+    public Debug(GameContext context, DebugConfig debugConfig) {
         this.debugConfig = debugConfig;
+        this.context = context;
+        this.input = context.input;
+        this.world = context.world;
+        this.viewport = context.viewport;
+        this.player = context.player;
+        this.shapeRenderer = context.shapeRenderer;
+
+        this.camera = (OrthographicCamera) viewport.getCamera();
 
         Events.on(GameEvent.MapGenerated.class, e -> {
             pendingMapConfig = e.mapConfig;
@@ -60,7 +77,7 @@ public class Debug {
         }
     }
 
-    public void update(InputHandler input, Viewport viewport, Player player, World world) {
+    public void update() {
 
         if (debugConfig.isEnabled(DebugType.PERFORMANCE)) {
             if (!debugConfig.isEnabled(DebugType.PERFORMANCE)) return;
@@ -104,7 +121,7 @@ public class Debug {
 
     }
 
-    public void render(World world, OrthographicCamera camera, ShapeRenderer shapeRenderer) {
+    public void render() {
 
         //render tile borders
         if (debugConfig.isEnabled(DebugType.RENDER)) {

@@ -1,6 +1,6 @@
 package core.entities;
 
-import Data.map.asset.AssetType;
+import data.map.asset.AssetType;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;

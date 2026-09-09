@@ -1,12 +1,12 @@
 package core;
 
-import Data.PlayerData;
+import core.app.GameContext;
+import data.PlayerData;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 import core.controller.Controller;
-import core.controller.PlayerAction;
 import core.world.World;
 
 public class Player {
@@ -14,24 +14,28 @@ public class Player {
     private final float PLAYER_HEIGHT = PlayerData.getPlayerHeight();
     private final float PLAYER_SPEED = PlayerData.getPlayerSpeed();
 
-
-
     public final Sprite sprite;
 
     private final World world;
     private final Controller controller;
 
-    public Player(Texture texture, World world, float worldWidth, float worldHeight, Controller controller, AssetsHandler assets) {
-        this.controller = controller;
-        this.world = world;
+    private final float worldWidth;
+    private final float worldHeight;
+
+
+    public Player(Texture texture, GameContext context) {
+        this.controller = context.controller;
+        this.world = context.world;
+        this.worldWidth = world.getWorldWidth();
+        this.worldHeight = world.getWorldHeight();
 
         sprite = new Sprite(texture);
         sprite.setSize(PLAYER_WIDTH, PLAYER_HEIGHT);
         sprite.setPosition(worldWidth / 2f, worldHeight / 2f);  // spawn in middle of the map
     }
 
-    public void update(float delta, float WorldWidth, float worldHeight, InputHandler input) {
-        controller.moveCharacter(getPlayer(), sprite, delta, PLAYER_SPEED, WorldWidth, worldHeight);
+    public void update(float delta) {
+        controller.moveCharacter(getPlayer(), sprite, delta, PLAYER_SPEED, worldWidth, worldHeight);
     }
 
     public void draw(SpriteBatch batch) {
