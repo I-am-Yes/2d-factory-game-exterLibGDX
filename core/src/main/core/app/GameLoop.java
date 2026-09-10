@@ -1,23 +1,35 @@
 package core.app;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.utils.ScreenUtils;
 
 public class GameLoop {
 
     private final GameContext context;
-    private final float UPDATE_INTERVAL = 1f / 60f; // 60 updates per second
+    private static final float UPDATE_INTERVAL = 1f / 60f; // 60 updates per second
+
+    private float deltaTime;
 
     public GameLoop(GameContext context) {
         this.context = context;
     }
 
     public void update() {
+        deltaTime = context.getDeltaTime();
+
+        context.player.update(deltaTime);
         context.playerAction.update();
+        //TODO: change this
+        context.controller.setFullScreenByInput();
         context.cameraController.update();
 
         context.renderer.update();
+        context.overlayRenderer.update();
 
+        context.ghostOverlayRenderer.update(deltaTime);
+        context.interfaceHandler.update();
+        context.debug.update();
     }
 
     public void render() {
@@ -27,27 +39,18 @@ public class GameLoop {
         draw();
         context.input.endFrame();
     }
-    private void input() {
 
-    }
+    private void input() {}
+    private void logic() {}
 
-    private void logic() {
-        context.player.update(UPDATE_INTERVAL);
-        context.interfaceHandler.update();
-        //TODO: change this
-        context.controller.setFullScreenByInput();
-        context.overlayRenderer.update();
-        context.ghostOverlayRenderer.update(UPDATE_INTERVAL);
-        context.debug.update();
-    }
     private void draw() {
         ScreenUtils.clear(0.15f, 0.15f, 0.2f, 1f);
         context.viewport.apply();
 
         context.world.render((OrthographicCamera) context.viewport.getCamera());
         context.spriteBatch.setProjectionMatrix(context.viewport.getCamera().combined);
-        context.debug.render();
 
+        context.debug.render();
         context.overlayRenderer.render();
 
         //BEGIN batch
@@ -63,6 +66,26 @@ public class GameLoop {
 
         context.playerAction.draw();
         context.interfaceHandler.draw();
+    }
+
+    public void resize(int width, int height) {
+        context.viewport.update(width, height, false);
+        context.interfaceHandler.resize();
+    }
+
+    public void pause() {}
+    public void resume() {}
+
+    public void dispose() {
+        context.spriteBatch.dispose();
+
+        context.assets.dispose();
+        context.world.dispose();
+
+        context.shapeRenderer.dispose();
+        context.planRenderer.dispose();
+        context.playerAction.dispose();
+        context.interfaceHandler.dispose();
     }
 
 

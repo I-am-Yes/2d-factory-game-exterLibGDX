@@ -15,21 +15,22 @@ public class Player {
     private final float PLAYER_SPEED = PlayerData.getPlayerSpeed();
 
     public final Sprite sprite;
-
     private final World world;
     private final Controller controller;
 
     private final float worldWidth;
     private final float worldHeight;
 
+    //TODO: change this player texture to a regis system.
+    private final Texture playerTexture = new Texture("unpacked/player/player.png");
 
-    public Player(Texture texture, GameContext context) {
+    public Player(GameContext context) {
         this.controller = context.controller;
         this.world = context.world;
         this.worldWidth = world.getWorldWidth();
         this.worldHeight = world.getWorldHeight();
 
-        sprite = new Sprite(texture);
+        sprite = new Sprite(playerTexture);
         sprite.setSize(PLAYER_WIDTH, PLAYER_HEIGHT);
         sprite.setPosition(worldWidth / 2f, worldHeight / 2f);  // spawn in middle of the map
     }
@@ -67,6 +68,10 @@ public class Player {
     }
     public float getPlayerPositionY() {
         return sprite.getY();
+    }
+
+    public Texture getPlayerTexture() {
+        return playerTexture;
     }
 
 }

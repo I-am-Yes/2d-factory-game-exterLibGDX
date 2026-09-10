@@ -20,10 +20,16 @@ import core.render.OverlayRenderer;
 import core.render.PlanRenderer;
 import core.render.Renderer;
 import core.world.World;
+import data.map.MapConfig;
 import data.map.asset.AssetType;
 import ui.InterfaceHandler;
 
+import javax.swing.text.View;
+import java.util.Objects;
+
 public final class GameContext {
+
+    public MapConfig mapConfig;
 
     public Debug debug;
     public Window window;
@@ -50,6 +56,10 @@ public final class GameContext {
     public PlanManager planManager;
     public PlanBuilder<AssetType> planBuilder;
     public PlanRenderer<AssetType> planRenderer;
+
+    public GameContext() {
+
+    }
 
     public float getDeltaTime() {
         return Gdx.graphics.getDeltaTime();

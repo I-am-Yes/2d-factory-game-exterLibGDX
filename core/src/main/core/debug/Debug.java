@@ -15,6 +15,8 @@ import core.world.World;
 import core.Player;
 import core.event.*;
 
+import java.util.Objects;
+
 public class Debug {
 
     private final GameContext context;

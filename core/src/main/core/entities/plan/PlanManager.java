@@ -1,5 +1,6 @@
 package core.entities.plan;
 
+import core.app.GameContext;
 import data.map.asset.AssetType;
 import com.badlogic.gdx.utils.Queue;
 import core.event.Events;
@@ -12,8 +13,8 @@ public class PlanManager {
     private boolean isConstructing;
     private final Queue<PlanBuilder<?>> planRenderQueue = new Queue<>();
 
-    public PlanManager(World world) {
-        this.world = world;
+    public PlanManager(GameContext context) {
+        this.world = context.world;
 
         Events.on(GameEvent.PlanBuilderRenderRequest.class, request -> {
             addPlanToRenderQueue(request.planBuilder);

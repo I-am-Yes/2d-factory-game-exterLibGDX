@@ -1,11 +1,13 @@
 package ui;
 
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import core.Window;
+import core.app.GameContext;
 import core.controller.PlayerAction;
 import core.world.World;
 
@@ -23,8 +25,8 @@ public class InterfaceHandler {
     private final Label.LabelStyle textStyle1;
 
 
-    public InterfaceHandler(Window window, World world, PlayerAction playerAction) {
-        this.window = window;
+    public InterfaceHandler(GameContext context) {
+        this.window = context.window;
 
         skin = new Skin(Gdx.files.internal("ui/uiskin.json"));
         stage = new Stage(new FitViewport(1280, 720));

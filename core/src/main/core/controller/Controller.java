@@ -6,6 +6,7 @@ import com.badlogic.gdx.math.MathUtils;
 import core.InputHandler;
 import core.Player;
 import core.Window;
+import core.app.GameContext;
 import core.event.PlayerEvent.*;
 
 public class Controller {
@@ -21,9 +22,9 @@ public class Controller {
     private final InputHandler input;
     private final Window window;
 
-    public Controller(Window window, InputHandler input) {
-        this.input = input;
-        this.window = window;
+    public Controller(GameContext context) {
+        this.input = context.input;
+        this.window = context.window;
 
     }
 
