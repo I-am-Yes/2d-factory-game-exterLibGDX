@@ -1,4 +1,4 @@
-package core.render;
+package core.player.mechanic;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -11,11 +11,12 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import core.AssetsHandler;
 import core.InputHandler;
 import core.Window;
-import core.app.GameContext;
-import core.controller.PlayerAction;
+import core.app.context.GameContext;
+import core.player.PlayerAction;
+import core.system.PlayerSystem;
 import core.world.World;
 
-public class OverlayRenderer {
+public class Overlay {
     private final World world;
     private final Window window;
     private final Viewport viewport;
@@ -26,6 +27,7 @@ public class OverlayRenderer {
 
     private final Vector3 tmp = new Vector3();
     private final Vector2 bracketAnimate = new Vector2();
+    private final Vector2 hoverTile = new Vector2();
 
     private float SLIDE_SPEED = 32f;
     private float PADDING = 0.06f;
@@ -33,6 +35,7 @@ public class OverlayRenderer {
 
     private float cornerBracketThickness = 6f;
     private float cornerBracketGapRatio = 0.27f;
+
 
     public enum BracketPaddingMode {
         OUTSIDE,   // bracket sits outside tile
@@ -56,12 +59,12 @@ public class OverlayRenderer {
     private boolean animInitialized;
     private boolean isOverlayRenderAnimationEnabled = true; //true by default
 
-    public OverlayRenderer(GameContext context) {
+    public Overlay(GameContext context, PlayerAction action) {
         this.world = context.world;
         this.window = context.window;
         this.viewport = context.viewport;
         this.input = context.input;
-        this.playerAction = context.playerAction;
+        this.playerAction = action;
         this.assetsHandler = context.assets;
         this.shapeRenderer = context.shapeRenderer;
 
@@ -70,17 +73,21 @@ public class OverlayRenderer {
 
     }
 
-    public void update() {
-        delta = window.getDeltaTime();
+    public void update(float delta) {
+        this.delta = delta;
+
+        hoverTile.set(
+            PlayerSystem.getHoverTileX(),
+            PlayerSystem.getHoverTileY()
+        );
 
         //TODO: change overlay bracket to render, resize, update base on current tile, not player mouse
-        drawCornerBrackets(world, viewport, null, cornerBracketGapRatio, cornerBracketThickness);
         animateBracketSize();
         if (!hoverVisible) return;
 
 
         if (isOverlayRenderAnimationEnabled) {
-            animInitialized = AnimateRenderer.animateMove(delta, targetX, targetY, SLIDE_SPEED, bracketAnimate, animInitialized);
+            animInitialized = OverlayHelper.animateMove(delta, targetX, targetY, SLIDE_SPEED, bracketAnimate, animInitialized);
         } else {
             bracketAnimate.set(targetX, targetY);
         }
@@ -96,9 +103,10 @@ public class OverlayRenderer {
                 "OverlayRenderer",
                 "Selected Type: " + playerAction.getSelectedType()
             );
+            //TODO: fix to use the actual object size on camera.
             setExpandBracket(true,
                 (float) assetsHandler.getTextureHeight(playerAction.getSelectedType())
-                    / world.getMapConfig().getTilePixel() / 4f );
+                    / world.getMapConfig().getTilePixel() / 6f );
         }
 
     }
@@ -114,6 +122,8 @@ public class OverlayRenderer {
         shapeRenderer.end();
     }
 
+
+
     private void setExpandBracket(boolean bool, float expandSize) {
         setBracketPaddingMode(bool ? BracketPaddingMode.OUTSIDE : defaultPaddingMode);
         setBracketPadding(bool ? +expandSize : defaultPadding);
@@ -125,7 +135,12 @@ public class OverlayRenderer {
         viewport.unproject(tmp);
 
         float tile = world.getTileSize();
-        int tx = MathUtils.floor(tmp.x / tile), ty = MathUtils.floor(tmp.y / tile);
+//        int tx = MathUtils.floor(tmp.x / tile),
+//            ty = MathUtils.floor(tmp.y / tile);
+
+//        //threshold
+        int tx = (int) hoverTile.x;
+        int ty = (int) hoverTile.y;
 
         if (!world.isInBounds(tx, ty)) {
             hoverVisible = false;

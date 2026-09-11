@@ -7,7 +7,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import core.world.World;
-import core.Player;
+import core.player.Player;
 
 public final class CameraDebugger {
 
@@ -43,8 +43,8 @@ public final class CameraDebugger {
     private void capture(Viewport viewport, Player player, World world) {
         OrthographicCamera camera = (OrthographicCamera) viewport.getCamera();
 
-        float followX = player.sprite.getX() + player.sprite.getWidth() / 2f;
-        float followY = player.sprite.getY() + player.sprite.getHeight() / 2f;
+        float followX = player.getSprite().getX() + player.getSprite().getWidth() / 2f;
+        float followY = player.getSprite().getY() + player.getSprite().getHeight() / 2f;
 
         snapshot.frame = ++cameraFrame;
 

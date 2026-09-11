@@ -1,6 +1,6 @@
 package core.entities.plan;
 
-import core.app.GameContext;
+import core.app.context.GameContext;
 import data.map.asset.AssetType;
 import com.badlogic.gdx.utils.Queue;
 import core.event.Events;

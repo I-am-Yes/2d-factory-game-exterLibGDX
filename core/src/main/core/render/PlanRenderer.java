@@ -1,6 +1,6 @@
 package core.render;
 
-import core.app.GameContext;
+import core.app.context.GameContext;
 import data.map.asset.AssetType;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;

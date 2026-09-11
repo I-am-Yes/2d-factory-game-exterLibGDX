@@ -1,8 +1,8 @@
 package core.app;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.utils.ScreenUtils;
+import core.app.context.GameContext;
 
 public class GameLoop {
 
@@ -18,18 +18,16 @@ public class GameLoop {
     public void update() {
         deltaTime = context.getDeltaTime();
 
-        context.player.update(deltaTime);
-        context.playerAction.update();
+        context.systems.update(deltaTime);
+
         //TODO: change this
         context.controller.setFullScreenByInput();
-        context.cameraController.update();
 
-        context.renderer.update();
-        context.overlayRenderer.update();
 
-        context.ghostOverlayRenderer.update(deltaTime);
-        context.interfaceHandler.update();
-        context.debug.update();
+        context.renderer.update(deltaTime);
+
+        context.interfaceHandler.update(deltaTime);
+        context.debug.update(deltaTime);
     }
 
     public void render() {
@@ -37,10 +35,12 @@ public class GameLoop {
         input();
         logic();
         draw();
-        context.input.endFrame();
     }
 
-    private void input() {}
+    private void input() {
+
+        context.input.endFrame();
+    }
     private void logic() {}
 
     private void draw() {
@@ -51,25 +51,26 @@ public class GameLoop {
         context.spriteBatch.setProjectionMatrix(context.viewport.getCamera().combined);
 
         context.debug.render();
-        context.overlayRenderer.render();
+
+        context.systems.render();
 
         //BEGIN batch
         context.spriteBatch.begin();
 
         context.planRenderer.render();
-        context.ghostOverlayRenderer.draw();
-        context.player.draw(context.spriteBatch);
-        context.ghostOverlayRenderer.render();
 
         context.spriteBatch.end();
         //END batch
 
-        context.playerAction.draw();
+
         context.interfaceHandler.draw();
     }
 
     public void resize(int width, int height) {
         context.viewport.update(width, height, false);
+
+        context.systems.resize(width, height);
+
         context.interfaceHandler.resize();
     }
 
@@ -84,8 +85,9 @@ public class GameLoop {
 
         context.shapeRenderer.dispose();
         context.planRenderer.dispose();
-        context.playerAction.dispose();
+
         context.interfaceHandler.dispose();
+        context.systems.dispose();
     }
 
 

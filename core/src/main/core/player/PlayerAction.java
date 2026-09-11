@@ -1,6 +1,9 @@
-package core.controller;
+package core.player;
 
-import core.app.GameContext;
+import com.badlogic.gdx.math.Vector2;
+import core.app.context.GameContext;
+import core.player.mechanic.OverlayHelper;
+import core.system.PlayerSystem;
 import data.map.asset.AssetType;
 import data.map.asset.FloorType;
 import com.badlogic.gdx.Input;
@@ -11,7 +14,6 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import core.AssetsHandler;
 import core.InputHandler;
-import core.Player;
 import core.world.World;
 import core.entities.BuildGhostLine;
 import core.event.GameEvent;
@@ -30,6 +32,8 @@ public class PlayerAction {
     private final AssetsHandler assets;
 
     private final Vector3 tmp = new Vector3();
+    private final Vector2 hoverTile = new Vector2();
+
     private AssetType selectedType;
 
     public enum PlaceMode {
@@ -38,19 +42,28 @@ public class PlayerAction {
     private PlaceMode placeMode = PlaceMode.none;
     private int selectX = -1, selectY = -1;
 
-    public PlayerAction(GameContext context) {
+    private float delta;
+
+    public PlayerAction(GameContext context, Player player) {
         this.world = context.world;
-        this.player = context.player;
+        this.player = player;
         this.input = context.input;
         this.viewport = context.viewport;
         this.shapeRenderer = context.shapeRenderer;
         this.spriteBatch = context.spriteBatch;
         this.assets = context.assets;
 
+        this.delta = context.getDeltaTime();
         this.buildGhostLine = new BuildGhostLine(world, player, viewport, this, input, spriteBatch, shapeRenderer, assets);
     }
 
-    public void update() {
+    public void update(float delta) {
+        this.delta = delta;
+
+        hoverTile.set(
+            PlayerSystem.getHoverTileX(),
+            PlayerSystem.getHoverTileY()
+        );
 
         buildGhostLine.update(getSelectedType());
 
@@ -66,8 +79,11 @@ public class PlayerAction {
 
         if (input.isMousePressed(Input.Buttons.MIDDLE)) return; //panning = no place block
 
-        int tx = screenToTileX(viewport, world);
-        int ty = screenToTileY(viewport, world);
+//        int tx = screenToTileX(viewport, world);
+//        int ty = screenToTileY(viewport, world);
+
+        int tx = (int) hoverTile.x;
+        int ty = (int) hoverTile.y;
 
         if (!world.isInBounds(tx, ty)) {
             placeMode = PlaceMode.none;
@@ -98,8 +114,7 @@ public class PlayerAction {
 
     }
 
-    public void render() {
-    }
+    public void render() {}
 
     public void draw() {
         buildGhostLine.draw();

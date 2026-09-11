@@ -1,7 +1,6 @@
 package core.debug;
 
-import com.badlogic.gdx.graphics.Camera;
-import core.app.GameContext;
+import core.app.context.GameContext;
 import data.debug.DebugConfig;
 import data.debug.DebugType;
 import data.map.asset.FloorType;
@@ -12,10 +11,8 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import core.InputHandler;
 import core.world.World;
-import core.Player;
+import core.player.Player;
 import core.event.*;
-
-import java.util.Objects;
 
 public class Debug {
 
@@ -31,6 +28,8 @@ public class Debug {
     private MapConfig pendingMapConfig;
     private FloorType[][] pendingGrid;
 
+    private float delta;
+
     private final OrthographicCamera camera;
 
     private final PerformanceDebugger performanceDebugger = new PerformanceDebugger();
@@ -44,10 +43,12 @@ public class Debug {
         this.input = context.input;
         this.world = context.world;
         this.viewport = context.viewport;
-        this.player = context.player;
+        this.player = context.playerContext.player;
         this.shapeRenderer = context.shapeRenderer;
 
         this.camera = (OrthographicCamera) viewport.getCamera();
+
+        this.delta = context.getDeltaTime();
 
         Events.on(GameEvent.MapGenerated.class, e -> {
             pendingMapConfig = e.mapConfig;
@@ -79,7 +80,8 @@ public class Debug {
         }
     }
 
-    public void update() {
+    public void update(float delta) {
+        this.delta = delta;
 
         if (debugConfig.isEnabled(DebugType.PERFORMANCE)) {
             if (!debugConfig.isEnabled(DebugType.PERFORMANCE)) return;

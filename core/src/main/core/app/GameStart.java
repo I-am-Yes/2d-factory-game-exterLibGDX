@@ -1,37 +1,27 @@
 package core.app;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.InputMultiplexer;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import core.AssetsHandler;
 import core.InputHandler;
-import core.Player;
 import core.Window;
-import core.controller.CameraController;
-import core.controller.Controller;
-import core.controller.CursorController;
-import core.controller.PlayerAction;
+import core.app.context.GameContext;
+import core.player.mechanic.PlayerController;
+import core.controller.camera.CursorController;
 import core.debug.Debug;
 import core.entities.plan.PlanBuilder;
 import core.entities.plan.PlanManager;
-import core.event.GameEvent;
-import core.render.GhostOverlayRenderer;
-import core.render.OverlayRenderer;
 import core.render.PlanRenderer;
 import core.render.Renderer;
+import core.system.CameraSystem;
+import core.system.PlayerSystem;
 import core.world.World;
 import data.debug.DebugConfig;
 import data.debug.DebugType;
 import data.map.MapConfig;
 import data.map.PresetMap;
-import data.map.asset.AssetType;
-import data.map.asset.BuildingType;
 import ui.InterfaceHandler;
-
-import java.util.Random;
 
 public final class GameStart {
 
@@ -60,19 +50,14 @@ public final class GameStart {
 
         context.input = new InputHandler();
 
-        context.controller = new Controller(context);
-        context.player = new Player(context);
+        context.controller = new PlayerController(context);
 
         context.spriteBatch = new SpriteBatch();
         context.shapeRenderer = new ShapeRenderer();
         context.renderer = new Renderer(context);
 
-        context.debug = new Debug(context, DebugConfig.createDefaultConfig());
 
-        context.playerAction = new PlayerAction(context);
 
-        context.overlayRenderer = new OverlayRenderer(context);
-        context.ghostOverlayRenderer = new GhostOverlayRenderer(context);
 
         context.interfaceHandler = new InterfaceHandler(context);
 
@@ -80,9 +65,15 @@ public final class GameStart {
         context.planBuilder = new PlanBuilder<>();
         context.planRenderer = new PlanRenderer<>(context);
 
-        context.cameraController = new CameraController(context);
-        context.cursorController = new CursorController();
-        context.cursorController.loadCursor();
+        GameSystems systems = new GameSystems();
+
+        systems.add(new PlayerSystem(context));
+        systems.add(new CameraSystem(context, context.playerContext));
+
+        context.systems = systems;
+
+        context.debug = new Debug(context, DebugConfig.createDefaultConfig());
+
 
         //multiplexer bla bla...
         InputDesktop.init(context);

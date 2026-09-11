@@ -1,12 +1,11 @@
-package core;
+package core.player;
 
-import core.app.GameContext;
+import core.app.context.GameContext;
+import core.player.mechanic.PlayerController;
 import data.PlayerData;
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
-import core.controller.Controller;
 import core.world.World;
 
 public class Player {
@@ -14,9 +13,10 @@ public class Player {
     private final float PLAYER_HEIGHT = PlayerData.getPlayerHeight();
     private final float PLAYER_SPEED = PlayerData.getPlayerSpeed();
 
-    public final Sprite sprite;
+    private final GameContext context;
     private final World world;
-    private final Controller controller;
+    private final Sprite sprite;
+    private final PlayerController controller;
 
     private final float worldWidth;
     private final float worldHeight;
@@ -25,6 +25,7 @@ public class Player {
     private final Texture playerTexture = new Texture("unpacked/player/player.png");
 
     public Player(GameContext context) {
+        this.context = context;
         this.controller = context.controller;
         this.world = context.world;
         this.worldWidth = world.getWorldWidth();
@@ -39,16 +40,20 @@ public class Player {
         controller.moveCharacter(getPlayer(), sprite, delta, PLAYER_SPEED, worldWidth, worldHeight);
     }
 
-    public void draw(SpriteBatch batch) {
-        sprite.draw(batch);
+    public void draw() {
+        sprite.draw(context.spriteBatch);
     }
 
-    public Controller getController() {
+    public PlayerController getController() {
         return controller;
     }
 
     public Player getPlayer() {
         return this;
+    }
+
+    public Sprite getSprite() {
+        return sprite;
     }
 
     public boolean isPlayerMoving() {

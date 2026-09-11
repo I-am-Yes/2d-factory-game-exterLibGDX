@@ -1,6 +1,9 @@
-package core.render;
+package core.player.mechanic;
 
-import core.app.GameContext;
+import core.app.context.GameContext;
+import core.player.Player;
+import core.player.PlayerAction;
+import core.system.PlayerSystem;
 import data.map.asset.AssetType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -12,14 +15,10 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import core.AssetsHandler;
-import core.Player;
 import core.entities.BuildGhostLine;
 import core.world.World;
-import core.controller.PlayerAction;
 
-import javax.swing.text.View;
-
-public class GhostOverlayRenderer {
+public class GhostOverlay {
 
     private final Viewport viewport;
     private final World world;
@@ -28,7 +27,6 @@ public class GhostOverlayRenderer {
     private final BuildGhostLine buildGhostLine;
     private final SpriteBatch spriteBatch;
     private final AssetsHandler assetsHandler;
-
 
     private static final float SLIDE_SPEED = 24f;
 
@@ -40,12 +38,14 @@ public class GhostOverlayRenderer {
     private boolean hoverVisible;
     private boolean hoverWalkable;
 
+    private final Vector2 hoverTile = new Vector2();
 
     private AssetType type;
 
-    public GhostOverlayRenderer(GameContext context) {
-        this.playerAction = context.playerAction;
-        this.player = context.player;
+
+    public GhostOverlay(GameContext context, Player player, PlayerAction action) {
+        this.playerAction = action;
+        this.player = player;
         this.spriteBatch = context.spriteBatch;
         this.viewport = context.viewport;
         this.world = context.world;
@@ -57,6 +57,11 @@ public class GhostOverlayRenderer {
 
     public void update(float delta) {
 
+        hoverTile.set(
+            PlayerSystem.getHoverTileX(),
+            PlayerSystem.getHoverTileY()
+        );
+
         if (type == null) {
             this.type = playerAction.getSelectedType();
             animInitialized = false;
@@ -67,9 +72,13 @@ public class GhostOverlayRenderer {
         tmp.set(Gdx.input.getX(), Gdx.input.getY(), 0);
         viewport.unproject(tmp);
 
+//        float tile = world.getTileSize();
+//        int tx = MathUtils.floor(tmp.x / tile);
+//        int ty = MathUtils.floor(tmp.y / tile);
+
         float tile = world.getTileSize();
-        int tx = MathUtils.floor(tmp.x / tile);
-        int ty = MathUtils.floor(tmp.y / tile);
+        int tx = (int) hoverTile.x;
+        int ty = (int) hoverTile.y;
 
         if (!world.isInBounds(tx, ty)) {
             hoverVisible = false;
@@ -83,12 +92,14 @@ public class GhostOverlayRenderer {
         hoverVisible = true;
 
 
-        animInitialized = AnimateRenderer.animateMove(delta, targetX, targetY, SLIDE_SPEED, animate, hoverVisible);
+        animInitialized = OverlayHelper.animateMove(delta, targetX, targetY, SLIDE_SPEED, animate, hoverVisible);
 
     }
 
     public void render() {
+
         if (type == null || !hoverVisible) return;
+        updateSelectedType();
         renderGhostOverlay(world, viewport, spriteBatch, type, assetsHandler);
 
         //render drag line plans
@@ -100,16 +111,23 @@ public class GhostOverlayRenderer {
     }
 
     public void draw() {
+        updateSelectedType();
         buildGhostLine.drawTilePreview(spriteBatch, buildGhostLine.getCurrentTiledLine(), playerAction.getSelectedType());
+
+        render();
     }
 
     private void renderGhostOverlay(World world, Viewport viewport, SpriteBatch spriteBatch, AssetType type, AssetsHandler assetsHandler) {
+        updateSelectedType();
         tmp.set(Gdx.input.getX(), Gdx.input.getY(), 0);
         viewport.unproject(tmp);
 
         float tile = world.getTileSize();
-        int tx = MathUtils.floor(tmp.x / tile);
-        int ty = MathUtils.floor(tmp.y / tile);
+//        int tx = MathUtils.floor(tmp.x / tile);
+//        int ty = MathUtils.floor(tmp.y / tile);
+        int tx = (int) hoverTile.x;
+        int ty = (int) hoverTile.y;
+
         if (!world.isInBounds(tx, ty)) return;
 
         TiledMapTile tiled = assetsHandler.getTile(type);
@@ -128,7 +146,16 @@ public class GhostOverlayRenderer {
     }
 
 
+    private AssetType getSelectedType() {
+        if (playerAction.getSelectedType() == null) return null;
+        if (type == null) return playerAction.getSelectedType();
+        if (type == playerAction.getSelectedType()) return type;
+        else return null;
+    }
 
+    private void updateSelectedType() {
+        this.type = getSelectedType();
+    }
 
 
 

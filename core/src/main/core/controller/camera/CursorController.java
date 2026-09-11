@@ -1,4 +1,4 @@
-package core.controller;
+package core.controller.camera;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Cursor;

@@ -1,15 +1,15 @@
-package core.controller;
+package core.player.mechanic;
 
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.MathUtils;
 import core.InputHandler;
-import core.Player;
 import core.Window;
-import core.app.GameContext;
+import core.app.context.GameContext;
 import core.event.PlayerEvent.*;
+import core.player.Player;
 
-public class Controller {
+public class PlayerController {
 
     private float vx, vy;
     private static final float ACCEL = 40f;   // how fast you speed up
@@ -22,7 +22,7 @@ public class Controller {
     private final InputHandler input;
     private final Window window;
 
-    public Controller(GameContext context) {
+    public PlayerController(GameContext context) {
         this.input = context.input;
         this.window = context.window;
 

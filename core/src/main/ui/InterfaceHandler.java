@@ -1,15 +1,12 @@
 package ui;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import core.Window;
-import core.app.GameContext;
-import core.controller.PlayerAction;
-import core.world.World;
+import core.app.context.GameContext;
 
 public class InterfaceHandler {
 
@@ -21,6 +18,8 @@ public class InterfaceHandler {
 
     private final PlayerHotbar playerHotbar;
     private final GameUI gameUI;
+
+    private float delta;
 
     private final Label.LabelStyle textStyle1;
 
@@ -37,16 +36,20 @@ public class InterfaceHandler {
         playerHotbar = new PlayerHotbar(window, stage, skin, style);
         gameUI = new GameUI(window, stage, skin, style);
 
+        this.delta = context.getDeltaTime();
+
     }
 
-    public void update() {
-        act(window.getDeltaTime());
-        gameUI.update(window.getDeltaTime());
+    public void update(float delta) {
+        this.delta = delta;
+
+        act();
+        gameUI.update(delta);
         playerHotbar.update();
     }
 
-    public void act(float deltaTime) {
-        stage.act(deltaTime);
+    public void act() {
+        stage.act(delta);
     }
 
     public void draw() {

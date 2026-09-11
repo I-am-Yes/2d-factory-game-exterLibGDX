@@ -1,7 +1,7 @@
 package core.event;
 
 import data.map.asset.AssetType;
-import core.Player;
+import core.player.Player;
 
 public class PlayerEvent {
     public PlayerEvent() {}
