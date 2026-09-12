@@ -1,4 +1,4 @@
-package core.app.context;
+package core.app;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -6,8 +6,8 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import core.AssetsHandler;
 import core.InputHandler;
-import core.app.GameSystems;
 import core.Window;
+import core.app.context.ContextProvider;
 import core.controller.camera.CameraController;
 import core.player.mechanic.PlayerController;
 import core.controller.camera.CursorController;
@@ -16,9 +16,7 @@ import core.entities.plan.PlanBuilder;
 import core.entities.plan.PlanManager;
 import core.render.PlanRenderer;
 import core.render.Renderer;
-import core.system.CameraSystem;
 import core.system.GameSystem;
-import core.system.PlayerSystem;
 import core.world.World;
 import data.map.MapConfig;
 import data.map.asset.AssetType;
@@ -28,7 +26,6 @@ public final class GameContext {
 
     public MapConfig mapConfig;
 
-    public Debug debug;
     public Window window;
     public World world;
     public Viewport viewport;
@@ -38,26 +35,29 @@ public final class GameContext {
     public InterfaceHandler interfaceHandler;
 
     public Renderer renderer;
-    public SpriteBatch spriteBatch;
-    public ShapeRenderer shapeRenderer;
 
-    public PlayerController controller;
     public CursorController cursorController;
     public CameraController cameraController;
 
-    public PlanManager planManager;
-    public PlanBuilder<AssetType> planBuilder;
-    public PlanRenderer<AssetType> planRenderer;
-
     public GameSystems systems;
-    public GameSystem gameSystem;
-    public PlayerSystem playerSystem;
-    public CameraSystem cameraSystem;
-
-    public PlayerContext playerContext;
-    public CameraContext cameraContext;
 
     public GameContext() {}
+
+    public <T extends GameSystem> T addSystem(T system) {
+        return systems.add(system);
+    }
+
+    public <T extends GameSystem> T getSystem(Class<T> systemClass) {
+        return systems.get(systemClass);
+    }
+
+    public <T> T getContext(Class<T> contextClass) {
+        return systems.getContext(contextClass);
+    }
+
+    public <T, S extends GameSystem & ContextProvider<T>> T getSystemContext(Class<S> systemClass) {
+        return getSystem(systemClass).getContext();
+    }
 
     public float getDeltaTime() {
         return Gdx.graphics.getDeltaTime();

@@ -1,6 +1,6 @@
 package core.render;
 
-import core.app.context.GameContext;
+import core.app.GameContext;
 import data.map.asset.AssetType;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -23,18 +23,16 @@ public class PlanRenderer<T extends AssetType> {
 
     private final float tileSize;
 
-    private PlanBuilder<AssetType> planBuilder;
     private Queue<PlanBuilder<?>> planRenderQueue;
 
-    public PlanRenderer(GameContext context) {
-        this.world = context.world;
-        this.viewport = context.viewport;
-        this.spriteBatch = context.spriteBatch;
-        this.assetsHandler = context.assets;
+    public PlanRenderer(World world, Viewport viewport, SpriteBatch spriteBatch, AssetsHandler assetsHandler, PlanManager planManager) {
+        this.world = world;
+        this.viewport = viewport;
+        this.spriteBatch = spriteBatch;
+        this.assetsHandler = assetsHandler;
+        this.planManager = planManager;
 
         this.tileSize = world.getTileSize();
-
-        this.planManager = context.planManager;
     }
 
     public void update() {}

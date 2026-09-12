@@ -1,16 +1,15 @@
 package core.player.mechanic;
 
-import core.app.context.GameContext;
+import core.app.GameContext;
 import core.player.Player;
 import core.player.PlayerAction;
-import core.system.PlayerSystem;
+import core.system.systems.PlayerSystem;
 import data.map.asset.AssetType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -43,16 +42,20 @@ public class GhostOverlay {
     private AssetType type;
 
 
-    public GhostOverlay(GameContext context, Player player, PlayerAction action) {
-        this.playerAction = action;
+
+
+
+
+    public GhostOverlay(World world, Viewport viewport, Player player, PlayerAction action, SpriteBatch spriteBatch, AssetsHandler assets, BuildGhostLine buildGhostLine) {
+        this.world = world;
         this.player = player;
-        this.spriteBatch = context.spriteBatch;
-        this.viewport = context.viewport;
-        this.world = context.world;
-        this.assetsHandler = context.assets;
+        this.playerAction = action;
+        this.spriteBatch = spriteBatch;
+        this.viewport = viewport;
+        this.assetsHandler = assets;
+        this.buildGhostLine = buildGhostLine;
 
         this.animate.set(player.getPos());
-        this.buildGhostLine = playerAction.getBuildGhostLine();
     }
 
     public void update(float delta) {

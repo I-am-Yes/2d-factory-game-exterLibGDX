@@ -1,6 +1,7 @@
 package core.debug;
 
-import core.app.context.GameContext;
+import core.app.GameContext;
+import core.app.context.PlayerContext;
 import data.debug.DebugConfig;
 import data.debug.DebugType;
 import data.map.asset.FloorType;
@@ -16,13 +17,12 @@ import core.event.*;
 
 public class Debug {
 
-    private final GameContext context;
     private final DebugConfig debugConfig;
     private final InputHandler input;
     private final World world;
     private final Viewport viewport;
     private final Player player;
-    private final ShapeRenderer shapeRenderer;
+    private final ShapeRenderer debugShapeRenderer;
 
     private boolean mapGenReportPending;
     private MapConfig pendingMapConfig;
@@ -32,23 +32,22 @@ public class Debug {
 
     private final OrthographicCamera camera;
 
-    private final PerformanceDebugger performanceDebugger = new PerformanceDebugger();
     private final CameraDebugger      cameraDebugger      = new CameraDebugger();
-    private final InputDebugger       inputDebugger       = new InputDebugger();
     private final EventsDebugger      eventsDebugger      = new EventsDebugger();
+    private final InputDebugger       inputDebugger       = new InputDebugger();
+    private final MapGenDebugger      mapGenDebugger      = new MapGenDebugger();
+    private final PerformanceDebugger performanceDebugger = new PerformanceDebugger();
+    private final RenderDebugger      renderDebugger      = new RenderDebugger();
 
-    public Debug(GameContext context, DebugConfig debugConfig) {
+    public Debug(DebugConfig debugConfig, World world, Viewport viewport, InputHandler input, Player player, ShapeRenderer debugShapeRenderer) {
         this.debugConfig = debugConfig;
-        this.context = context;
-        this.input = context.input;
-        this.world = context.world;
-        this.viewport = context.viewport;
-        this.player = context.playerContext.player;
-        this.shapeRenderer = context.shapeRenderer;
-
+        this.world = world;
+        this.input = input;
+        this.viewport = viewport;
         this.camera = (OrthographicCamera) viewport.getCamera();
+        this.player = player;
+        this.debugShapeRenderer = debugShapeRenderer;
 
-        this.delta = context.getDeltaTime();
 
         Events.on(GameEvent.MapGenerated.class, e -> {
             pendingMapConfig = e.mapConfig;
@@ -107,7 +106,7 @@ public class Debug {
         if (mapGenReportPending && debugConfig.isEnabled(DebugType.MAP_GENERATION)) {
             if (!debugConfig.isEnabled(DebugType.MAP_GENERATION)) return;
 
-            MapGenDebugger.printReport(pendingMapConfig,  pendingGrid);
+            mapGenDebugger.printReport(pendingMapConfig,  pendingGrid);
             mapGenReportPending = false;
         }
 
@@ -129,27 +128,27 @@ public class Debug {
 
         //render tile borders
         if (debugConfig.isEnabled(DebugType.RENDER)) {
-            shapeRenderer.setProjectionMatrix(camera.combined);
+            debugShapeRenderer.setProjectionMatrix(camera.combined);
 
             //begin must have end(); at the end.
             Gdx.gl.glLineWidth(0.1f);
-            shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+            debugShapeRenderer.begin(ShapeRenderer.ShapeType.Line);
 
-            RenderDebugger.drawTileBorders(world, camera, shapeRenderer);
+            renderDebugger.drawTileBorders(world, camera, debugShapeRenderer);
 
 
             //add codes to above not below of this command.
-            shapeRenderer.end();
+            debugShapeRenderer.end();
             Gdx.gl.glLineWidth(1f);
         }
 
         if (debugConfig.isEnabled(DebugType.CAMERA)) {
-            shapeRenderer.setProjectionMatrix(camera.combined);
-            shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+            debugShapeRenderer.setProjectionMatrix(camera.combined);
+            debugShapeRenderer.begin(ShapeRenderer.ShapeType.Line);
 
-            cameraDebugger.render(shapeRenderer);
+            cameraDebugger.render(debugShapeRenderer);
 
-            shapeRenderer.end();
+            debugShapeRenderer.end();
         }
 
     }
@@ -172,6 +171,25 @@ public class Debug {
     }
     public boolean isAllDebugDisabled() {
         return debugConfig.isAllDebugDisabled();
+    }
+
+    public PerformanceDebugger getPerformanceDebugger() {
+        return performanceDebugger;
+    }
+    public CameraDebugger getCameraDebugger() {
+        return cameraDebugger;
+    }
+    public RenderDebugger getRenderDebugger() {
+        return renderDebugger;
+    }
+    public MapGenDebugger getMapGenDebugger() {
+        return mapGenDebugger;
+    }
+    public InputDebugger getInputDebugger() {
+        return inputDebugger;
+    }
+    public EventsDebugger getEventsDebugger() {
+        return eventsDebugger;
     }
 
 }

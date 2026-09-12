@@ -6,7 +6,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import core.Window;
-import core.app.context.GameContext;
+import core.app.GameContext;
 
 public class InterfaceHandler {
 

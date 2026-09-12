@@ -2,12 +2,15 @@ package core.app;
 
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ObjectMap;
+import core.app.context.ContextProvider;
+import core.render.RenderLayer;
 import core.system.GameSystem;
 
 public final class GameSystems {
 
     private final Array<GameSystem> systems = new Array<>();
     private final ObjectMap<Class<?>, GameSystem> systemType = new ObjectMap<>();
+    private final ObjectMap<Class<?>, Object> contexts = new ObjectMap<>();
 
     /** register a new game system
      @param <T> the type of the game system
@@ -23,12 +26,23 @@ public final class GameSystems {
             );
         }
 
+        //regis system's context
+        if (system instanceof ContextProvider<?> provider) {
+            Class<?> contextClass = provider.getContext().getClass();
+            if (contexts.containsKey(contextClass)) {
+                throw new IllegalStateException(
+                    "Context already registered: " + contextClass.getSimpleName()
+                );
+            }
+            contexts.put(contextClass, provider.getContext());
+        }
+
         systemType.put(systemClass, system);
         systems.add(system);
         return system;
     }
 
-    /** get a game system by type
+    /** get a game system by system.class
      @param systemClass the class of the game system to get
      @param <T> the type of the game system
      @return the game system of the specified type
@@ -43,6 +57,21 @@ public final class GameSystems {
         return systemClass.cast(system);
     }
 
+    /** get a context by context.class
+     * @param contextClass the class of the context to get
+     * @return the context of the specified type
+     * @param <T> the type of the context
+     */
+    public <T> T getContext(Class<T> contextClass) {
+        Object systemContext = contexts.get(contextClass);
+        if (systemContext == null) {
+            throw  new IllegalStateException(
+                "Context not registered: " + contextClass.getSimpleName()
+            );
+        }
+        return contextClass.cast(systemContext);
+    }
+
     public void update(float delta) {
         for (GameSystem system : systems) {
             system.update(delta);
@@ -50,8 +79,12 @@ public final class GameSystems {
     }
 
     public void render() {
-        for (GameSystem system : systems) {
-            system.render();
+        for (RenderLayer layer : RenderLayer.values()) {
+            for (GameSystem system : systems) {
+                if (system.renderLayer() == layer) {
+                    system.render();
+                }
+            }
         }
     }
 

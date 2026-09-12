@@ -1,6 +1,6 @@
 package core.player;
 
-import core.app.context.GameContext;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import core.player.mechanic.PlayerController;
 import data.PlayerData;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -13,10 +13,10 @@ public class Player {
     private final float PLAYER_HEIGHT = PlayerData.getPlayerHeight();
     private final float PLAYER_SPEED = PlayerData.getPlayerSpeed();
 
-    private final GameContext context;
     private final World world;
     private final Sprite sprite;
     private final PlayerController controller;
+    private final SpriteBatch spriteBatch;
 
     private final float worldWidth;
     private final float worldHeight;
@@ -24,12 +24,12 @@ public class Player {
     //TODO: change this player texture to a regis system.
     private final Texture playerTexture = new Texture("unpacked/player/player.png");
 
-    public Player(GameContext context) {
-        this.context = context;
-        this.controller = context.controller;
-        this.world = context.world;
+    public Player(World world, PlayerController controller, SpriteBatch playerSpriteBatch) {
+        this.controller = controller;
+        this.world = world;
         this.worldWidth = world.getWorldWidth();
         this.worldHeight = world.getWorldHeight();
+        this.spriteBatch = playerSpriteBatch;
 
         sprite = new Sprite(playerTexture);
         sprite.setSize(PLAYER_WIDTH, PLAYER_HEIGHT);
@@ -41,7 +41,7 @@ public class Player {
     }
 
     public void draw() {
-        sprite.draw(context.spriteBatch);
+        sprite.draw(spriteBatch);
     }
 
     public PlayerController getController() {

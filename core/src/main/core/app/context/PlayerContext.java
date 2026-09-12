@@ -1,24 +1,33 @@
 package core.app.context;
 
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import core.app.GameContext;
 import core.player.Player;
 import core.player.PlayerAction;
 import core.player.mechanic.GhostOverlay;
 import core.player.mechanic.Overlay;
+import core.player.mechanic.PlayerController;
 
 public class PlayerContext {
-
 
     public GameContext context;
     public Player player;
     public PlayerAction action;
+    public PlayerController controller;
     public Overlay overlay;
     public GhostOverlay ghostOverlay;
+    public SpriteBatch playerSpriteBatch;
+    public ShapeRenderer playerShapeRenderer;
 
-    public PlayerContext(Player player, PlayerAction action, Overlay overlay, GhostOverlay ghostOverlay) {
+    public PlayerContext(Player player, PlayerAction action, PlayerController controller, Overlay overlay, GhostOverlay ghostOverlay, SpriteBatch playerSpriteBatch, ShapeRenderer playerShapeRenderer) {
         this.player = player;
         this.action = action;
+        this.controller = controller;
         this.overlay = overlay;
         this.ghostOverlay = ghostOverlay;
+        this.playerSpriteBatch = playerSpriteBatch;
+        this.playerShapeRenderer = playerShapeRenderer;
     }
 
 }

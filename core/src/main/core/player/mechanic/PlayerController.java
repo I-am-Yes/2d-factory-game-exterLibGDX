@@ -5,7 +5,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.MathUtils;
 import core.InputHandler;
 import core.Window;
-import core.app.context.GameContext;
+import core.app.GameContext;
 import core.event.PlayerEvent.*;
 import core.player.Player;
 
@@ -22,9 +22,9 @@ public class PlayerController {
     private final InputHandler input;
     private final Window window;
 
-    public PlayerController(GameContext context) {
-        this.input = context.input;
-        this.window = context.window;
+    public PlayerController(InputHandler input, Window window) {
+        this.input = input;
+        this.window = window;
 
     }
 

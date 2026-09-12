@@ -6,16 +6,16 @@ import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import core.AssetsHandler;
 import core.InputHandler;
 import core.Window;
-import core.app.context.GameContext;
 import core.player.mechanic.PlayerController;
-import core.controller.camera.CursorController;
 import core.debug.Debug;
 import core.entities.plan.PlanBuilder;
 import core.entities.plan.PlanManager;
 import core.render.PlanRenderer;
 import core.render.Renderer;
-import core.system.CameraSystem;
-import core.system.PlayerSystem;
+import core.system.systems.CameraSystem;
+import core.system.systems.DebugSystem;
+import core.system.systems.PlayerSystem;
+import core.system.systems.RenderSystem;
 import core.world.World;
 import data.debug.DebugConfig;
 import data.debug.DebugType;
@@ -50,30 +50,17 @@ public final class GameStart {
 
         context.input = new InputHandler();
 
-        context.controller = new PlayerController(context);
-
-        context.spriteBatch = new SpriteBatch();
-        context.shapeRenderer = new ShapeRenderer();
         context.renderer = new Renderer(context);
-
-
-
 
         context.interfaceHandler = new InterfaceHandler(context);
 
-        context.planManager = new PlanManager(context);
-        context.planBuilder = new PlanBuilder<>();
-        context.planRenderer = new PlanRenderer<>(context);
+        context.systems = new GameSystems();
 
-        GameSystems systems = new GameSystems();
+        context.addSystem(new PlayerSystem(context));
+        context.addSystem(new RenderSystem(context));
+        context.addSystem(new CameraSystem(context, context.getSystemContext(PlayerSystem.class)));
 
-        systems.add(new PlayerSystem(context));
-        systems.add(new CameraSystem(context, context.playerContext));
-
-        context.systems = systems;
-
-        context.debug = new Debug(context, DebugConfig.createDefaultConfig());
-
+        context.addSystem(new DebugSystem(context));
 
         //multiplexer bla bla...
         InputDesktop.init(context);
@@ -95,7 +82,10 @@ public final class GameStart {
 //        planManager.addPlanToRenderQueue(planBuilder);
 
         //debug testers
-        context.debug.enableDebugModes(DebugType.CAMERA);
+        context.getSystem(DebugSystem.class).getDebug().enableDebugModes(
+            DebugType.CAMERA,
+            DebugType.RENDER
+        );
 
         context.window.setForegroundFPS(0);
         context.window.setVSync(false);

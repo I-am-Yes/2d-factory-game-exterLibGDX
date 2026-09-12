@@ -11,9 +11,9 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import core.AssetsHandler;
 import core.InputHandler;
 import core.Window;
-import core.app.context.GameContext;
+import core.app.GameContext;
 import core.player.PlayerAction;
-import core.system.PlayerSystem;
+import core.system.systems.PlayerSystem;
 import core.world.World;
 
 public class Overlay {
@@ -59,14 +59,14 @@ public class Overlay {
     private boolean animInitialized;
     private boolean isOverlayRenderAnimationEnabled = true; //true by default
 
-    public Overlay(GameContext context, PlayerAction action) {
-        this.world = context.world;
-        this.window = context.window;
-        this.viewport = context.viewport;
-        this.input = context.input;
+    public Overlay(World world, Window window, Viewport viewport, InputHandler input, PlayerAction action, AssetsHandler assets, ShapeRenderer shapeRenderer) {
+        this.world = world;
+        this.window = window;
+        this.viewport = viewport;
+        this.input = input;
         this.playerAction = action;
-        this.assetsHandler = context.assets;
-        this.shapeRenderer = context.shapeRenderer;
+        this.assetsHandler = assets;
+        this.shapeRenderer = shapeRenderer;
 
         //TODO: change bracket color to light blue when hovering overlay on ghost tile
         setBracketPaddingMode(defaultPaddingMode);
@@ -99,10 +99,10 @@ public class Overlay {
         }
 
         if (playerAction != null && playerAction.getSelectedType() != null) {
-            Gdx.app.log(
-                "OverlayRenderer",
-                "Selected Type: " + playerAction.getSelectedType()
-            );
+//            Gdx.app.log(
+//                "OverlayRenderer",
+//                "Selected Type: " + playerAction.getSelectedType()
+//            );
             //TODO: fix to use the actual object size on camera.
             setExpandBracket(true,
                 (float) assetsHandler.getTextureHeight(playerAction.getSelectedType())

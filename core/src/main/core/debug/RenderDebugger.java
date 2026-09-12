@@ -8,9 +8,9 @@ import core.world.World;
 
 public final class RenderDebugger {
 
-    private RenderDebugger() {}
+    public RenderDebugger() {}
 
-    public static void drawTileBorders(World world, OrthographicCamera camera, ShapeRenderer shapeRenderer) {
+    public void drawTileBorders(World world, OrthographicCamera camera, ShapeRenderer shapeRenderer) {
 
         float tileSize = world.getTileSize();
         int tilesWidth = (int) world.getTilesWidth();

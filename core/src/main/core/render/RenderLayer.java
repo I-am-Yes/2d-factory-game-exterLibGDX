@@ -1,0 +1,42 @@
+package core.render;
+
+public enum RenderLayer {
+
+    WORLD_LAYER,
+
+    DEBUG_LAYER,
+
+    FLOOR_LAYER,
+    FLOOR_LAYER_2,
+    FLOOR_LAYER_3,
+
+    BUILDING_LAYER,
+    BUILDING_LAYER_2,
+    BUILDING_LAYER_3,
+
+    OBJECT_LAYER,
+    OBJECT_LAYER_2,
+    OBJECT_LAYER_3,
+
+    PLAYER_LAYER,
+    PLAYER_LAYER_2,
+    PLAYER_LAYER_3,
+
+    DEBUG_LAYER_2,
+
+    ENTITY_LAYER,
+    ENTITY_LAYER_2,
+    ENTITY_LAYER_3,
+
+
+    EFFECT_LAYER,
+    EFFECT_LAYER_2,
+    EFFECT_LAYER_3,
+
+    UI_LAYER,
+    UI_LAYER_2,
+    UI_LAYER_3,
+
+    DEBUG_LAYER_3,
+
+}

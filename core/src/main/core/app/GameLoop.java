@@ -2,7 +2,7 @@ package core.app;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.utils.ScreenUtils;
-import core.app.context.GameContext;
+import core.app.context.RenderContext;
 
 public class GameLoop {
 
@@ -20,14 +20,7 @@ public class GameLoop {
 
         context.systems.update(deltaTime);
 
-        //TODO: change this
-        context.controller.setFullScreenByInput();
-
-
-        context.renderer.update(deltaTime);
-
         context.interfaceHandler.update(deltaTime);
-        context.debug.update(deltaTime);
     }
 
     public void render() {
@@ -48,20 +41,20 @@ public class GameLoop {
         context.viewport.apply();
 
         context.world.render((OrthographicCamera) context.viewport.getCamera());
-        context.spriteBatch.setProjectionMatrix(context.viewport.getCamera().combined);
-
-        context.debug.render();
 
         context.systems.render();
 
+        //Deprecated batch drawing method..
+        context.getContext(RenderContext.class).spriteBatch.setProjectionMatrix(context.viewport.getCamera().combined);
+
         //BEGIN batch
-        context.spriteBatch.begin();
+        context.getContext(RenderContext.class).spriteBatch.begin();
 
-        context.planRenderer.render();
+        //usually don't use this here, do inside the system render itself.
+        //if we have to use, just create new sprite batch instead.
 
-        context.spriteBatch.end();
+        context.getContext(RenderContext.class).spriteBatch.end();
         //END batch
-
 
         context.interfaceHandler.draw();
     }
@@ -78,13 +71,9 @@ public class GameLoop {
     public void resume() {}
 
     public void dispose() {
-        context.spriteBatch.dispose();
 
         context.assets.dispose();
         context.world.dispose();
-
-        context.shapeRenderer.dispose();
-        context.planRenderer.dispose();
 
         context.interfaceHandler.dispose();
         context.systems.dispose();

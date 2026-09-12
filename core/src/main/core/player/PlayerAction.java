@@ -1,9 +1,8 @@
 package core.player;
 
 import com.badlogic.gdx.math.Vector2;
-import core.app.context.GameContext;
-import core.player.mechanic.OverlayHelper;
-import core.system.PlayerSystem;
+import core.app.GameContext;
+import core.system.systems.PlayerSystem;
 import data.map.asset.AssetType;
 import data.map.asset.FloorType;
 import com.badlogic.gdx.Input;
@@ -44,16 +43,15 @@ public class PlayerAction {
 
     private float delta;
 
-    public PlayerAction(GameContext context, Player player) {
-        this.world = context.world;
+    public PlayerAction(World world, Viewport viewport, Player player, InputHandler input, SpriteBatch playerSpriteBatch, ShapeRenderer shapeRenderer, AssetsHandler assets) {
+        this.world = world;
         this.player = player;
-        this.input = context.input;
-        this.viewport = context.viewport;
-        this.shapeRenderer = context.shapeRenderer;
-        this.spriteBatch = context.spriteBatch;
-        this.assets = context.assets;
+        this.input = input;
+        this.viewport = viewport;
+        this.shapeRenderer = shapeRenderer;
+        this.spriteBatch = playerSpriteBatch;
+        this.assets = assets;
 
-        this.delta = context.getDeltaTime();
         this.buildGhostLine = new BuildGhostLine(world, player, viewport, this, input, spriteBatch, shapeRenderer, assets);
     }
 

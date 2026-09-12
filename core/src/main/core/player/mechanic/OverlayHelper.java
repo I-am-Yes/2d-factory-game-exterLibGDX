@@ -5,7 +5,7 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import core.system.PlayerSystem;
+import core.system.systems.PlayerSystem;
 
 public class OverlayHelper {
 
