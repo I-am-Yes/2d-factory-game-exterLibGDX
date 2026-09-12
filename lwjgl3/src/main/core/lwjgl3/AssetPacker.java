@@ -37,11 +37,19 @@ public final class AssetPacker {
 //            "blocks"
 //        );
 
+        //packing tiles
+//        TexturePacker.process(
+//            settings,
+//            "../assets/unpacked/tiles/tiles",
+//            "../assets/packed/tiles/tiles",
+//            "tile assets"
+//        );
+
         TexturePacker.process(
             settings,
-            "../assets/unpacked/tiles/tiles",
-            "../assets/packed/tiles/tiles",
-            "tile assets"
+            "../assets/unpacked/ui/hotbar",
+            "../assets/packed/ui/hotbar",
+            "hotbar assets"
         );
     }
 }

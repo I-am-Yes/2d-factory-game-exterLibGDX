@@ -1,6 +1,8 @@
 package core.system.systems;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -32,6 +34,8 @@ public class InterfaceSystem implements GameSysCycle, ContextProvider<InterfaceC
 
     private final Label.LabelStyle textStyle1;
 
+    private final BitmapFont aldrichFont;
+
 
     public InterfaceSystem(GameContext context) {
         this.window = context.window;
@@ -40,9 +44,15 @@ public class InterfaceSystem implements GameSysCycle, ContextProvider<InterfaceC
         stage = new Stage(new FitViewport(1280, 720));
         style = new Style();
 
+        aldrichFont = Style.fonts.Aldrich.getFont(16, Color.WHITE);
+
         textStyle1 = style.getTextStyle(Style.textStyle.TEXT_STYLE_1);
 
-        playerHotbar = new PlayerHotbar(window, stage, skin, style);
+        playerHotbar = new PlayerHotbar(
+            window, stage, skin, style, aldrichFont,
+            context.input
+        );
+
         gameUI = new GameUI(window, stage, skin, style);
 
         interfaceContext = new InterfaceContext(

@@ -73,14 +73,16 @@ public final class GameSystem {
     }
 
     public void update(float delta) {
-        for (GameSysCycle system : systems) {
-            system.update(delta);
+        for (int i = 0; i < systems.size; i++) {
+            systems.get(i).update(delta);
         }
     }
 
     public void render() {
         for (RenderLayer layer : RenderLayer.values()) {
-            for (GameSysCycle system : systems) {
+            for (int i = 0; i < systems.size; i++) {
+                GameSysCycle system = systems.get(i);
+
                 if (system.renderLayer() == layer) {
                     system.render();
                 }
@@ -89,8 +91,8 @@ public final class GameSystem {
     }
 
     public void resize(int width, int height) {
-        for (GameSysCycle system : systems) {
-            system.resize(width, height);
+        for (int i = 0; i < systems.size; i++) {
+            systems.get(i).resize(width, height);
         }
     }
 

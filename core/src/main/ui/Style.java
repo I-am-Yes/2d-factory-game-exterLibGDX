@@ -43,10 +43,10 @@ public class Style {
         public String getFontPath() {
             return fontPath;
         }
-        public BitmapFont getFont(BitmapFont font) {
+        public BitmapFont getFont() {
             return createFont(this);
         }
-        public BitmapFont getFont(BitmapFont font, int fontSize, Color fontColor) {
+        public BitmapFont getFont(int fontSize, Color fontColor) {
             return createFont(this, fontSize, fontColor);
         }
     }
