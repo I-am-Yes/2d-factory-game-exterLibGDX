@@ -2,7 +2,7 @@ package core.app;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.utils.ScreenUtils;
-import core.app.context.RenderContext;
+import core.system.context.RenderContext;
 
 public class GameLoop {
 
@@ -20,7 +20,6 @@ public class GameLoop {
 
         context.systems.update(deltaTime);
 
-        context.interfaceHandler.update(deltaTime);
     }
 
     public void render() {
@@ -56,7 +55,7 @@ public class GameLoop {
         context.getContext(RenderContext.class).spriteBatch.end();
         //END batch
 
-        context.interfaceHandler.draw();
+
     }
 
     public void resize(int width, int height) {
@@ -64,7 +63,6 @@ public class GameLoop {
 
         context.systems.resize(width, height);
 
-        context.interfaceHandler.resize();
     }
 
     public void pause() {}
@@ -75,7 +73,6 @@ public class GameLoop {
         context.assets.dispose();
         context.world.dispose();
 
-        context.interfaceHandler.dispose();
         context.systems.dispose();
     }
 

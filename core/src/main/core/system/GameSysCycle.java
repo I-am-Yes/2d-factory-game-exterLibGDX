@@ -2,7 +2,7 @@ package core.system;
 
 import core.render.RenderLayer;
 
-public interface GameSystem {
+public interface GameSysCycle {
 
     default void update(float delta) {}
 

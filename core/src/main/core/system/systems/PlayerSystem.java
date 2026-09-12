@@ -9,8 +9,8 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import core.AssetsHandler;
 import core.InputHandler;
 import core.Window;
-import core.app.context.ContextProvider;
-import core.app.context.PlayerContext;
+import core.system.ContextProvider;
+import core.system.context.PlayerContext;
 import core.player.*;
 import core.app.GameContext;
 import core.player.mechanic.GhostOverlay;
@@ -18,10 +18,10 @@ import core.player.mechanic.Overlay;
 import core.player.mechanic.OverlayHelper;
 import core.player.mechanic.PlayerController;
 import core.render.RenderLayer;
-import core.system.GameSystem;
+import core.system.GameSysCycle;
 import core.world.World;
 
-public class PlayerSystem implements GameSystem, ContextProvider<PlayerContext> {
+public class PlayerSystem implements GameSysCycle, ContextProvider<PlayerContext> {
 
     private GameContext context;
     private World world;
@@ -106,6 +106,7 @@ public class PlayerSystem implements GameSystem, ContextProvider<PlayerContext> 
         );
     }
 
+    @Override
     public void update(float delta) {
         updateHoverThreshold();
 
@@ -118,6 +119,7 @@ public class PlayerSystem implements GameSystem, ContextProvider<PlayerContext> 
         ghostOverlay.update(delta);
     }
 
+    @Override
     public void render() {
         draw();
         overlay.render();
@@ -139,6 +141,7 @@ public class PlayerSystem implements GameSystem, ContextProvider<PlayerContext> 
         action.draw();
     }
 
+    @Override
     public void dispose() {
         action.dispose();
     }

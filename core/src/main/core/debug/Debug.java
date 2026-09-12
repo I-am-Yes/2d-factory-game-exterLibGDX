@@ -1,7 +1,6 @@
 package core.debug;
 
-import core.app.GameContext;
-import core.app.context.PlayerContext;
+import core.debug.debuggers.*;
 import data.debug.DebugConfig;
 import data.debug.DebugType;
 import data.map.asset.FloorType;
@@ -32,12 +31,12 @@ public class Debug {
 
     private final OrthographicCamera camera;
 
-    private final CameraDebugger      cameraDebugger      = new CameraDebugger();
-    private final EventsDebugger      eventsDebugger      = new EventsDebugger();
+    private final CameraDebugger cameraDebugger      = new CameraDebugger();
+    private final EventsDebugger eventsDebugger      = new EventsDebugger();
     private final InputDebugger       inputDebugger       = new InputDebugger();
-    private final MapGenDebugger      mapGenDebugger      = new MapGenDebugger();
+    private final MapGenDebugger mapGenDebugger      = new MapGenDebugger();
     private final PerformanceDebugger performanceDebugger = new PerformanceDebugger();
-    private final RenderDebugger      renderDebugger      = new RenderDebugger();
+    private final RenderDebugger renderDebugger      = new RenderDebugger();
 
     public Debug(DebugConfig debugConfig, World world, Viewport viewport, InputHandler input, Player player, ShapeRenderer debugShapeRenderer) {
         this.debugConfig = debugConfig;

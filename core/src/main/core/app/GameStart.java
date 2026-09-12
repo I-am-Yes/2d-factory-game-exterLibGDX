@@ -1,27 +1,18 @@
 package core.app;
 
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import core.AssetsHandler;
 import core.InputHandler;
 import core.Window;
-import core.player.mechanic.PlayerController;
-import core.debug.Debug;
-import core.entities.plan.PlanBuilder;
-import core.entities.plan.PlanManager;
-import core.render.PlanRenderer;
-import core.render.Renderer;
 import core.system.systems.CameraSystem;
 import core.system.systems.DebugSystem;
 import core.system.systems.PlayerSystem;
 import core.system.systems.RenderSystem;
 import core.world.World;
-import data.debug.DebugConfig;
 import data.debug.DebugType;
 import data.map.MapConfig;
 import data.map.PresetMap;
-import ui.InterfaceHandler;
+import core.system.systems.InterfaceSystem;
 
 public final class GameStart {
 
@@ -50,15 +41,12 @@ public final class GameStart {
 
         context.input = new InputHandler();
 
-        context.renderer = new Renderer(context);
-
-        context.interfaceHandler = new InterfaceHandler(context);
-
-        context.systems = new GameSystems();
+        context.systems = new GameSystem();
 
         context.addSystem(new PlayerSystem(context));
         context.addSystem(new RenderSystem(context));
         context.addSystem(new CameraSystem(context, context.getSystemContext(PlayerSystem.class)));
+        context.addSystem(new InterfaceSystem(context));
 
         context.addSystem(new DebugSystem(context));
 

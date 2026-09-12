@@ -1,6 +1,5 @@
-package core.debug;
+package core.debug.debuggers;
 
-import com.badlogic.gdx.Game;
 import core.event.Events;
 import core.event.GameEvent;
 import core.event.PlayerEvent;

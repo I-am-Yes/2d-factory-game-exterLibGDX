@@ -1,4 +1,4 @@
-package core.debug;
+package core.debug.debuggers;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;

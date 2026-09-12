@@ -1,6 +1,7 @@
-package core.app.context;
+package core.system.context;
 
 import core.debug.*;
+import core.debug.debuggers.*;
 
 public class DebugContext {
 

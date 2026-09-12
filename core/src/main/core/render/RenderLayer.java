@@ -3,6 +3,7 @@ package core.render;
 public enum RenderLayer {
 
     WORLD_LAYER,
+    UI_LAYER,
 
     DEBUG_LAYER,
 
@@ -22,6 +23,7 @@ public enum RenderLayer {
     PLAYER_LAYER_2,
     PLAYER_LAYER_3,
 
+    UI_LAYER_2,
     DEBUG_LAYER_2,
 
     ENTITY_LAYER,
@@ -33,8 +35,6 @@ public enum RenderLayer {
     EFFECT_LAYER_2,
     EFFECT_LAYER_3,
 
-    UI_LAYER,
-    UI_LAYER_2,
     UI_LAYER_3,
 
     DEBUG_LAYER_3,

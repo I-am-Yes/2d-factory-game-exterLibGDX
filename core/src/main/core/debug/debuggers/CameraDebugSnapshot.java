@@ -1,4 +1,4 @@
-package core.debug;
+package core.debug.debuggers;
 
 public class CameraDebugSnapshot {
 

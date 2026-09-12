@@ -1,4 +1,4 @@
-package core.app.context;
+package core.system;
 
 public interface ContextProvider<T> {
     T getContext();

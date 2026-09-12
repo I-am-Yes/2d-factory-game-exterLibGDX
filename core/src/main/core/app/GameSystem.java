@@ -2,14 +2,14 @@ package core.app;
 
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ObjectMap;
-import core.app.context.ContextProvider;
+import core.system.ContextProvider;
 import core.render.RenderLayer;
-import core.system.GameSystem;
+import core.system.GameSysCycle;
 
-public final class GameSystems {
+public final class GameSystem {
 
-    private final Array<GameSystem> systems = new Array<>();
-    private final ObjectMap<Class<?>, GameSystem> systemType = new ObjectMap<>();
+    private final Array<GameSysCycle> systems = new Array<>();
+    private final ObjectMap<Class<?>, GameSysCycle> systemType = new ObjectMap<>();
     private final ObjectMap<Class<?>, Object> contexts = new ObjectMap<>();
 
     /** register a new game system
@@ -17,7 +17,7 @@ public final class GameSystems {
      @param system the game system to register
      @return the registered game system
      * */
-    public <T extends GameSystem> T add(T system) {
+    public <T extends GameSysCycle> T add(T system) {
         Class<?> systemClass = system.getClass();
 
         if (systemType.containsKey(systemClass)) {
@@ -26,7 +26,7 @@ public final class GameSystems {
             );
         }
 
-        //regis system's context
+        //registers system's context
         if (system instanceof ContextProvider<?> provider) {
             Class<?> contextClass = provider.getContext().getClass();
             if (contexts.containsKey(contextClass)) {
@@ -42,13 +42,13 @@ public final class GameSystems {
         return system;
     }
 
-    /** get a game system by system.class
+    /** get a game system by system. Class
      @param systemClass the class of the game system to get
      @param <T> the type of the game system
      @return the game system of the specified type
      */
-    public <T extends GameSystem> T get(Class<T> systemClass) {
-        GameSystem system = systemType.get(systemClass);
+    public <T extends GameSysCycle> T get(Class<T> systemClass) {
+        GameSysCycle system = systemType.get(systemClass);
         if (system == null) {
             throw new IllegalStateException(
                 "System not registered: " + systemClass.getSimpleName()
@@ -57,7 +57,7 @@ public final class GameSystems {
         return systemClass.cast(system);
     }
 
-    /** get a context by context.class
+    /** get a context by context. Class
      * @param contextClass the class of the context to get
      * @return the context of the specified type
      * @param <T> the type of the context
@@ -73,14 +73,14 @@ public final class GameSystems {
     }
 
     public void update(float delta) {
-        for (GameSystem system : systems) {
+        for (GameSysCycle system : systems) {
             system.update(delta);
         }
     }
 
     public void render() {
         for (RenderLayer layer : RenderLayer.values()) {
-            for (GameSystem system : systems) {
+            for (GameSysCycle system : systems) {
                 if (system.renderLayer() == layer) {
                     system.render();
                 }
@@ -89,7 +89,7 @@ public final class GameSystems {
     }
 
     public void resize(int width, int height) {
-        for (GameSystem system : systems) {
+        for (GameSysCycle system : systems) {
             system.resize(width, height);
         }
     }

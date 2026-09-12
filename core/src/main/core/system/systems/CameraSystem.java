@@ -1,14 +1,14 @@
 package core.system.systems;
 
-import core.app.context.CameraContext;
+import core.system.context.CameraContext;
 import core.app.GameContext;
-import core.app.context.ContextProvider;
+import core.system.ContextProvider;
 import core.controller.camera.CameraController;
-import core.app.context.PlayerContext;
+import core.system.context.PlayerContext;
 import core.controller.camera.CursorController;
-import core.system.GameSystem;
+import core.system.GameSysCycle;
 
-public class CameraSystem implements GameSystem, ContextProvider<CameraContext> {
+public class CameraSystem implements GameSysCycle, ContextProvider<CameraContext> {
 
     private GameContext context;
     private PlayerContext playerContext;
@@ -16,6 +16,8 @@ public class CameraSystem implements GameSystem, ContextProvider<CameraContext> 
 
     private CameraController cameraController;
     private CursorController cursor;
+
+    private float delta;
 
     public CameraSystem(GameContext context, PlayerContext playerContext) {
         this.context = context;
@@ -31,7 +33,11 @@ public class CameraSystem implements GameSystem, ContextProvider<CameraContext> 
             cursor
         );
     }
+
+    @Override
     public void update(float delta) {
+        this.delta = delta;
+
         cameraController.update(delta);
     }
 

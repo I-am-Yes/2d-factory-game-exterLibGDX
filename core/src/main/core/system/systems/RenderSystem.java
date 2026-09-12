@@ -5,16 +5,16 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import core.AssetsHandler;
 import core.app.GameContext;
-import core.app.context.ContextProvider;
-import core.app.context.RenderContext;
+import core.system.ContextProvider;
+import core.system.context.RenderContext;
 import core.entities.plan.PlanManager;
 import core.render.PlanRenderer;
 import core.render.RenderLayer;
-import core.system.GameSystem;
+import core.system.GameSysCycle;
 import core.world.World;
 import data.map.asset.AssetType;
 
-public class RenderSystem implements GameSystem, ContextProvider<RenderContext> {
+public class RenderSystem implements GameSysCycle, ContextProvider<RenderContext> {
 
     private final GameContext context;
     private final RenderContext renderContext;
@@ -27,6 +27,8 @@ public class RenderSystem implements GameSystem, ContextProvider<RenderContext> 
 
     private final PlanRenderer<AssetType> planRenderer;
     private final PlanManager planManager;
+
+    private float delta;
 
     public RenderSystem(GameContext context) {
         this.context = context;
@@ -56,6 +58,16 @@ public class RenderSystem implements GameSystem, ContextProvider<RenderContext> 
             planRenderer
         );
 
+    }
+
+    @Override
+    public void update(float delta) {
+        this.delta = delta;
+    }
+
+    @Override
+    public void render() {
+        draw();
     }
 
     public void draw() {

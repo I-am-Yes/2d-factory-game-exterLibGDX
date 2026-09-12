@@ -4,17 +4,17 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import core.InputHandler;
 import core.app.GameContext;
-import core.app.context.ContextProvider;
-import core.app.context.DebugContext;
-import core.app.context.PlayerContext;
+import core.system.ContextProvider;
+import core.system.context.DebugContext;
+import core.system.context.PlayerContext;
 import core.debug.Debug;
 import core.player.Player;
 import core.render.RenderLayer;
-import core.system.GameSystem;
+import core.system.GameSysCycle;
 import core.world.World;
 import data.debug.DebugConfig;
 
-public class DebugSystem implements GameSystem, ContextProvider<DebugContext> {
+public class DebugSystem implements GameSysCycle, ContextProvider<DebugContext> {
 
     private GameContext context;
     private DebugContext debugContext;
@@ -56,19 +56,17 @@ public class DebugSystem implements GameSystem, ContextProvider<DebugContext> {
         );
     }
 
+    @Override
     public void update(float delta) {
         this.delta = delta;
 
         debug.update(delta);
     }
 
+    @Override
     public void render() {
 
         debug.render();
-
-    }
-
-    public void dispos() {
 
     }
 

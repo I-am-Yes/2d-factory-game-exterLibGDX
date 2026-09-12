@@ -1,4 +1,4 @@
-package core.app.context;
+package core.system.context;
 
 import core.controller.camera.CameraController;
 import core.controller.camera.CursorController;
