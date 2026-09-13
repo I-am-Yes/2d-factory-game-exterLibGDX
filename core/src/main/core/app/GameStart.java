@@ -23,6 +23,8 @@ public final class GameStart {
         context.window = new Window();
         context.window.createGameWindow();
 
+        context.window.setVSync(true);
+
         context.assets = new AssetsHandler();
         context.assets.load();
 
@@ -43,10 +45,10 @@ public final class GameStart {
 
         context.systems = new GameSystem();
 
+        context.addSystem(new InterfaceSystem(context));
         context.addSystem(new PlayerSystem(context));
         context.addSystem(new RenderSystem(context));
         context.addSystem(new CameraSystem(context, context.getSystemContext(PlayerSystem.class)));
-        context.addSystem(new InterfaceSystem(context));
 
         context.addSystem(new DebugSystem(context));
 
@@ -71,13 +73,10 @@ public final class GameStart {
 
         //debug testers
         context.getSystem(DebugSystem.class).getDebug().enableDebugModes(
-            DebugType.CAMERA,
-            DebugType.RENDER
+            DebugType.CAMERA
         );
 
         context.window.setForegroundFPS(0);
-        context.window.setVSync(false);
-
 
         return context;
     }

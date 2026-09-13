@@ -1,9 +1,12 @@
 package ui;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.math.Interpolation;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.*;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
@@ -18,42 +21,56 @@ public class PlayerHotbar {
     private final Window window;
     private final Stage stage;
     private final Skin skin;
-    private final Style style;
     private final Table hotbar;
     private final Label textLabel;
     private final TextButton[] hotbarItemButtons;
     private final ButtonGroup<TextButton> hotbarItemGroup;
 
+    private final InterfaceAction UIaction;
+
     private final Label.LabelStyle textStyle1;
     private final BitmapFont aldrichFont;
+    private final Image selectionBorder;
 
     private final TextureAtlas hotbarSkin;
     private final InputHandler input;
 
-    public PlayerHotbar(Window window, Stage stage, Skin skin, Style style, BitmapFont aldrichFont, InputHandler input) {
+    private static final int[] HOTBAR_KEYS = {
+        Input.Keys.NUM_1, Input.Keys.NUM_2, Input.Keys.NUM_3,
+        Input.Keys.NUM_4, Input.Keys.NUM_5, Input.Keys.NUM_6,
+        Input.Keys.NUM_7, Input.Keys.NUM_8, Input.Keys.NUM_9
+    };
+
+    public PlayerHotbar(Window window, Stage stage, Skin skin, InterfaceAction UIaction, BitmapFont aldrichFont, InputHandler input) {
         this.window = window;
         this.stage = stage;
         this.skin = skin;
-        this.style = style;
         this.aldrichFont = aldrichFont;
         this.input = input;
+        this.UIaction = UIaction;
 
-        textStyle1 = style.getTextStyle(Style.textStyle.TEXT_STYLE_1);
+        textStyle1 = Style.getTextStyle(Style.textStyle.TEXT_STYLE_1);
 
         hotbarSkin = new TextureAtlas(Gdx.files.internal("packed/ui/hotbar/hotbar assets.atlas"));
 
-        TextureRegionDrawable hotbarBox = new TextureRegionDrawable(hotbarSkin.findRegion("hotbar box"));
-        TextureRegionDrawable hotbarBoxSelected = new TextureRegionDrawable(hotbarSkin.findRegion("hotbar box selected"));
-        TextureRegionDrawable hotbarBoxBorder = new TextureRegionDrawable(hotbarSkin.findRegion("hotbar border"));
+        TextureRegionDrawable hotbarBox = new TextureRegionDrawable(hotbarSkin.findRegion("box background"));
+        TextureRegionDrawable hotbarBoxSelected = new TextureRegionDrawable(hotbarSkin.findRegion("box selected"));
+        TextureRegionDrawable hotbarBoxBorder = new TextureRegionDrawable(hotbarSkin.findRegion("box border center doubled"));
 
         TextButton.TextButtonStyle hotbarStyle = new TextButton.TextButtonStyle();
         hotbarStyle.up = hotbarBox;
         hotbarStyle.down = hotbarBoxSelected;
         hotbarStyle.checked = hotbarBoxSelected;
-        hotbarStyle.checkedDown = hotbarBoxSelected;
+//        hotbarStyle.checkedDown = hotbarBoxSelected;
+
+        hotbarStyle.over = hotbarBoxSelected;
 
         hotbarStyle.font = aldrichFont;
         hotbarStyle.fontColor = Color.WHITE;
+
+        selectionBorder = new Image(hotbarBoxBorder);
+        selectionBorder.setTouchable(Touchable.disabled);
+        selectionBorder.setVisible(false);
 
         //create actors
         textLabel = new Label("text label", textStyle1);
@@ -69,16 +86,18 @@ public class PlayerHotbar {
         //add actors to stage
         stage.addActor(hotbar);
         stage.addActor(textLabel);
+        stage.addActor(selectionBorder);
 
         //config actors
         textLabel.setText("text label");
         textLabel.setAlignment(Align.center);
 
 
+        hotbar.setTouchable(Touchable.childrenOnly);
         hotbar.setOrigin(Align.center, Align.center);
         hotbar.bottom();
         hotbar.setSize((float) window.getWindowWidth() / 2, (float) window.getWindowHeight() / 10);
-        hotbar.setPosition((float) window.getWindowWidth() / 2 - hotbar.getWidth() / 2, 0);
+        hotbar.setPosition((float) window.getWindowWidth() / 2 - hotbar.getWidth() / 2, (float) window.getWindowHeight() / 100);
 
         for (int i = 0; i < hotbarItemButtons.length; i++) {
             TextButton button = new TextButton(
@@ -86,64 +105,80 @@ public class PlayerHotbar {
                 hotbarStyle
             );
 
-            Image border = new Image(hotbarBoxBorder);
-            border.setTouchable(Touchable.disabled);
-            border.setVisible(false);
+            Stack slot = new Stack();
+            slot.add(button);
+
+            final boolean[] hovering = { false };
 
             button.addListener(new ChangeListener() {
                 @Override
                 public void changed(ChangeEvent event, Actor actor) {
-                    border.setVisible(button.isChecked());
+                    if (!button.isChecked()) {
+                        selectionBorder.clearActions();
+                        if (selectionBorder.isVisible()) {
+                            selectionBorder.addAction(
+                                Actions.sequence(
+                                    Actions.fadeOut(0.1f),
+                                    Actions.hide()
+                                )
+                            );
+                        }
+                        return;
+                    }
 
-                    button.setTransform(true);
-                    button.addAction(
-                        Actions.sequence(
-                            Actions.scaleTo(0.9f, 0.9f, 0.05f),
-                            Actions.scaleTo(1f, 1f, 0.10f)
-                        )
+                    Vector2 borderTarget = slot.localToStageCoordinates(
+                        new Vector2(0f, 0f)
+                    );
+
+                    selectionBorder.clearActions();
+                    selectionBorder.setSize(slot.getWidth(), slot.getHeight());
+                    selectionBorder.setVisible(true);
+                    selectionBorder.getColor().a = 1f;
+                    selectionBorder.toFront();
+
+                    float borderY = borderTarget.y + (hovering[0] ? 4f : 0f);
+
+                    selectionBorder.addAction(
+                        Actions.moveTo(borderTarget.x, borderY, 0.1f, Interpolation.smoother)
+                    );
+
+                    selectionBorder.setOrigin(Align.center);
+                    selectionBorder.addAction(
+                        Actions.scaleTo(1.08f, 1.08f, 0.1f, Interpolation.smooth2)
                     );
                 }
 
             });
 
-            button.setTransform(true);
-            button.setOrigin(Align.center);
+            float generalDuration = 0.08f;
 
-            button.addListener(new InputListener() {
-                @Override
-                public void enter(
-                    InputEvent event,
-                    float x,
-                    float y,
-                    int pointer,
-                    Actor fromActor
-                ) {
-                    if (pointer == -1) { // real mouse, not a touch pointer
-                        button.clearActions();
-                        button.addAction(Actions.scaleTo(1.08f, 1.08f, 0.10f));
+
+            UIaction.addHoverEffect(button,
+                () -> Actions.moveTo(0f, 4f, generalDuration),
+                () -> Actions.moveTo(0f, 0f, generalDuration),
+                () -> {
+                    hovering[0] = true;
+
+                    if (button.isChecked()) {
+
+                        Vector2 target = slot.localToStageCoordinates(new Vector2(0f, 0f));
+
+                        UIaction.moveTo(selectionBorder, target.x, target.y + 4f, generalDuration);
+                    }
+                },
+                () -> {
+                    hovering[0] = false;
+
+                    if (button.isChecked()) {
+                        Vector2 target = slot.localToStageCoordinates(new Vector2(0f, 0f));
+
+                        UIaction.moveTo(selectionBorder, target.x, target.y, generalDuration);
                     }
                 }
-
-                @Override
-                public void exit(
-                    InputEvent event,
-                    float x,
-                    float y,
-                    int pointer,
-                    Actor toActor
-                ) {
-                    if (pointer == -1) {
-                        button.clearActions();
-                        button.addAction(Actions.scaleTo(1f, 1f, 0.10f));
-                    }
-                }
-            });
+            );
 
 
-
-            Stack slot = new Stack();
-            slot.add(button);
-            slot.add(border);
+            UIaction.DefaultHoverEffect(button, generalDuration, generalDuration);
 
             hotbarItemButtons[i] = button;
             hotbarItemGroup.add(button);
@@ -153,10 +188,22 @@ public class PlayerHotbar {
     }
 
     public void update() {
+
+        updateInputToHotbar();
+
     }
 
     public void dispose() {
         hotbarSkin.dispose();
+    }
+
+    private void updateInputToHotbar() {
+        for (int i = 0; i < HOTBAR_KEYS.length; i++) {
+            if (input.isKeyJustPressed(HOTBAR_KEYS[i])) {
+                hotbarItemButtons[i].setChecked(!hotbarItemButtons[i].isChecked());
+                break;
+            }
+        }
     }
 
 }

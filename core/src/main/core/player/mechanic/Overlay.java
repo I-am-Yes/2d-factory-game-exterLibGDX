@@ -11,7 +11,6 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import core.AssetsHandler;
 import core.InputHandler;
 import core.Window;
-import core.app.GameContext;
 import core.player.PlayerAction;
 import core.system.systems.PlayerSystem;
 import core.world.World;
@@ -77,8 +76,8 @@ public class Overlay {
         this.delta = delta;
 
         hoverTile.set(
-            PlayerSystem.getHoverTileX(),
-            PlayerSystem.getHoverTileY()
+            PlayerSystem.getHoverTileThresholdX(),
+            PlayerSystem.getHoverTileThresholdY()
         );
 
         //TODO: change overlay bracket to render, resize, update base on current tile, not player mouse

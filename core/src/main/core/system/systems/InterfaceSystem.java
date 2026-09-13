@@ -7,6 +7,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import core.UiInputGate;
 import core.Window;
 import core.app.GameContext;
 import core.render.RenderLayer;
@@ -14,18 +15,20 @@ import core.system.ContextProvider;
 import core.system.GameSysCycle;
 import core.system.context.InterfaceContext;
 import ui.GameUI;
+import ui.InterfaceAction;
 import ui.PlayerHotbar;
 import ui.Style;
 
 public class InterfaceSystem implements GameSysCycle, ContextProvider<InterfaceContext> {
 
+    private GameContext context;
     private InterfaceContext interfaceContext;
 
     private final Window window;
     private final Stage stage;
-    private final Style style;
     private final Skin skin;
-
+    private final UiInputGate uiInputGate;
+    private final InterfaceAction UIaction;
 
     private final PlayerHotbar playerHotbar;
     private final GameUI gameUI;
@@ -38,27 +41,31 @@ public class InterfaceSystem implements GameSysCycle, ContextProvider<InterfaceC
 
 
     public InterfaceSystem(GameContext context) {
+        this.context = context;
         this.window = context.window;
 
-        skin = new Skin(Gdx.files.internal("ui/uiskin.json"));
-        stage = new Stage(new FitViewport(1280, 720));
-        style = new Style();
+        this.skin = new Skin(Gdx.files.internal("ui/uiskin.json"));
+        this.stage = new Stage(new FitViewport(window.getWindowWidth(), window.getWindowHeight()));
 
-        aldrichFont = Style.fonts.Aldrich.getFont(16, Color.WHITE);
+        this.uiInputGate = new UiInputGate(stage);
 
-        textStyle1 = style.getTextStyle(Style.textStyle.TEXT_STYLE_1);
+        this.UIaction = new InterfaceAction();
+
+        aldrichFont = Style.fonts.Aldrich.getFont();
+
+        textStyle1 = Style.getTextStyle(Style.textStyle.TEXT_STYLE_1);
 
         playerHotbar = new PlayerHotbar(
-            window, stage, skin, style, aldrichFont,
+            window, stage, skin, UIaction, aldrichFont,
             context.input
         );
 
-        gameUI = new GameUI(window, stage, skin, style);
+        gameUI = new GameUI(window, stage, skin);
 
         interfaceContext = new InterfaceContext(
             stage,
-            style,
             skin,
+            uiInputGate,
             gameUI,
             playerHotbar
         );
@@ -109,6 +116,10 @@ public class InterfaceSystem implements GameSysCycle, ContextProvider<InterfaceC
     @Override
     public InterfaceContext getContext() {
         return interfaceContext;
+    }
+
+    public UiInputGate getUiInputGate() {
+        return this.uiInputGate;
     }
 
 }

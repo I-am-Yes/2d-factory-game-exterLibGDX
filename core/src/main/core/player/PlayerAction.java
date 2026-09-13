@@ -1,9 +1,9 @@
 package core.player;
 
-import com.badlogic.gdx.math.Vector2;
-import core.app.GameContext;
+import core.UiInputGate;
 import core.system.systems.PlayerSystem;
 import data.map.asset.AssetType;
+import data.map.asset.BuildingType;
 import data.map.asset.FloorType;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -14,7 +14,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import core.AssetsHandler;
 import core.InputHandler;
 import core.world.World;
-import core.entities.BuildGhostLine;
+import core.player.mechanic.BuildGhostLine;
 import core.event.GameEvent;
 import core.event.PlayerEvent;
 
@@ -29,9 +29,9 @@ public class PlayerAction {
     private final Viewport viewport;
     private final SpriteBatch spriteBatch;
     private final AssetsHandler assets;
+    private final UiInputGate uiInputGate;
 
     private final Vector3 tmp = new Vector3();
-    private final Vector2 hoverTile = new Vector2();
 
     private AssetType selectedType;
 
@@ -43,7 +43,7 @@ public class PlayerAction {
 
     private float delta;
 
-    public PlayerAction(World world, Viewport viewport, Player player, InputHandler input, SpriteBatch playerSpriteBatch, ShapeRenderer shapeRenderer, AssetsHandler assets) {
+    public PlayerAction(World world, Viewport viewport, Player player, InputHandler input, UiInputGate uiInputGate, SpriteBatch playerSpriteBatch, ShapeRenderer shapeRenderer, AssetsHandler assets) {
         this.world = world;
         this.player = player;
         this.input = input;
@@ -52,64 +52,22 @@ public class PlayerAction {
         this.spriteBatch = playerSpriteBatch;
         this.assets = assets;
 
-        this.buildGhostLine = new BuildGhostLine(world, player, viewport, this, input, spriteBatch, shapeRenderer, assets);
+        this.uiInputGate = uiInputGate;
+
+        this.buildGhostLine = new BuildGhostLine(world, player, viewport, this, input, shapeRenderer, assets);
     }
 
     public void update(float delta) {
         this.delta = delta;
-
-        hoverTile.set(
-            PlayerSystem.getHoverTileX(),
-            PlayerSystem.getHoverTileY()
-        );
 
         buildGhostLine.update(getSelectedType());
 
         if (input.isKeyJustPressed(NUM_1)) clearSelection();
         selectingBlock(input, NUM_2, FloorType.SAND);
         selectingBlock(input, NUM_3, FloorType.STONE);
-        selectingBlock(input, NUM_4, FloorType.ROCK);
+        selectingBlock(input, NUM_4, BuildingType.HAZARD_BLOCK2);
 
-        if (placeMode == PlaceMode.ghost) {
-            return;
-        }
-        if (selectedType == null) return; //block placing when selectedType = null
-
-        if (input.isMousePressed(Input.Buttons.MIDDLE)) return; //panning = no place block
-
-//        int tx = screenToTileX(viewport, world);
-//        int ty = screenToTileY(viewport, world);
-
-        int tx = (int) hoverTile.x;
-        int ty = (int) hoverTile.y;
-
-        if (!world.isInBounds(tx, ty)) {
-            placeMode = PlaceMode.none;
-            return;
-        }
-
-        //handle mouse press, start placement
-        if (input.isMouseJustPressed(Input.Buttons.LEFT) && selectedType != null) {
-            selectX = tx;
-            selectY = ty;
-            placeMode = PlaceMode.placing;
-            GameEvent.BlockPlaceRequest.fire(selectX, selectY, selectedType);
-
-        }
-
-        //handle mouse drag, update line
-        if (input.isMousePressed(Input.Buttons.LEFT) && placeMode == PlaceMode.placing) {
-            selectX = tx;
-            selectY = ty;
-            GameEvent.BlockPlaceRequest.fire(selectX, selectY, selectedType);
-        }
-
-        //handle mouse release, end placement
-        if (input.isMouseReleased(Input.Buttons.LEFT) && placeMode == PlaceMode.placing) {
-
-            placeMode = PlaceMode.none;
-        }
-
+        updatePlacingBlock();
     }
 
     public void render() {}
@@ -142,6 +100,49 @@ public class PlayerAction {
         return buildGhostLine;
     }
 
+    private void updatePlacingBlock() {
+        if (input.isMouseReleased(Input.Buttons.LEFT)) {
+            if (placeMode == PlaceMode.placing) {
+                placeMode = PlaceMode.none;
+            }
+            return;
+        }
+
+        if (uiInputGate.isPointerOverGUI()) {
+            if (placeMode == PlaceMode.placing) {
+                placeMode = PlaceMode.none;
+            }
+            return;
+        }
+
+        if (placeMode == PlaceMode.ghost
+            || selectedType == null
+            || input.isMousePressed(Input.Buttons.MIDDLE)
+            || !input.isMousePressed(Input.Buttons.LEFT)) {
+            return;
+        }
+
+        int tx = PlayerSystem.getHoverTileThresholdX();
+        int ty = PlayerSystem.getHoverTileThresholdY();
+
+        if (!world.isInBounds(tx, ty)) {
+            placeMode = PlaceMode.none;
+            return;
+        }
+
+        if (input.isMouseJustPressed(Input.Buttons.LEFT)) {
+            placeMode = PlaceMode.placing;
+        }
+
+        if (placeMode != PlaceMode.placing) {
+            return;
+        }
+
+        selectX = tx;
+        selectY = ty;
+        GameEvent.BlockPlaceRequest.fire(tx, ty, selectedType);
+    }
+
     private void selectingBlock(InputHandler input, int key, AssetType selectedType) {
         if (input.isKeyJustPressed(key)) {
             this.selectedType = selectedType;
@@ -163,8 +164,5 @@ public class PlayerAction {
     private int screenToTileY(Viewport viewport, World world) {
         //no need duplicate tmp.set(...);
         return MathUtils.floor(tmp.y / world.getTileSize());
-    }
-    public SpriteBatch getSpriteBatch() {
-        return this.spriteBatch;
     }
 }

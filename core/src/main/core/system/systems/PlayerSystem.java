@@ -8,6 +8,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import core.AssetsHandler;
 import core.InputHandler;
+import core.UiInputGate;
 import core.Window;
 import core.system.ContextProvider;
 import core.system.context.PlayerContext;
@@ -36,12 +37,13 @@ public class PlayerSystem implements GameSysCycle, ContextProvider<PlayerContext
     private GhostOverlay ghostOverlay;
     private SpriteBatch playerSpriteBatch;
     private ShapeRenderer playerShapeRenderer;
+    private UiInputGate uiInputGate;
 
     private PlayerContext playerContext;
 
-    public static final float HOVER_THRESHOLD = 0.20f;
+    public static final float HOVER_THRESHOLD = 0.15f;
     private final Vector3 mouseWorld = new Vector3();
-    private static final Vector2 hoverTile = new Vector2();
+    private static final Vector2 hoverTileThreshold = new Vector2();
     private boolean hoverTargetInitialized;
 
     private float delta;
@@ -55,6 +57,8 @@ public class PlayerSystem implements GameSysCycle, ContextProvider<PlayerContext
         this.input = context.input;
 
         this.delta = context.getDeltaTime();
+
+        this.uiInputGate = context.getSystem(InterfaceSystem.class).getUiInputGate();
 
         this.playerSpriteBatch = new SpriteBatch();
         this.playerShapeRenderer = new ShapeRenderer();
@@ -70,6 +74,7 @@ public class PlayerSystem implements GameSysCycle, ContextProvider<PlayerContext
             viewport,
             player,
             input,
+            uiInputGate,
             playerSpriteBatch,
             playerShapeRenderer,
             assets
@@ -150,7 +155,7 @@ public class PlayerSystem implements GameSysCycle, ContextProvider<PlayerContext
         float tileSize = context.world.getTileSize();
         OverlayHelper.updateMouseWorld(context.viewport, mouseWorld);
         if (!hoverTargetInitialized) {
-            hoverTile.set(
+            hoverTileThreshold.set(
                 MathUtils.floor(mouseWorld.x / tileSize),
                 MathUtils.floor(mouseWorld.y / tileSize)
             );
@@ -159,7 +164,7 @@ public class PlayerSystem implements GameSysCycle, ContextProvider<PlayerContext
         OverlayHelper.updateTileWithThreshold(
             mouseWorld,
             tileSize,
-            hoverTile
+            hoverTileThreshold
         );
     }
 
@@ -171,12 +176,16 @@ public class PlayerSystem implements GameSysCycle, ContextProvider<PlayerContext
         return playerContext;
     }
 
-    public static int getHoverTileX() {
-        return (int) hoverTile.x;
+    public static int getHoverTileThresholdX() {
+        return (int) hoverTileThreshold.x;
     }
 
-    public static int getHoverTileY() {
-        return (int) hoverTile.y;
+    public static int getHoverTileThresholdY() {
+        return (int) hoverTileThreshold.y;
+    }
+
+    public static Vector2 getHoverTileThreshold() {
+        return hoverTileThreshold;
     }
 
     @Override

@@ -1,6 +1,5 @@
 package core.player.mechanic;
 
-import core.app.GameContext;
 import core.player.Player;
 import core.player.PlayerAction;
 import core.system.systems.PlayerSystem;
@@ -14,7 +13,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import core.AssetsHandler;
-import core.entities.BuildGhostLine;
 import core.world.World;
 
 public class GhostOverlay {
@@ -61,8 +59,8 @@ public class GhostOverlay {
     public void update(float delta) {
 
         hoverTile.set(
-            PlayerSystem.getHoverTileX(),
-            PlayerSystem.getHoverTileY()
+            PlayerSystem.getHoverTileThresholdX(),
+            PlayerSystem.getHoverTileThresholdY()
         );
 
         if (type == null) {

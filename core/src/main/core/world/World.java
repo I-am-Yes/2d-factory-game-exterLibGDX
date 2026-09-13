@@ -178,18 +178,15 @@ public class World {
         return ghostGrid[tileX][tileY];
     }
 
-    public FloorType[][] getFloorGrid() {
-        return floorGrid;
-    }
-
-
     public boolean isInBounds(int tileX, int tileY) {
         return tileX >= 0 && tileX < tilesWidth && tileY >= 0 && tileY < tilesHeight;
     }
 
     public boolean hasTile(int tileX, int tileY) {
         if (!isInBounds(tileX, tileY)) return false;
-        return floorLayer.getCell(tileX, tileY) != null;
+        if (getFloorAt(tileX, tileY) != null) return true;
+        if (getBuildingAt(tileX, tileY) != null) return true;
+        return getGhostTileAt(tileX, tileY) != null;
     }
 
     public boolean isGhostTile(int tileX, int tileY) {
@@ -331,8 +328,14 @@ public class World {
                 return;
             }
 
+            //TODO: get a dynamic multi layer checker system.
             //floor tile type already there
             if (getFloorAt(request.tileX,  request.tileY) == request.type) {
+                request.cancel();
+                return;
+            }
+
+            if (getBuildingAt(request.tileX,  request.tileY) == request.type) {
                 request.cancel();
                 return;
             }
@@ -370,6 +373,16 @@ public class World {
 
     public MapConfig getMapConfig() {
         return mapConfig;
+    }
+
+    public FloorType[][] getFloorGrid() {
+        return floorGrid;
+    }
+    public BuildingType[][] getBuildingGrid() {
+        return buildingGrid;
+    }
+    public GhostType[][] getGhostGrid() {
+        return ghostGrid;
     }
 
 }

@@ -1,4 +1,4 @@
-package core.entities;
+package core.player.mechanic;
 
 import data.map.asset.AssetType;
 import com.badlogic.gdx.Input;
@@ -28,7 +28,6 @@ public class BuildGhostLine {
     private final InputHandler input;
     private final Viewport viewport;
     private final ShapeRenderer shapeRenderer;
-    private final SpriteBatch spriteBatch;
     private final AssetsHandler assetsHandler;
     private final PlayerAction playerAction;
 
@@ -46,7 +45,8 @@ public class BuildGhostLine {
 
     private final float snapAngle = MathUtils.PI / 4f; //45, 90, ... degrees
 
-    private float width;
+    private final float DEBUG_LINE_WIDTH;
+    private float GHOST_LINE_THICKNESS;
     private Color color;
 
     private final float tileSize;
@@ -67,17 +67,17 @@ public class BuildGhostLine {
     }
     private PlacingAlgorithm placingAlgorithm = PlacingAlgorithm.THICK_LINE;
 
-    public BuildGhostLine(World world, Player player, Viewport viewport, PlayerAction playerAction, InputHandler input, SpriteBatch spriteBatch, ShapeRenderer shapeRenderer, AssetsHandler assetsHandler) {
+    public BuildGhostLine(World world, Player player, Viewport viewport, PlayerAction playerAction, InputHandler input, ShapeRenderer shapeRenderer, AssetsHandler assetsHandler) {
         this.world = world;
         this.player = player;
         this.input = input;
         this.viewport = viewport;
         this.shapeRenderer = shapeRenderer;
-        this.spriteBatch = spriteBatch;
         this.assetsHandler = assetsHandler;
         this.playerAction = playerAction;
 
-        this.width = 0.01f;
+        this.GHOST_LINE_THICKNESS = Float.MIN_NORMAL;
+        this.DEBUG_LINE_WIDTH = 0.05f;
         this.color = Color.WHITE;
         this.tileSize = world.getTileSize();
     }
@@ -249,6 +249,14 @@ public class BuildGhostLine {
         return drawLineMode;
     }
 
+    public float getGHOST_LINE_THICKNESS() {
+        return GHOST_LINE_THICKNESS;
+    }
+
+    public void setGHOST_LINE_THICKNESS(float GHOST_LINE_THICKNESS) {
+        this.GHOST_LINE_THICKNESS = GHOST_LINE_THICKNESS;
+    }
+
     private PlanBuilder<AssetType> registLinePlan(Array<Vector2> tiledLine, AssetType type) {
         if (tiledLine == null || type == null) return null;
         PlanBuilder<AssetType> plan = new PlanBuilder<>();
@@ -279,7 +287,7 @@ public class BuildGhostLine {
         return tileAlgorithm.thickLineTiles(
             worldStart.x, worldStart.y,
             worldTarget.x, worldTarget.y,
-            width, tileSize
+            GHOST_LINE_THICKNESS, tileSize
         );
     }
 
@@ -294,32 +302,42 @@ public class BuildGhostLine {
     }
 
     private void drawFreeLine() {
-        shapeRenderer.setColor(new Color(color));
-
-        worldTarget.set(screenToWorld(mouseScreenTarget));
-        worldTarget = tileToWorld(worldTarget);
-
-        shapeRenderer.rectLine(worldStart.x, worldStart.y, worldTarget.x, worldTarget.y, width);
+        worldTarget = tileToWorld(worldTarget.set(screenToWorld(mouseScreenTarget)));
+        rectDebugLine(
+            worldTarget.x,
+            worldTarget.y
+        );
     }
 
     private void drawTileSnappedLine() {
-        shapeRenderer.setColor(new Color(color));
-
-        worldTarget.set(screenToTile(mouseScreenTarget));
-        worldTarget = tileToMiddleTile(worldTarget);
-
-
-        shapeRenderer.rectLine(worldStart.x, worldStart.y, worldTarget.x, worldTarget.y, width);
+        worldTarget = tileToMiddleTile(worldTarget.set(screenToTile(mouseScreenTarget)));
+        rectDebugLine(
+            worldTarget.x,
+            worldTarget.y
+        );
     }
 
     private void drawAngleSnappedLine() {
-        shapeRenderer.setColor(new Color(color));
+        worldTarget = snapToAngleVector3(tileToMiddleTile(worldTarget.set(screenToTile(mouseScreenTarget))));
+        rectDebugLine(
+            worldTarget.x,
+            worldTarget.y
+        );
+    }
 
-        worldTarget.set(screenToTile(mouseScreenTarget));
-        worldTarget = tileToMiddleTile(worldTarget);
-        worldTarget = snapToAngleVector3(worldStart, worldTarget);
 
-        shapeRenderer.rectLine(worldStart.x, worldStart.y, worldTarget.x, worldTarget.y, width);
+    private void rectDebugLine(float endX, float endY) {
+        rectDebugLine(worldStart.x, worldStart.y, endX, endY);
+    }
+
+    private void rectDebugLine(float startX, float startY, float endX, float endY) {
+        rectDebugLine(startX, startY, endX, endY, DEBUG_LINE_WIDTH, color);
+    }
+
+    private void rectDebugLine(float startX, float startY, float endX, float endY, float thickness, Color color) {
+        shapeRenderer.setColor(color);
+        shapeRenderer.rectLine(startX, startY, endX, endY, thickness);
+
     }
 
     private DrawLineMode getCurrentLineMode() {
@@ -365,6 +383,10 @@ public class BuildGhostLine {
     private Vector3 tileToMiddleTile(Vector3 temp) {
         Vector3 tempVec = tileToWorldTile(temp);
         return new Vector3(tempVec.x + tileSize / 2.1f, tempVec.y + tileSize / 2.1f, 0);
+    }
+
+    private Vector3 snapToAngleVector3(Vector3 target) {
+        return snapToAngleVector3(worldStart, target);
     }
 
     private Vector3 snapToAngleVector3(Vector3 start, Vector3 target) {
