@@ -57,7 +57,7 @@ public class InterfaceSystem implements GameSysCycle, ContextProvider<InterfaceC
 
         playerHotbar = new PlayerHotbar(
             window, stage, skin, UIaction, aldrichFont,
-            context.input
+            context.input, context.assets
         );
 
         gameUI = new GameUI(window, stage, skin);

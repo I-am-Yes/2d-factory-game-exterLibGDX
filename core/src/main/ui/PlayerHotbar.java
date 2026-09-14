@@ -5,6 +5,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.*;
@@ -14,8 +15,13 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.Scaling;
+import core.AssetsHandler;
 import core.InputHandler;
 import core.Window;
+import data.map.asset.AssetType;
+import data.map.asset.BuildingType;
+import data.map.asset.FloorType;
 
 public class PlayerHotbar {
     private final Window window;
@@ -33,7 +39,13 @@ public class PlayerHotbar {
     private final Image selectionBorder;
 
     private final TextureAtlas hotbarSkin;
+    private final TextureAtlas tilesAtlas;
     private final InputHandler input;
+    private final AssetsHandler assets;
+
+    private final Image[] hotbarItemIcons;
+
+    private final float ICON_CONTAINER_PADDING = 6f;
 
     private static final int[] HOTBAR_KEYS = {
         Input.Keys.NUM_1, Input.Keys.NUM_2, Input.Keys.NUM_3,
@@ -41,13 +53,16 @@ public class PlayerHotbar {
         Input.Keys.NUM_7, Input.Keys.NUM_8, Input.Keys.NUM_9
     };
 
-    public PlayerHotbar(Window window, Stage stage, Skin skin, InterfaceAction UIaction, BitmapFont aldrichFont, InputHandler input) {
+    public PlayerHotbar(Window window, Stage stage, Skin skin, InterfaceAction UiAction, BitmapFont aldrichFont, InputHandler input, AssetsHandler assets) {
         this.window = window;
         this.stage = stage;
         this.skin = skin;
         this.aldrichFont = aldrichFont;
         this.input = input;
-        this.UIaction = UIaction;
+        this.UIaction = UiAction;
+        this.assets = assets;
+
+        this.tilesAtlas = assets.getTilesAtlas();
 
         textStyle1 = Style.getTextStyle(Style.textStyle.TEXT_STYLE_1);
 
@@ -77,6 +92,8 @@ public class PlayerHotbar {
 
         hotbar = new Table();
         hotbarItemButtons = new TextButton[9];
+        hotbarItemIcons = new Image[9];
+
         hotbarItemGroup = new ButtonGroup<>();
 
         hotbar.setFillParent(false);
@@ -105,8 +122,18 @@ public class PlayerHotbar {
                 hotbarStyle
             );
 
+            Image icon = new Image();
+            icon.setScaling(Scaling.fit);
+            icon.setTouchable(Touchable.disabled);
+
+            Container<Image> iconContainer = new Container<>(icon);
+            iconContainer.fill();
+            iconContainer.pad(ICON_CONTAINER_PADDING);
+            iconContainer.setTouchable(Touchable.disabled);
+
             Stack slot = new Stack();
             slot.add(button);
+            slot.add(iconContainer);
 
             final boolean[] hovering = { false };
 
@@ -153,7 +180,7 @@ public class PlayerHotbar {
             float generalDuration = 0.08f;
 
 
-            UIaction.addHoverEffect(button,
+            UiAction.addHoverEffect(button,
                 () -> Actions.moveTo(0f, 4f, generalDuration),
                 () -> Actions.moveTo(0f, 0f, generalDuration),
                 () -> {
@@ -163,7 +190,7 @@ public class PlayerHotbar {
 
                         Vector2 target = slot.localToStageCoordinates(new Vector2(0f, 0f));
 
-                        UIaction.moveTo(selectionBorder, target.x, target.y + 4f, generalDuration);
+                        UiAction.moveTo(selectionBorder, target.x, target.y + 4f, generalDuration);
                     }
                 },
                 () -> {
@@ -172,18 +199,29 @@ public class PlayerHotbar {
                     if (button.isChecked()) {
                         Vector2 target = slot.localToStageCoordinates(new Vector2(0f, 0f));
 
-                        UIaction.moveTo(selectionBorder, target.x, target.y, generalDuration);
+                        UiAction.moveTo(selectionBorder, target.x, target.y, generalDuration);
                     }
                 }
             );
 
 
-            UIaction.DefaultHoverEffect(button, generalDuration, generalDuration);
+            UiAction.DefaultHoverEffect(button, generalDuration, generalDuration);
 
             hotbarItemButtons[i] = button;
+            hotbarItemIcons[i] = icon;
             hotbarItemGroup.add(button);
             hotbar.add(slot).pad(1).size(50, 50);
         }
+
+
+        setHotbarItem(1, BuildingType.HAZARD_BLOCK2);
+
+        setHotbarItems(
+            2, BuildingType.HAZARD_BLOCK,
+            3, FloorType.SAND,
+            4, FloorType.STONE,
+            5, FloorType.MARBLE
+        );
 
     }
 
@@ -202,6 +240,40 @@ public class PlayerHotbar {
             if (input.isKeyJustPressed(HOTBAR_KEYS[i])) {
                 hotbarItemButtons[i].setChecked(!hotbarItemButtons[i].isChecked());
                 break;
+            }
+        }
+    }
+
+    public void setHotbarItems(Object... values) {
+        if (values.length % 2 != 0) {
+            throw new IllegalArgumentException(
+                "Expected slot/type pairs."
+            );
+        }
+        for (int i = 0; i < values.length; i += 2) {
+            if (!(values[i] instanceof Integer slotNumber)) {
+                throw new IllegalArgumentException(
+                    "Expected an integer slot number."
+                );
+            }
+            if (!(values[i + 1] instanceof AssetType type)) {
+                throw new IllegalArgumentException(
+                    "Expected an AssetType."
+                );
+            }
+            setHotbarItem(slotNumber - 1, type);
+        }
+    }
+
+    private void setHotbarItem(int index, AssetType type) {
+        if (index < 0 || index >= hotbarItemButtons.length) return;
+        TextureRegionDrawable icon;
+        if (type != null) {
+            TiledMapTile tile = assets.getTile(type);
+
+            if (tile != null) {
+                icon = new TextureRegionDrawable(tile.getTextureRegion());
+                hotbarItemIcons[index].setDrawable(icon);
             }
         }
     }

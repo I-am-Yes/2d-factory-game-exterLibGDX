@@ -10,6 +10,7 @@ public final class InputDesktop {
     private InputDesktop() {}
 
     public static void init(GameContext context) {
+
         UiInputGate uiInputGate = context.getContext(InterfaceContext.class).uiInputGate;
         InterfaceSystem interfaceSystem = context.getSystem(InterfaceSystem.class);
 
