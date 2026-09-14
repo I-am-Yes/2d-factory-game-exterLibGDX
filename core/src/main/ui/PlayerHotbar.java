@@ -109,7 +109,6 @@ public class PlayerHotbar {
         textLabel.setText("text label");
         textLabel.setAlignment(Align.center);
 
-
         hotbar.setTouchable(Touchable.childrenOnly);
         hotbar.setOrigin(Align.center, Align.center);
         hotbar.bottom();

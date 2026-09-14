@@ -115,9 +115,6 @@ public class PlayerSystem implements GameSysCycle, ContextProvider<PlayerContext
     public void update(float delta) {
         updateHoverThreshold();
 
-        //TODO: change this
-        controller.setFullScreenByInput();
-
         player.update(delta);
         action.update(delta);
         overlay.update(delta);

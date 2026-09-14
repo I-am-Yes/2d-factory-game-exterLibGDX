@@ -4,15 +4,11 @@ import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import core.AssetsHandler;
 import core.InputHandler;
 import core.Window;
-import core.system.systems.CameraSystem;
-import core.system.systems.DebugSystem;
-import core.system.systems.PlayerSystem;
-import core.system.systems.RenderSystem;
+import core.system.systems.*;
 import core.world.World;
 import data.debug.DebugType;
 import data.map.MapConfig;
 import data.map.PresetMap;
-import core.system.systems.InterfaceSystem;
 
 public final class GameStart {
 
@@ -49,6 +45,8 @@ public final class GameStart {
         context.addSystem(new PlayerSystem(context));
         context.addSystem(new RenderSystem(context));
         context.addSystem(new CameraSystem(context, context.getSystemContext(PlayerSystem.class)));
+
+        context.addSystem(new EntrySystem(context, context.input));
 
         context.addSystem(new DebugSystem(context));
 

@@ -1,6 +1,7 @@
 package core;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Graphics;
 
 public class Window {
 
@@ -9,6 +10,7 @@ public class Window {
     private int foregroundFPS = 180;
 
     private boolean vSync;
+    private boolean isBorderlessFullscreen = false;
 
     public Window() {}
 
@@ -34,12 +36,31 @@ public class Window {
         Gdx.graphics.setWindowedMode(windowWidth, windowHeight);
     }
 
-    public boolean setWindowFullscreen(boolean fullscreen) {
+    public void setWindowFullscreen() {
+        setWindowFullscreen(!isFullscreen());
+    }
+
+    public void setWindowFullscreen(boolean fullscreen) {
         if (fullscreen) {
-            return Gdx.graphics.setFullscreenMode(Gdx.graphics.getDisplayMode());
+            Gdx.graphics.setFullscreenMode(Gdx.graphics.getDisplayMode());
         } else {
-            return Gdx.graphics.setWindowedMode(windowWidth, windowHeight);
+            Gdx.graphics.setWindowedMode(windowWidth, windowHeight);
         }
+    }
+
+    public void setBorderlessFullscreen() {
+        setBorderlessFullscreen(!isBorderlessFullscreen());
+    }
+
+    public void setBorderlessFullscreen(boolean borderlessFullscreen) {
+        if (borderlessFullscreen) {
+            Graphics.DisplayMode mode = Gdx.graphics.getDisplayMode();
+            Gdx.graphics.setWindowedMode(mode.width, mode.height);
+            isBorderlessFullscreen = true;
+            return;
+        }
+        Gdx.graphics.setWindowedMode(windowWidth, windowHeight);
+        isBorderlessFullscreen = false;
     }
 
     public void exitFullscreen() {
@@ -56,6 +77,10 @@ public class Window {
 
     public boolean isFullscreen() {
         return Gdx.graphics.isFullscreen();
+    }
+
+    public boolean isBorderlessFullscreen() {
+        return isBorderlessFullscreen;
     }
 
     public int getWindowWidth() {

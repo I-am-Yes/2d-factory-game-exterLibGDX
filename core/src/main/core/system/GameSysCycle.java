@@ -1,5 +1,6 @@
 package core.system;
 
+import core.app.UpdateDomain;
 import core.render.RenderLayer;
 
 public interface GameSysCycle {
@@ -15,4 +16,8 @@ public interface GameSysCycle {
     default void resize(int width, int height) {}
 
     default void dispose() {}
+
+    default UpdateDomain updateDomain() {
+        return UpdateDomain.GAME_DEFAULT;
+    }
 }

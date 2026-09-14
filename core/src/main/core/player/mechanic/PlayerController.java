@@ -28,12 +28,6 @@ public class PlayerController {
 
     }
 
-    public void setFullScreenByInput() {
-        if (input.isKeyJustPressed(Input.Keys.F11)) {
-            window.setWindowFullscreen(!window.isFullscreen());
-        }
-    }
-
     public void moveCharacter(Player player, Sprite sprite, float delta, float speed, float worldW, float worldH) {
         float inputX = 0f;
         float inputY = 0f;

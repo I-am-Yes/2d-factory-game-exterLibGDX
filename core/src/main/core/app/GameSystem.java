@@ -72,9 +72,21 @@ public final class GameSystem {
         return contextClass.cast(systemContext);
     }
 
-    public void update(float delta) {
+    public void update(float realDelta, float gameDelta) {
         for (int i = 0; i < systems.size; i++) {
-            systems.get(i).update(delta);
+            GameSysCycle system = systems.get(i);
+
+            float delta;
+            if (system.updateDomain() == UpdateDomain.REAL_TIME) {
+                delta = realDelta;
+            } else if (system.updateDomain() == UpdateDomain.GAME_DEFAULT) {
+                delta = gameDelta;
+            } else {
+                throw new IllegalStateException(
+                    "Unknown update domain: " + system.updateDomain()
+                );
+            }
+            system.update(delta);
         }
     }
 

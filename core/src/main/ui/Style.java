@@ -62,6 +62,10 @@ public class Style {
         }
     }
 
+    public static BitmapFont getFont(fonts font) {
+        return font.getFont();
+    }
+
     public static BitmapFont createFont(fonts font, @Null Integer fontSize, @Null Float fontScale, @Null Color fontColor) {
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal(font.getFontPath()));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();

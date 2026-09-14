@@ -3,9 +3,9 @@ package core.system.context;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import core.UiInputGate;
-import ui.GameUI;
+import ui.game.GameUI;
 import ui.PlayerHotbar;
-import ui.Style;
+import ui.game.SettingsPanel;
 
 public class InterfaceContext {
 
@@ -16,8 +16,9 @@ public class InterfaceContext {
 
     public GameUI gameUI;
     public PlayerHotbar playerHotbar;
+    public SettingsPanel settingsPanel;
 
-    public InterfaceContext(Stage stage, Skin skin, UiInputGate uiInputGate, GameUI gameUI, PlayerHotbar playerHotbar) {
+    public InterfaceContext(Stage stage, Skin skin, UiInputGate uiInputGate, GameUI gameUI, PlayerHotbar playerHotbar, SettingsPanel settingsPanel) {
         this.stage = stage;
         this.skin = skin;
 
@@ -25,6 +26,7 @@ public class InterfaceContext {
 
         this.gameUI = gameUI;
         this.playerHotbar = playerHotbar;
+        this.settingsPanel = settingsPanel;
     }
 
 }

@@ -1,7 +1,6 @@
 package core.system.systems;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -10,14 +9,14 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import core.UiInputGate;
 import core.Window;
 import core.app.GameContext;
+import core.app.UpdateDomain;
 import core.render.RenderLayer;
 import core.system.ContextProvider;
 import core.system.GameSysCycle;
 import core.system.context.InterfaceContext;
-import ui.GameUI;
-import ui.InterfaceAction;
-import ui.PlayerHotbar;
-import ui.Style;
+import ui.*;
+import ui.game.GameUI;
+import ui.game.SettingsPanel;
 
 public class InterfaceSystem implements GameSysCycle, ContextProvider<InterfaceContext> {
 
@@ -29,9 +28,11 @@ public class InterfaceSystem implements GameSysCycle, ContextProvider<InterfaceC
     private final Skin skin;
     private final UiInputGate uiInputGate;
     private final InterfaceAction UIaction;
+    private final InterfaceCreate interfaceCreate;
 
     private final PlayerHotbar playerHotbar;
     private final GameUI gameUI;
+    private final SettingsPanel settingsPanel;
 
     private float delta;
 
@@ -48,7 +49,7 @@ public class InterfaceSystem implements GameSysCycle, ContextProvider<InterfaceC
         this.stage = new Stage(new FitViewport(window.getWindowWidth(), window.getWindowHeight()));
 
         this.uiInputGate = new UiInputGate(stage);
-
+        this.interfaceCreate = new InterfaceCreate();
         this.UIaction = new InterfaceAction();
 
         aldrichFont = Style.fonts.Aldrich.getFont();
@@ -62,12 +63,15 @@ public class InterfaceSystem implements GameSysCycle, ContextProvider<InterfaceC
 
         gameUI = new GameUI(window, stage, skin);
 
+        settingsPanel = new SettingsPanel(stage, skin, interfaceCreate);
+
         interfaceContext = new InterfaceContext(
             stage,
             skin,
             uiInputGate,
             gameUI,
-            playerHotbar
+            playerHotbar,
+            settingsPanel
         );
     }
 
@@ -111,6 +115,12 @@ public class InterfaceSystem implements GameSysCycle, ContextProvider<InterfaceC
     @Override
     public RenderLayer renderLayer() {
         return RenderLayer.UI_LAYER_3;
+    }
+
+    //game UI should be real time update
+    @Override
+    public UpdateDomain updateDomain() {
+        return UpdateDomain.REAL_TIME;
     }
 
     @Override
