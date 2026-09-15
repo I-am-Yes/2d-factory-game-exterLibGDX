@@ -129,7 +129,15 @@ public class UiHelper {
     }
 
     public Window configsPanel(Window panel, Skin skin, BitmapFont font, float width, float height, float posX, float posY, float pad, Color backgroundColor, Drawable backgroundImage) {
-        return configsPanel(panel, panel.getTitleLabel().getText().toString(), skin, font, width, height, posX, posY, pad, pad, pad, pad, backgroundColor, backgroundImage, false, false, false, false, true);
+        if (panel == null) {
+            return configsPanel(null, null, skin, font, width, height,
+                posX, posY, pad, pad, pad, pad,
+                backgroundColor, backgroundImage,
+                false, false, false, false, true);
+        }
+        return configsPanel(panel, panel.getTitleLabel().getText().toString(),
+            skin, font, width, height, posX, posY, pad, pad, pad, pad, backgroundColor,
+            backgroundImage, false, false, false, false, true);
     }
 
     public Window configsPanel(
