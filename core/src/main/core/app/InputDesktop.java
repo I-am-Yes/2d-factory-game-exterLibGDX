@@ -24,8 +24,6 @@ public final class InputDesktop {
         multiplexer.addProcessor(interfaceSystem.getStage());
 
 
-
-
         Gdx.input.setInputProcessor(multiplexer);
     }
 

@@ -126,6 +126,11 @@ public class InterfaceSystem implements GameSysCycle, ContextProvider<InterfaceC
     }
 
     @Override
+    public boolean updateWhenPaused() {
+        return true;
+    }
+
+    @Override
     public InterfaceContext getContext() {
         return interfaceContext;
     }

@@ -22,7 +22,7 @@ public class InputHandler extends InputAdapter {
     private float scrollAmountY = 0f;
 
     public InputHandler() {
-//        Gdx.input.setInputProcessor(this);
+        Gdx.input.setInputProcessor(this);
     }
 
     @Override

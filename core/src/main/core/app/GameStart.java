@@ -6,23 +6,26 @@ import core.InputHandler;
 import core.Window;
 import core.system.systems.*;
 import core.world.World;
-import data.debug.DebugType;
 import data.map.MapConfig;
 import data.map.PresetMap;
 
 public final class GameStart {
 
-    public static GameContext create() {
+    public static GameContext createLoadingContext() {
         GameContext context = new GameContext();
 
-        //TODO: change every parameter pass into creates to be context.
         context.window = new Window();
         context.window.createGameWindow();
-
         context.window.setVSync(true);
+        context.window.setForegroundFPS(0);
 
         context.assets = new AssetsHandler();
-        context.assets.load();
+        context.assets.queueLoad();
+
+        return context;
+    }
+
+    public static void finishGameStart(GameContext context) {
 
         context.mapConfig = new MapConfig();
         //TODO: change to better seed system later
@@ -74,9 +77,6 @@ public final class GameStart {
 
         );
 
-        context.window.setForegroundFPS(0);
-
-        return context;
     }
 
 }

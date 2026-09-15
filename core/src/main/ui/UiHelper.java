@@ -3,11 +3,14 @@ package ui;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 
 import java.util.Objects;
@@ -34,6 +37,61 @@ public class UiHelper {
         label.setSize(width, height);
         label.setAlignment(alignment);
         return label;
+    }
+
+    public CheckBox createCheckbox(Skin skin, String text, Runnable actionOnChecked, Runnable actionOnUnchecked) {
+        CheckBox checkBox = new CheckBox(text, skin);
+        checkBox.setChecked(false);
+        checkBox.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                if (checkBox.isChecked()) {
+                    if (actionOnChecked != null) actionOnChecked.run();
+                } else {
+                    if (actionOnUnchecked != null) actionOnUnchecked.run();
+                }
+            }
+        });
+        return checkBox;
+    }
+
+    public ScrollPane configScrollPane(ScrollPane scrollPane,boolean horizontalScroll, boolean verticalScroll, boolean forceScrollX, boolean forceScrollY, boolean fadeScrollBar) {
+        scrollPane.setScrollingDisabled(verticalScroll, horizontalScroll);
+        scrollPane.setForceScroll(forceScrollX, forceScrollY);
+        scrollPane.setFadeScrollBars(fadeScrollBar);
+        return scrollPane;
+    }
+
+    public ScrollPane createScrollPane(Skin skin, Table table) {
+        return createScrollPane(skin, table, false, true, false, true, false);
+    }
+
+    public ScrollPane createScrollPane(Skin skin, Table table,boolean horizontalScroll, boolean verticalScroll, boolean forceScrollX, boolean forceScrollY, boolean fadeScrollBar) {
+        ScrollPane scrollPane = new ScrollPane(table, skin);
+        scrollPane.setScrollingDisabled(verticalScroll, horizontalScroll);
+        scrollPane.setForceScroll(forceScrollX, forceScrollY);
+        scrollPane.setFadeScrollBars(fadeScrollBar);
+        return scrollPane;
+    }
+
+    public ScrollPane betterScrollBar(Skin skin, ScrollPane scrollPane) {
+        scrollPane.setStyle(betterScrollBar(skin, 8f, false));
+        return scrollPane;
+    }
+
+    public ScrollPane.ScrollPaneStyle betterScrollBar(Skin skin, float scrollbarWidth, boolean barBackground) {
+        ScrollPane.ScrollPaneStyle style =
+            new ScrollPane.ScrollPaneStyle(
+                skin.get(ScrollPane.ScrollPaneStyle.class)
+            );
+        TextureRegionDrawable thinKnob =
+            new TextureRegionDrawable(skin.getRegion("scrollbar"));
+        thinKnob.setMinWidth(scrollbarWidth);
+        style.vScrollKnob = thinKnob;
+        if (!barBackground) {
+            style.vScroll = null;
+        }
+        return style;
     }
 
     public Window createClosablePanel(Skin skin) {

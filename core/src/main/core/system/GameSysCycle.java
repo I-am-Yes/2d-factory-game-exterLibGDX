@@ -7,6 +7,8 @@ public interface GameSysCycle {
 
     default void update(float delta) {}
 
+    default void tickUpdate(float tickDelta) {}
+
     default void render() {}
 
     default RenderLayer renderLayer() {
@@ -19,5 +21,9 @@ public interface GameSysCycle {
 
     default UpdateDomain updateDomain() {
         return UpdateDomain.GAME_DEFAULT;
+    }
+
+    default boolean updateWhenPaused() {
+        return false;
     }
 }

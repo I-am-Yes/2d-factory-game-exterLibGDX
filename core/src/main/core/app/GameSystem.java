@@ -72,7 +72,7 @@ public final class GameSystem {
         return contextClass.cast(systemContext);
     }
 
-    public void update(float realDelta, float gameDelta) {
+    public void update(float realDelta, float gameDelta, boolean paused) {
         for (int i = 0; i < systems.size; i++) {
             GameSysCycle system = systems.get(i);
 
@@ -86,7 +86,15 @@ public final class GameSystem {
                     "Unknown update domain: " + system.updateDomain()
                 );
             }
-            system.update(delta);
+            if (!paused || system.updateWhenPaused()) {
+                system.update(delta);
+            }
+        }
+    }
+
+    public void tickUpdate(float tickDelta) {
+        for (int i = 0; i < systems.size; i++) {
+            systems.get(i).tickUpdate(tickDelta);
         }
     }
 

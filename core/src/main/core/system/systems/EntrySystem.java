@@ -4,6 +4,7 @@ import com.badlogic.gdx.Input;
 import core.InputHandler;
 import core.Window;
 import core.app.GameContext;
+import core.app.GameLoop;
 import core.system.ContextProvider;
 import core.system.GameSysCycle;
 import core.system.context.EntryContext;
@@ -53,6 +54,11 @@ public class EntrySystem implements GameSysCycle, ContextProvider<EntryContext> 
         } else {
             interfaceContext.settingsPanel.close();
         }
+    }
+
+    @Override
+    public boolean updateWhenPaused() {
+        return true;
     }
 
     @Override
