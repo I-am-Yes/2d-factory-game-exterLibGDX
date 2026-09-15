@@ -28,7 +28,7 @@ public class InterfaceSystem implements GameSysCycle, ContextProvider<InterfaceC
     private final Skin skin;
     private final UiInputGate uiInputGate;
     private final InterfaceAction UIaction;
-    private final InterfaceCreate interfaceCreate;
+    private final UiHelper uiHelper;
 
     private final PlayerHotbar playerHotbar;
     private final GameUI gameUI;
@@ -49,7 +49,7 @@ public class InterfaceSystem implements GameSysCycle, ContextProvider<InterfaceC
         this.stage = new Stage(new FitViewport(window.getWindowWidth(), window.getWindowHeight()));
 
         this.uiInputGate = new UiInputGate(stage);
-        this.interfaceCreate = new InterfaceCreate();
+        this.uiHelper = new UiHelper();
         this.UIaction = new InterfaceAction();
 
         aldrichFont = Style.fonts.Aldrich.getFont();
@@ -63,7 +63,9 @@ public class InterfaceSystem implements GameSysCycle, ContextProvider<InterfaceC
 
         gameUI = new GameUI(window, stage, skin);
 
-        settingsPanel = new SettingsPanel(stage, skin, interfaceCreate);
+        settingsPanel = new SettingsPanel(skin, uiHelper);
+
+        stage.addActor(settingsPanel);
 
         interfaceContext = new InterfaceContext(
             stage,

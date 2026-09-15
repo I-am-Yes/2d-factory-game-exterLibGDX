@@ -71,7 +71,7 @@ public final class GameStart {
 
         //debug testers
         context.getSystem(DebugSystem.class).getDebug().enableDebugModes(
-            DebugType.CAMERA
+
         );
 
         context.window.setForegroundFPS(0);

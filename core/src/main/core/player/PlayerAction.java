@@ -65,7 +65,9 @@ public class PlayerAction {
         if (input.isKeyJustPressed(NUM_1)) clearSelection();
         selectingBlock(input, NUM_2, FloorType.SAND);
         selectingBlock(input, NUM_3, FloorType.STONE);
-        selectingBlock(input, NUM_4, BuildingType.HAZARD_BLOCK2);
+        selectingBlock(input, NUM_4, BuildingType.HAZARD_BLOCK);
+        selectingBlock(input, NUM_5, BuildingType.HAZARD_BLOCK2);
+
 
         updatePlacingBlock();
     }
