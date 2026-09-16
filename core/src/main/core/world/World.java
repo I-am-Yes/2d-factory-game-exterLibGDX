@@ -299,12 +299,11 @@ public class World {
         return getFloorAt((int)tile.x, (int)tile.y);
     }
 
-    public String getTileName(Vector2 tile) {
-        return getTileName((int)tile.x, (int)tile.y);
+    public String getTileAssetName(Vector2 tile) {
+        return getTileAssetName((int)tile.x, (int)tile.y);
     }
 
-    public String getTileName(int tileX, int tileY) {
-        //TODO: later improve to in-game called tile name and to that
+    public String getTileAssetName(int tileX, int tileY) {
         GhostType<AssetType> ghost = getGhostTileAt(tileX, tileY);
 
         if (ghost != null) {
@@ -319,6 +318,30 @@ public class World {
         FloorType floor = getFloorAt(tileX, tileY);
         if (floor != null) {
             return floor.getNamePNG();
+        }
+
+        return "None";
+    }
+
+    public String getTileName(Vector2 tile) {
+        return getTileName((int)tile.x, (int)tile.y);
+    }
+
+    public String getTileName(int tileX, int tileY) {
+        GhostType<AssetType> ghost = getGhostTileAt(tileX, tileY);
+
+        if (ghost != null) {
+            return "Ghost " + ghost.getSourceType().getName();
+        }
+
+        BuildingType building = getBuildingAt(tileX, tileY);
+        if (building != null) {
+            return building.getName();
+        }
+
+        FloorType floor = getFloorAt(tileX, tileY);
+        if (floor != null) {
+            return floor.getName();
         }
 
         return "None";

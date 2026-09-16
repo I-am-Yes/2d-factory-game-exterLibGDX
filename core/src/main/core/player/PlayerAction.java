@@ -1,6 +1,7 @@
 package core.player;
 
 import core.UiInputGate;
+import core.system.systems.InterfaceSystem;
 import core.system.systems.PlayerSystem;
 import data.map.asset.AssetType;
 import data.map.asset.BuildingType;
@@ -17,6 +18,7 @@ import core.world.World;
 import core.player.mechanic.BuildGhostLine;
 import core.event.GameEvent;
 import core.event.PlayerEvent;
+import ui.PlayerHotbar;
 
 import static com.badlogic.gdx.Input.Keys.*;
 
@@ -43,7 +45,8 @@ public class PlayerAction {
 
     private float delta;
 
-    public PlayerAction(World world, Viewport viewport, Player player, InputHandler input, UiInputGate uiInputGate, SpriteBatch playerSpriteBatch, ShapeRenderer shapeRenderer, AssetsHandler assets) {
+    public PlayerAction(World world, Viewport viewport, Player player, InputHandler input, UiInputGate uiInputGate,
+                        SpriteBatch playerSpriteBatch, ShapeRenderer shapeRenderer, AssetsHandler assets) {
         this.world = world;
         this.player = player;
         this.input = input;
@@ -60,13 +63,10 @@ public class PlayerAction {
     public void update(float delta) {
         this.delta = delta;
 
+        this.selectedType = PlayerHotbar.getSelectedType();
+
         buildGhostLine.update(getSelectedType());
 
-        if (input.isKeyJustPressed(NUM_1)) clearSelection();
-        selectingBlock(input, NUM_2, FloorType.SAND);
-        selectingBlock(input, NUM_3, FloorType.STONE);
-        selectingBlock(input, NUM_4, BuildingType.HAZARD_BLOCK);
-        selectingBlock(input, NUM_5, BuildingType.HAZARD_BLOCK2);
 
 
         updatePlacingBlock();
@@ -92,10 +92,6 @@ public class PlayerAction {
 
     public AssetType getSelectedType() {
         return selectedType;
-    }
-
-    public void setSelectedType(AssetType selectedType) {
-        this.selectedType = selectedType;
     }
 
     public BuildGhostLine getBuildGhostLine() {
@@ -143,18 +139,6 @@ public class PlayerAction {
         selectX = tx;
         selectY = ty;
         GameEvent.BlockPlaceRequest.fire(tx, ty, selectedType);
-    }
-
-    private void selectingBlock(InputHandler input, int key, AssetType selectedType) {
-        if (input.isKeyJustPressed(key)) {
-            this.selectedType = selectedType;
-            PlayerEvent.blockSelected.fire(selectedType);
-        }
-    }
-
-    private void clearSelection() {
-        selectedType = null;
-        PlayerEvent.blockSelected.fire(null);
     }
 
     private int screenToTileX(Viewport viewport, World world) {

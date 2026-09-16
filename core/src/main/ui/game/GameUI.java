@@ -2,7 +2,6 @@ package ui.game;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -54,6 +53,7 @@ public class GameUI {
     private final Label worldMousePosLabel;
     private final Label worldMouseHoverPosLabel;
     private final Label worldMouseTileLabel;
+    private final Label worldMouseTileNameLabel;
 
     private final Table WorldInfoList;
     private final Table PerformanceList;
@@ -82,7 +82,8 @@ public class GameUI {
             worldVisibleChunksLabel = uiHelper.createTextLabel("Visible Chunks: ", textStyle1),
             worldLoadedChunkLabel = uiHelper.createTextLabel("loaded Chunk: ", textStyle1),
             worldChunkSizeLabel = uiHelper.createTextLabel("Chunk Size: ", textStyle1),
-            worldMouseTileLabel = uiHelper.createTextLabel("Mouse Tile: ", textStyle1)
+            worldMouseTileLabel = uiHelper.createTextLabel("Mouse Tile: ", textStyle1),
+            worldMouseTileNameLabel = uiHelper.createTextLabel("Tile Name: ", textStyle1)
         );
 
         WorldInfoList.setTouchable(Touchable.disabled);
@@ -141,7 +142,11 @@ public class GameUI {
                 + "x" + world.getChunkManager().getLoadedMapBounds().heightInChunks());
 
         worldMouseTileLabel.setText(
-            "Mouse Tile: " + world.getTileName(PlayerSystem.getHoverTileThreshold())
+            "Mouse Tile: " + world.getTileAssetName(PlayerSystem.getHoverTileThreshold())
+        );
+
+        worldMouseTileNameLabel.setText(
+            "Tile Name: " + world.getTileName(PlayerSystem.getHoverTileThreshold())
         );
 
         worldMousePosLabel.setText(

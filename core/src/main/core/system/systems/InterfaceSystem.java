@@ -18,6 +18,7 @@ import core.system.GameSysCycle;
 import core.system.context.InterfaceContext;
 import core.system.context.PlayerContext;
 import core.world.World;
+import data.map.asset.AssetType;
 import ui.*;
 import ui.game.GameUI;
 import ui.game.SettingsPanel;
@@ -147,6 +148,10 @@ public class InterfaceSystem implements GameSysCycle, ContextProvider<InterfaceC
 
     public UiInputGate getUiInputGate() {
         return this.uiInputGate;
+    }
+
+    public AssetType getSelectedType() {
+        return playerHotbar.getSelectedType();
     }
 
 }

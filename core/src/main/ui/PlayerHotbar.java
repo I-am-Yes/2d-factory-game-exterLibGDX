@@ -22,13 +22,14 @@ import core.Window;
 import data.map.asset.AssetType;
 import data.map.asset.BuildingType;
 import data.map.asset.FloorType;
+import data.map.asset.GhostType;
 
 public class PlayerHotbar {
     private final Window window;
     private final Stage stage;
     private final Skin skin;
     private final Table hotbar;
-    private final Label textLabel;
+    private final Label selectionLabel;
     private final TextButton[] hotbarItemButtons;
     private final ButtonGroup<TextButton> hotbarItemGroup;
 
@@ -56,6 +57,8 @@ public class PlayerHotbar {
     };
 
     private static final AssetType[] HOTBAR_ASSETS = new AssetType[HOTBAR_SLOT_COUNT];
+
+    public static AssetType selectedType;
 
     public PlayerHotbar(Window window, Stage stage, Skin skin, InterfaceAction UiAction, BitmapFont aldrichFont, InputHandler input, AssetsHandler assets) {
         this.window = window;
@@ -95,7 +98,7 @@ public class PlayerHotbar {
         selectionBorder.setVisible(false);
 
         //create actors
-        textLabel = new Label("text label", textStyle1);
+        selectionLabel = new Label(null, textStyle1);
 
         hotbar = new Table();
         hotbarItemButtons = new TextButton[HOTBAR_SLOT_COUNT];
@@ -109,13 +112,11 @@ public class PlayerHotbar {
 
         //add actors to stage
         stage.addActor(hotbar);
-        stage.addActor(textLabel);
+        stage.addActor(selectionLabel);
         stage.addActor(selectionBorder);
 
-        //config actors
-        textLabel.setText("text label");
-        textLabel.setAlignment(Align.center);
 
+        //config actors
         hotbar.setTouchable(Touchable.childrenOnly);
         hotbar.setOrigin(Align.center, Align.center);
         hotbar.bottom();
@@ -192,6 +193,8 @@ public class PlayerHotbar {
                 () -> {
                     hovering[0] = true;
 
+                    iconContainer.addAction(Actions.moveTo(0f, 4f, generalDuration));
+
                     if (button.isChecked()) {
 
                         Vector2 target = slot.localToStageCoordinates(new Vector2(0f, 0f));
@@ -202,6 +205,8 @@ public class PlayerHotbar {
                 () -> {
                     hovering[0] = false;
 
+                    iconContainer.addAction(Actions.moveTo(0f, 0f, generalDuration));
+
                     if (button.isChecked()) {
                         Vector2 target = slot.localToStageCoordinates(new Vector2(0f, 0f));
 
@@ -210,20 +215,20 @@ public class PlayerHotbar {
                 }
             );
 
-
-            UiAction.DefaultHoverEffect(button, generalDuration, generalDuration);
-
             hotbarItemButtons[i] = button;
             hotbarItemIcons[i] = icon;
             hotbarItemGroup.add(button);
             hotbar.add(slot).pad(1).size(50, 50);
         }
 
+        selectionLabel.setVisible(false);
+        selectionLabel.setPosition(Gdx.graphics.getWidth() / 2f, hotbar.getY() + hotbar.getHeight());
+        selectionLabel.setAlignment(Align.center);
 
-        setHotbarItem(1, BuildingType.HAZARD_BLOCK2);
 
         setHotbarItems(
-            2, BuildingType.HAZARD_BLOCK,
+            1, BuildingType.HAZARD_BLOCK,
+            2, BuildingType.HAZARD_BLOCK2,
             3, FloorType.SAND,
             4, FloorType.STONE,
             5, FloorType.MARBLE
@@ -234,6 +239,7 @@ public class PlayerHotbar {
     public void update() {
 
         updateInputToHotbar();
+        updateSelectedType();
 
     }
 
@@ -241,10 +247,39 @@ public class PlayerHotbar {
         hotbarSkin.dispose();
     }
 
+    private void updateSelectionLabel(AssetType type) {
+        selectionLabel.clearActions();
+        if (type == null) {
+            selectionLabel.setText(null);
+            selectionLabel.setVisible(false);
+            return;
+        }
+
+        selectionLabel.setText(type.getNamePNG());
+        selectionLabel.getColor().a = 0f;
+        selectionLabel.setVisible(true);
+        selectionLabel.addAction(Actions.sequence(
+            Actions.fadeIn(0.15f),
+            Actions.delay(1.5f),
+            Actions.fadeOut(0.3f),
+            Actions.hide()
+        ));
+    }
+
+    private void updateSelectedType() {
+        int selectedIndex = hotbarItemGroup.getCheckedIndex();
+
+        if (selectedType == getHotbarItem(selectedIndex)) return;
+
+        selectedType = getHotbarItem(selectedIndex);
+        updateSelectionLabel(selectedType);
+    }
+
     private void updateInputToHotbar() {
         for (int i = 0; i < HOTBAR_KEYS.length; i++) {
             if (input.isKeyJustPressed(HOTBAR_KEYS[i])) {
                 hotbarItemButtons[i].setChecked(!hotbarItemButtons[i].isChecked());
+                updateSelectedType();
                 break;
             }
         }
@@ -256,6 +291,7 @@ public class PlayerHotbar {
                 "Expected slot/type pairs."
             );
         }
+
         for (int i = 0; i < values.length; i += 2) {
             if (!(values[i] instanceof Integer slotNumber)) {
                 throw new IllegalArgumentException(
@@ -280,13 +316,22 @@ public class PlayerHotbar {
             if (tile != null) {
                 icon = new TextureRegionDrawable(tile.getTextureRegion());
                 hotbarItemIcons[index].setDrawable(icon);
+                HOTBAR_ASSETS[index] = type;
             }
         }
+    }
+
+    public static AssetType[] getAllHotbarItems() {
+        return HOTBAR_ASSETS.clone();
     }
 
     public AssetType getHotbarItem(int index) {
         if (index < 0 || index >= hotbarItemButtons.length) return null;
         return HOTBAR_ASSETS[index];
+    }
+
+    public static AssetType getSelectedType() {
+        return selectedType;
     }
 
 }

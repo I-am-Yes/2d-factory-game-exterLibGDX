@@ -53,6 +53,7 @@ public class PlayerEvent {
         }
     }
 
+    //TODO: deprecate this.
     public static final class blockSelected {
         public final AssetType selectedType;
 

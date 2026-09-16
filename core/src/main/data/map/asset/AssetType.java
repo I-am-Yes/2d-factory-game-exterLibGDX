@@ -6,6 +6,8 @@ public interface AssetType {
 
     String getNamePNG();
 
+    String getName();
+
     String getTextureParentFolder();
 
     String getAssetFolder();
