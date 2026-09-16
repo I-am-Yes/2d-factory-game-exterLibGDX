@@ -47,11 +47,15 @@ public class PlayerHotbar {
 
     private final float ICON_CONTAINER_PADDING = 6f;
 
+    private static final int HOTBAR_SLOT_COUNT = 9;
+
     private static final int[] HOTBAR_KEYS = {
         Input.Keys.NUM_1, Input.Keys.NUM_2, Input.Keys.NUM_3,
         Input.Keys.NUM_4, Input.Keys.NUM_5, Input.Keys.NUM_6,
         Input.Keys.NUM_7, Input.Keys.NUM_8, Input.Keys.NUM_9
     };
+
+    private static final AssetType[] HOTBAR_ASSETS = new AssetType[HOTBAR_SLOT_COUNT];
 
     public PlayerHotbar(Window window, Stage stage, Skin skin, InterfaceAction UiAction, BitmapFont aldrichFont, InputHandler input, AssetsHandler assets) {
         this.window = window;
@@ -94,8 +98,8 @@ public class PlayerHotbar {
         textLabel = new Label("text label", textStyle1);
 
         hotbar = new Table();
-        hotbarItemButtons = new TextButton[9];
-        hotbarItemIcons = new Image[9];
+        hotbarItemButtons = new TextButton[HOTBAR_SLOT_COUNT];
+        hotbarItemIcons = new Image[HOTBAR_SLOT_COUNT];
 
         hotbarItemGroup = new ButtonGroup<>();
 
@@ -278,6 +282,11 @@ public class PlayerHotbar {
                 hotbarItemIcons[index].setDrawable(icon);
             }
         }
+    }
+
+    public AssetType getHotbarItem(int index) {
+        if (index < 0 || index >= hotbarItemButtons.length) return null;
+        return HOTBAR_ASSETS[index];
     }
 
 }

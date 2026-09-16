@@ -64,6 +64,14 @@ public final class SettingsPanel extends Window {
         }
     }
 
+    public void togglePanel() {
+        if (isPanelOpen()) {
+            close();
+        } else {
+            open();
+        }
+    }
+
     public void setPauseOnOpen(boolean pauseOnOpen) {
         this.pauseOnOpen = pauseOnOpen;
     }
