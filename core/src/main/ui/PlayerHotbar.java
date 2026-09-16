@@ -24,6 +24,8 @@ import data.map.asset.BuildingType;
 import data.map.asset.FloorType;
 import data.map.asset.GhostType;
 
+import java.util.Arrays;
+
 public class PlayerHotbar {
     private final Window window;
     private final Stage stage;
@@ -221,6 +223,12 @@ public class PlayerHotbar {
             hotbar.add(slot).pad(1).size(50, 50);
         }
 
+        //this set pos to prevent the border appearing from somewhere else before animating
+        //TODO: later improve this to make the border appear from the selected slot, not the center of the hotbar or other previous selected slot if there is one
+        // note: the purpose of this animation is to smooth move the border from previous selected slot to current,
+        // so if the current previous selected slot is null, it spawn from new selected slot.
+        selectionBorder.setPosition(hotbar.getX() + hotbar.getWidth() / 2f, hotbar.getY());
+
         selectionLabel.setVisible(false);
         selectionLabel.setPosition(Gdx.graphics.getWidth() / 2f, hotbar.getY() + hotbar.getHeight());
         selectionLabel.setAlignment(Align.center);
@@ -233,6 +241,8 @@ public class PlayerHotbar {
             4, FloorType.STONE,
             5, FloorType.MARBLE
         );
+
+//        System.out.println(Arrays.toString(getAllHotbarItems()));
 
     }
 
