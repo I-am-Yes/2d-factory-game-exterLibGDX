@@ -21,11 +21,15 @@ public class GameLoop {
     private static float realDelta;
     private static float gameDelta;
 
-    private static float totalRealTime;
-    private static float totalGameTime;
-
     private static final float maxDeltaUpdate = 0.25f;
     private static final float maxGameSpeed = Float.MAX_VALUE; //maximum game speed multiplier
+
+    private static int currentUPS;
+    private static int upsCounter;
+    private static float upsTimer;
+
+    private static float totalRealTime;
+    private static float totalGameTime;
 
     private static boolean paused;
 
@@ -50,8 +54,18 @@ public class GameLoop {
                 context.systems.tickUpdate(UPDATE_INTERVAL);
                 tickAccumulator -= UPDATE_INTERVAL;
                 tick++;
+
+                upsCounter++;
+            }
+
+            upsTimer += realDelta;
+            if (upsTimer >= 1f) {
+                currentUPS = upsCounter;
+                upsCounter = 0;
+                upsTimer -= 1f;
             }
         }
+
     }
 
     public void render() {
@@ -136,6 +150,18 @@ public class GameLoop {
 
     public static float getTotalGameTime() {
         return totalGameTime;
+    }
+
+    public static int getCurrentUPS() {
+        return currentUPS;
+    }
+
+    public static float getUpdateInterval() {
+        return UPDATE_INTERVAL;
+    }
+
+    public static int getTargetUPS() {
+        return Math.round(1f / UPDATE_INTERVAL);
     }
 
     public static boolean isGamePaused() {

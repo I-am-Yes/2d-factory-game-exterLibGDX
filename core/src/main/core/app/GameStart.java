@@ -27,6 +27,7 @@ public final class GameStart {
 
     public static void finishGameStart(GameContext context) {
 
+
         context.mapConfig = new MapConfig();
         //TODO: change to better seed system later
         context.mapConfig.seed = (Long) System.currentTimeMillis();
@@ -56,26 +57,14 @@ public final class GameStart {
         //multiplexer bla bla...
         InputDesktop.init(context);
 
-        //testers
-//        PlanBuilder<AssetType> planBuilderTest1 = new PlanBuilder<>();
-//        Random random = new Random();
-//        for (int i = 0; i < context.world.getWorldWidth() /2; i++) {
-//            for (int j = 0; j < context.world.getWorldHeight() /2; j++) {
-//                if (random.nextBoolean()) {
-//                    planBuilderTest1.addPlan(i, j, BuildingType.HAZARD_BLOCK);
-//                } else {
-//                    planBuilderTest1.addPlan(i, j, BuildingType.HAZARD_BLOCK2);
-//                }
-//            }
-//        }
-//        GameEvent.PlanBuilderRequest.fire(planBuilderTest1);
-
-//        planManager.addPlanToRenderQueue(planBuilder);
-
         //debug testers
         context.getSystem(DebugSystem.class).getDebug().enableDebugModes(
 
         );
+
+
+
+        context.gameTest = new GameTest(context);
 
     }
 

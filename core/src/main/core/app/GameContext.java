@@ -30,6 +30,8 @@ public final class GameContext {
 
     public GameSystem systems;
 
+    public GameTest gameTest;
+
     public GameContext() {}
 
     public <T extends GameSysCycle> T addSystem(T system) {

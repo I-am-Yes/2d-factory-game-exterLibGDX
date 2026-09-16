@@ -20,7 +20,9 @@ public class GameUI {
     private final Label gameTimelabel;
     private final Label realTimelabel;
 
+
     private final Label VSyncLabel;
+    private final Label UPSLabel;
     private final Label FPSLabel;
     private final Label avgFPSLabel;
 
@@ -46,6 +48,7 @@ public class GameUI {
         realTimelabel = new Label("Real Time: ", textStyle1);
 
         VSyncLabel = new Label("V-Sync: off", textStyle1);
+        UPSLabel = new Label("UPS: ", textStyle1);
         FPSLabel = new Label("FPS: ", textStyle1);
         avgFPSLabel = new Label("Avg FPS: ", textStyle1);
 
@@ -59,6 +62,7 @@ public class GameUI {
         stage.addActor(realTimelabel);
 
         stage.addActor(VSyncLabel);
+        stage.addActor(UPSLabel);
         stage.addActor(FPSLabel);
         stage.addActor(avgFPSLabel);
 
@@ -75,6 +79,7 @@ public class GameUI {
         PerformanceList.add(realTimelabel).align(Align.left).padLeft(10).padTop(10).row();
 
         PerformanceList.add(VSyncLabel).align(Align.left).padLeft(10).padTop(10).row();
+        PerformanceList.add(UPSLabel).align(Align.left).padLeft(10).padTop(10).row();
         PerformanceList.add(FPSLabel).align(Align.left).padLeft(10).padTop(10).row();
         PerformanceList.add(avgFPSLabel).align(Align.left).padLeft(10).padTop(10).row();
 
@@ -86,6 +91,7 @@ public class GameUI {
 
     public void update(float deltaTime) {
         updateTimerLabel();
+        updateUPSLabel();
         updateFPSLabel();
         updateMemoriesLabel();
         updateVSyncLabel();
@@ -93,6 +99,10 @@ public class GameUI {
 
     private void updateVSyncLabel() {
         VSyncLabel.setText("V-Sync: " + (window.isVSync() ? "on" : "off"));
+    }
+
+    private void updateUPSLabel() {
+        UPSLabel.setText("UPS: " + GameLoop.getCurrentUPS() + "/" + GameLoop.getTargetUPS());
     }
 
     private void updateFPSLabel() {
