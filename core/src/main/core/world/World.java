@@ -1,5 +1,8 @@
 package core.world;
 
+import core.world.chunk.Chunk;
+import core.world.chunk.ChunkManager;
+import core.world.chunk.ChunkRenderer;
 import data.map.asset.BuildingType;
 import data.map.asset.FloorType;
 import data.map.MapConfig;
@@ -12,7 +15,6 @@ import com.badlogic.gdx.math.Vector2;
 import core.AssetsHandler;
 import core.event.Events;
 import core.event.GameEvent;
-import core.map.MapGenerator;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.maps.tiled.TiledMap;
@@ -28,6 +30,8 @@ public class World {
     private final MapConfig mapConfig;
     private final AssetsHandler assets;
     private final ColoredTiledMapRenderer mapRenderer;
+    private final ChunkRenderer chunkRenderer;
+    private final ChunkManager chunkManager;
 
     // tile map layer variables
     private final TiledMapTileLayer floorLayer;
@@ -46,9 +50,35 @@ public class World {
     private final float worldWidth;
     private final float worldHeight;
 
-
     private final long seed;
 
+    private World(MapConfig mapConfig, AssetsHandler assets) {
+        this.map = null;
+        this.mapConfig = mapConfig;
+        this.assets = assets;
+        this.seed = mapConfig.seed;
+
+        this.floorLayer = null;
+        this.buildingLayer = null;
+        this.ghostLayer = null;
+
+        this.floorGrid = null;
+        this.buildingGrid = null;
+        this.ghostGrid = null;
+
+        // Temporary viewport defaults; not world boundaries.
+        this.tilesWidth = 48;
+        this.tilesHeight = 27;
+        this.tileSize = 1f;
+        this.worldWidth = 512f;
+        this.worldHeight = 512f;
+
+        this.mapRenderer = null;
+        this.chunkRenderer = new ChunkRenderer(assets);
+        this.chunkManager = new ChunkManager(mapConfig);
+
+        registPlacement();
+    }
 
     public World(
         TiledMap map, MapConfig mapConfig, AssetsHandler assets,
@@ -84,6 +114,8 @@ public class World {
 
         float unitScale = 1f / mapConfig.getTilePixel();
         this.mapRenderer = new ColoredTiledMapRenderer(map,  unitScale);
+        this.chunkRenderer = new ChunkRenderer(assets);
+        this.chunkManager = new ChunkManager(mapConfig);
 
         registPlacement();
     }
@@ -100,68 +132,103 @@ public class World {
         }
     }
 
-    public static World generateWorld(MapConfig mapConfig, AssetsHandler assets) {
-        TiledMap map = new TiledMap();
-
-        map.getProperties().put("width", mapConfig.width);
-        map.getProperties().put("height", mapConfig.height);
-        map.getProperties().put("tilewidth", assets.getTileWidth());
-        map.getProperties().put("tileheight", assets.getTileHeight());
-
-        map.getTileSets().addTileSet(assets.buildTileSet());
-
-        //create layers
-        TiledMapTileLayer floorLayer = new TiledMapTileLayer(
-            mapConfig.width, mapConfig.height,
-            assets.getTileWidth(), assets.getTileHeight()
-        );
-        TiledMapTileLayer buildingLayer = new TiledMapTileLayer(
-            mapConfig.width, mapConfig.height,
-            assets.getTileWidth(), assets.getTileHeight()
-        );
-        TiledMapTileLayer ghostLayer = new TiledMapTileLayer(
-            mapConfig.width, mapConfig.height,
-            assets.getTileWidth(), assets.getTileHeight()
-        );
-
-        //set layer name
-        floorLayer.setName(FLOOR_LAYER_NAME);
-        buildingLayer.setName(BUILDING_LAYER_NAME);
-        ghostLayer.setName(GHOST_LAYER_NAME);
-
-        //add layer to map
-        map.getLayers().add(floorLayer);
-        map.getLayers().add(buildingLayer);
-        map.getLayers().add(ghostLayer);
-
-        //generate layer grid
-        FloorType[][] floorGrid = MapGenerator.generateTiledMap(mapConfig);
-        BuildingType[][] buildingGrid = new BuildingType[mapConfig.width][mapConfig.height];
-        GhostType<AssetType>[][] ghostGrid = new GhostType[mapConfig.width][mapConfig.height];
-
-        MapGenerator.applyToLayer(floorLayer, floorGrid, assets);
-
-
-        GameEvent.MapGenerated.fire(mapConfig, floorGrid);
-
-        return new World(map, mapConfig, assets,
-            floorLayer, buildingLayer,
-            ghostLayer, floorGrid, buildingGrid,
-            ghostGrid);
+    public static World generateWorld(
+        MapConfig mapConfig,
+        AssetsHandler assets
+    ) {
+        return new World(mapConfig, assets);
     }
 
+//    public static World generateWorld(MapConfig mapConfig, AssetsHandler assets) {
+//        TiledMap map = new TiledMap();
+//
+//        map.getProperties().put("width", mapConfig.width);
+//        map.getProperties().put("height", mapConfig.height);
+//        map.getProperties().put("tilewidth", assets.getTileWidth());
+//        map.getProperties().put("tileheight", assets.getTileHeight());
+//
+//        map.getTileSets().addTileSet(assets.buildTileSet());
+//
+//        //create layers
+//        TiledMapTileLayer floorLayer = new TiledMapTileLayer(
+//            mapConfig.width, mapConfig.height,
+//            assets.getTileWidth(), assets.getTileHeight()
+//        );
+//        TiledMapTileLayer buildingLayer = new TiledMapTileLayer(
+//            mapConfig.width, mapConfig.height,
+//            assets.getTileWidth(), assets.getTileHeight()
+//        );
+//        TiledMapTileLayer ghostLayer = new TiledMapTileLayer(
+//            mapConfig.width, mapConfig.height,
+//            assets.getTileWidth(), assets.getTileHeight()
+//        );
+//
+//        //set layer name
+//        floorLayer.setName(FLOOR_LAYER_NAME);
+//        buildingLayer.setName(BUILDING_LAYER_NAME);
+//        ghostLayer.setName(GHOST_LAYER_NAME);
+//
+//        //add layer to map
+//        map.getLayers().add(floorLayer);
+//        map.getLayers().add(buildingLayer);
+//        map.getLayers().add(ghostLayer);
+//
+//        //generate layer grid
+//        FloorType[][] floorGrid = MapGenerator.generateTiledMap(mapConfig);
+//        BuildingType[][] buildingGrid = new BuildingType[mapConfig.width][mapConfig.height];
+//        GhostType<AssetType>[][] ghostGrid = new GhostType[mapConfig.width][mapConfig.height];
+//
+//        MapGenerator.applyToLayer(floorLayer, floorGrid, assets);
+//
+//
+//        GameEvent.MapGenerated.fire(mapConfig, floorGrid);
+//
+//        return new World(map, mapConfig, assets,
+//            floorLayer, buildingLayer,
+//            ghostLayer, floorGrid, buildingGrid,
+//            ghostGrid);
+//    }
+
     public void render(OrthographicCamera camera) {
-        mapRenderer.setView(camera);
-        mapRenderer.render();
+        int cameraTileX = MathUtils.floor(camera.position.x / getTileSize());
+        int cameraTileY = MathUtils.floor(camera.position.y / getTileSize());
+
+        float visibleWidth = camera.viewportWidth * camera.zoom;
+        float visibleHeight = camera.viewportHeight * camera.zoom;
+        int chunkRadius = Math.max(
+            1,
+            MathUtils.ceil(
+                Math.max(visibleWidth, visibleHeight) / getTileSize() / Chunk.SIZE / 2f
+            )
+        );
+
+        chunkManager.loadChunksAroundTile(
+            cameraTileX, cameraTileY, chunkRadius
+        );
+
+        chunkRenderer.render(camera, chunkManager.getLoadedChunks(), getTileSize());
+
+//        mapRenderer.setView(camera);
+//        mapRenderer.render();
     }
 
     public void dispose() {
-        mapRenderer.dispose();
-        map.dispose();
+        if (mapRenderer != null) mapRenderer.dispose();
+        if (map != null) map.dispose();
+        if (chunkRenderer != null) chunkRenderer.dispose();
+    }
+
+    private Chunk getChunkAt(int tileX, int tileY) {
+        return chunkManager.getOrCreateChunkForTile(tileX, tileY);
     }
 
     public BuildingType getBuildingAt(int tileX, int tileY) {
-        return buildingGrid[tileX][tileY];
+        Chunk chunk = getChunkAt(tileX, tileY);
+
+        int localX = chunkManager.getLocalX(tileX);
+        int localY = chunkManager.getLocalY(tileY);
+
+        return chunk.buildings[localX][localY];
     }
 
     public boolean hasBuildingAt(int tileX, int tileY) {
@@ -175,11 +242,16 @@ public class World {
     }
 
     public GhostType<AssetType> getGhostTileAt(int tileX, int tileY) {
-        return ghostGrid[tileX][tileY];
+        Chunk chunk = getChunkAt(tileX, tileY);
+
+        int localX = chunkManager.getLocalX(tileX);
+        int localY = chunkManager.getLocalY(tileY);
+
+        return chunk.ghosts[localX][localY];
     }
 
     public boolean isInBounds(int tileX, int tileY) {
-        return tileX >= 0 && tileX < tilesWidth && tileY >= 0 && tileY < tilesHeight;
+        return true;
     }
 
     public boolean hasTile(int tileX, int tileY) {
@@ -190,8 +262,7 @@ public class World {
     }
 
     public boolean isGhostTile(int tileX, int tileY) {
-        if (!isInBounds(tileX, tileY)) return false;
-        return ghostLayer.getCell(tileX, tileY) != null;
+        return getGhostTileAt(tileX, tileY) != null;
     }
     public boolean isGhostTile(float tileX, float tileY) {
         return isGhostTile((int)tileX, (int)tileY);
@@ -212,8 +283,12 @@ public class World {
     }
 
     public FloorType getFloorAt(int tileX, int tileY) {
-        if (!isInBounds(tileX, tileY)) return null;
-        return floorGrid[tileX][tileY];
+        Chunk chunk = getChunkAt(tileX, tileY);
+
+        int localX = chunkManager.getLocalX(tileX);
+        int localY = chunkManager.getLocalY(tileY);
+
+        return chunk.floors[localX][localY];
     }
 
     public FloorType getFloorAt(float tileX, float tileY) {
@@ -224,11 +299,29 @@ public class World {
         return getFloorAt((int)tile.x, (int)tile.y);
     }
 
-    public AssetType getFloorName(int tileX, int tileY) {
-        if (!isInBounds(tileX, tileY)) return null;
-        //TODO: get floor name at x, y.
-        //TODO: fix generic types.
-        return floorGrid[tileX][tileY];
+    public String getTileName(Vector2 tile) {
+        return getTileName((int)tile.x, (int)tile.y);
+    }
+
+    public String getTileName(int tileX, int tileY) {
+        //TODO: later improve to in-game called tile name and to that
+        GhostType<AssetType> ghost = getGhostTileAt(tileX, tileY);
+
+        if (ghost != null) {
+            return "Ghost " + ghost.getSourceType().getNamePNG();
+        }
+
+        BuildingType building = getBuildingAt(tileX, tileY);
+        if (building != null) {
+            return building.getNamePNG();
+        }
+
+        FloorType floor = getFloorAt(tileX, tileY);
+        if (floor != null) {
+            return floor.getNamePNG();
+        }
+
+        return "None";
     }
 
     public boolean isWalkable(int tileX, int tileY) {
@@ -237,30 +330,60 @@ public class World {
     }
 
     public boolean placeFloor(int tileX, int tileY, FloorType floorType) {
-        return placeBlock(tileX, tileY, floorType);
+        if (floorType == null) return false;
+
+        Chunk chunk = getChunkAt(tileX, tileY);
+        int localX = chunkManager.getLocalX(tileX);
+        int localY = chunkManager.getLocalY(tileY);
+
+        if (chunk.floors[localX][localY] == floorType) return false;
+
+        chunk.floors[localX][localY] = floorType;
+        chunk.dirty = true;
+        return true;
     }
 
-    public boolean placeBuilding(int tileX, int tileY, BuildingType buildingType) {
-        return placeBlock(tileX, tileY, buildingType);
-    }
-
-    public boolean placeGhost(int tileX, int tileY, GhostType<? extends AssetType> ghostType) {
-        return placeGhostBlock(tileX, tileY, ghostType);
-    }
-
-    public boolean placeBlock(
-        int tileX, int tileY,
-        AssetType type
+    public boolean placeBuilding(
+        int tileX, int tileY, BuildingType buildingType
     ) {
-        if (type instanceof FloorType floorType) {
-            //if (type == FloorType.WATER) return false;
+        if (buildingType == null || !canPlaceBuildingAt(tileX, tileY)) {
+            return false;
+        }
 
-            return placeInLayer(tileX, tileY, floorType, floorGrid, floorLayer);
+        Chunk chunk = getChunkAt(tileX, tileY);
+        int localX = chunkManager.getLocalX(tileX);
+        int localY = chunkManager.getLocalY(tileY);
+
+        chunk.buildings[localX][localY] = buildingType;
+        chunk.dirty = true;
+        return true;
+    }
+
+    public boolean placeGhost(
+        int tileX, int tileY, GhostType<? extends AssetType> ghostType
+    ) {
+        if (ghostType == null) return false;
+
+        Chunk chunk = getChunkAt(tileX, tileY);
+        int localX = chunkManager.getLocalX(tileX);
+        int localY = chunkManager.getLocalY(tileY);
+
+        @SuppressWarnings("unchecked")
+        GhostType<AssetType> storedGhost =
+            (GhostType<AssetType>) ghostType;
+
+        chunk.ghosts[localX][localY] = storedGhost;
+        chunk.dirty = true;
+        return true;
+    }
+
+    public boolean placeBlock(int tileX, int tileY, AssetType type) {
+        if (type instanceof FloorType floorType) {
+            return placeFloor(tileX, tileY, floorType);
         }
 
         if (type instanceof BuildingType buildingType) {
-
-            return placeInLayer(tileX, tileY, buildingType, buildingGrid, buildingLayer);
+            return placeBuilding(tileX, tileY, buildingType);
         }
 
         return false;
@@ -348,11 +471,23 @@ public class World {
         });
     }
 
+    public ChunkManager getChunkManager() {
+        return chunkManager;
+    }
+
     public int worldToTileX(int worldX) {
         return (int) (worldX / tileSize);
     }
     public int worldToTileY(int worldY) {
         return (int) (worldY / tileSize);
+    }
+
+    public long getSeed() {
+        return seed;
+    }
+
+    public int getChunkSize() {
+        return Chunk.SIZE;
     }
 
     public float getTileSize() {

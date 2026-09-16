@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
@@ -18,6 +19,31 @@ import java.util.Objects;
 public class UiHelper {
 
     public UiHelper() {}
+
+    public Table createAndAddItems(Stage stage, int align, Actor... actors) {
+        Table table = new Table();
+        return addTableRows(stage, table, align, actors);
+    }
+
+    public Table addTableRows(Stage stage, Table table, int alin, Actor... actors) {
+        for (Actor actor : actors) {
+            if (alin == Align.right) {
+                table.add(actor).align(Align.right).padRight(10).padTop(10).row();
+            }
+            else if (alin == Align.left) {
+                table.add(actor).align(Align.left).padLeft(10).padTop(10).row();
+            }
+        }
+        table.setFillParent(true);
+        stage.addActor(table);
+        return table;
+    }
+
+    public Label createTextLabel(Stage stage, String text) {
+        Label label = new Label(text, Style.getTextStyle(Style.textStyle.TEXT_STYLE_1));
+        stage.addActor(label);
+        return label;
+    }
 
     public Label createTextLabel(String text) {
         return createTextLabel(text, Style.getTextStyle(Style.textStyle.TEXT_STYLE_1), 100f, 20f, Align.center);

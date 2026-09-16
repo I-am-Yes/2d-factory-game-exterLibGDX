@@ -62,6 +62,9 @@ public class PlayerHotbar {
         this.UIaction = UiAction;
         this.assets = assets;
 
+        //TODO: later add text label to show item name and description
+        //TODO: later add text label on top of hotbar to temporary show selected item name
+
         this.tilesAtlas = assets.getTilesAtlas();
 
         textStyle1 = Style.getTextStyle(Style.textStyle.TEXT_STYLE_1);

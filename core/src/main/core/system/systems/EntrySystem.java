@@ -4,11 +4,11 @@ import com.badlogic.gdx.Input;
 import core.InputHandler;
 import core.Window;
 import core.app.GameContext;
-import core.app.GameLoop;
 import core.system.ContextProvider;
 import core.system.GameSysCycle;
 import core.system.context.EntryContext;
 import core.system.context.InterfaceContext;
+import core.utils.ScreenshotCapture;
 
 public class EntrySystem implements GameSysCycle, ContextProvider<EntryContext> {
 
@@ -25,8 +25,6 @@ public class EntrySystem implements GameSysCycle, ContextProvider<EntryContext> 
         this.input = input;
         this.window = context.window;
 
-
-
         this.entryContext = new EntryContext(
 
         );
@@ -38,22 +36,40 @@ public class EntrySystem implements GameSysCycle, ContextProvider<EntryContext> 
 
 
         if (input.isKeyJustPressed(Input.Keys.ESCAPE)) {
-            openSettingPanel();
+            toggleSettingPanel();
         }
 
+        if (input.isKeyJustPressed(Input.Keys.F3)) {
+            toggleDebugPanel();
+        }
         if (input.isKeyJustPressed(Input.Keys.F11)) {
             //window.setWindowFullscreen();
             window.setBorderlessFullscreen();
         }
 
+        if (!input.isKeyPressed(Input.Keys.SHIFT_LEFT) && input.isKeyJustPressed(Input.Keys.F12)) {
+            ScreenshotCapture.requestCapture();
+        }
+
+        if (input.isKeyPressed(Input.Keys.SHIFT_LEFT) && input.isKeyJustPressed(Input.Keys.F12)) {
+            ScreenshotCapture.captureMapArea(
+                context.world,
+                (int) -context.world.getWorldWidth(),
+                (int) -context.world.getWorldHeight(),
+                (int) context.world.getWorldWidth(),
+                (int) context.world.getWorldHeight(),
+                4
+            );
+        }
+
     }
 
-    private void openSettingPanel() {
-        if (!interfaceContext.settingsPanel.isPanelOpen()) {
-            interfaceContext.settingsPanel.open();
-        } else {
-            interfaceContext.settingsPanel.close();
-        }
+    private void toggleSettingPanel() {
+        interfaceContext.settingsPanel.togglePanel();
+    }
+
+    private void toggleDebugPanel() {
+        interfaceContext.gameUI.setDebugInfoVisible(!interfaceContext.gameUI.isDebugInfoVisible());
     }
 
     @Override

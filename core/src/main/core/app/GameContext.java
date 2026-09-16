@@ -10,6 +10,7 @@ import core.controller.camera.CameraController;
 import core.controller.camera.CursorController;
 import core.render.Renderer;
 import core.system.GameSysCycle;
+import core.utils.ScreenshotCapture;
 import core.world.World;
 import data.map.MapConfig;
 import core.system.systems.InterfaceSystem;

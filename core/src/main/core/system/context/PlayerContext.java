@@ -2,6 +2,7 @@ package core.system.context;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Vector2;
 import core.app.GameContext;
 import core.player.Player;
 import core.player.PlayerAction;
@@ -20,7 +21,11 @@ public class PlayerContext {
     public SpriteBatch playerSpriteBatch;
     public ShapeRenderer playerShapeRenderer;
 
-    public PlayerContext(Player player, PlayerAction action, PlayerController controller, Overlay overlay, GhostOverlay ghostOverlay, SpriteBatch playerSpriteBatch, ShapeRenderer playerShapeRenderer) {
+    public PlayerContext(
+        Player player, PlayerAction action, PlayerController controller,
+        Overlay overlay, GhostOverlay ghostOverlay,
+        SpriteBatch playerSpriteBatch, ShapeRenderer playerShapeRenderer
+    ) {
         this.player = player;
         this.action = action;
         this.controller = controller;
@@ -28,6 +33,7 @@ public class PlayerContext {
         this.ghostOverlay = ghostOverlay;
         this.playerSpriteBatch = playerSpriteBatch;
         this.playerShapeRenderer = playerShapeRenderer;
+
     }
 
 }

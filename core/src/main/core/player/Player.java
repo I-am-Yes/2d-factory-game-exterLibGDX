@@ -33,7 +33,7 @@ public class Player {
 
         sprite = new Sprite(playerTexture);
         sprite.setSize(PLAYER_WIDTH, PLAYER_HEIGHT);
-        sprite.setPosition(worldWidth / 2f, worldHeight / 2f);  // spawn in middle of the map
+        sprite.setPosition(2f, 2f);  // spawn in middle of the map
     }
 
     public void update(float delta) {

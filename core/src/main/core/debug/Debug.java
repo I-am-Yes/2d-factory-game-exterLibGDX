@@ -131,10 +131,11 @@ public class Debug {
 
             //begin must have end(); at the end.
             Gdx.gl.glLineWidth(0.1f);
-            debugShapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+            debugShapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
 
             renderDebugger.drawTileBorders(world, camera, debugShapeRenderer);
 
+            renderDebugger.drawChunkBorder(world, camera, debugShapeRenderer);
 
             //add codes to above not below of this command.
             debugShapeRenderer.end();

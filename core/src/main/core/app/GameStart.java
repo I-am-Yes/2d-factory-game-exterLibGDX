@@ -5,7 +5,9 @@ import core.AssetsHandler;
 import core.InputHandler;
 import core.Window;
 import core.system.systems.*;
+import core.utils.ScreenshotCapture;
 import core.world.World;
+import data.debug.DebugType;
 import data.map.MapConfig;
 import data.map.PresetMap;
 
@@ -27,12 +29,11 @@ public final class GameStart {
 
     public static void finishGameStart(GameContext context) {
 
-
-        context.mapConfig = new MapConfig();
+        context.mapConfig = MapConfig.createPresetMap(PresetMap.PLAIN);
         //TODO: change to better seed system later
-        context.mapConfig.seed = (Long) System.currentTimeMillis();
+        context.mapConfig.seed = System.currentTimeMillis();
         context.world = World.generateWorld(
-            MapConfig.createPresetMap(PresetMap.PLAIN),
+            context.mapConfig,
             context.assets
         );
 

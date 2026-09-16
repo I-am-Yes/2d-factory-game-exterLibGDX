@@ -6,6 +6,8 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
+import core.InputHandler;
 import core.UiInputGate;
 import core.Window;
 import core.app.GameContext;
@@ -14,6 +16,8 @@ import core.render.RenderLayer;
 import core.system.ContextProvider;
 import core.system.GameSysCycle;
 import core.system.context.InterfaceContext;
+import core.system.context.PlayerContext;
+import core.world.World;
 import ui.*;
 import ui.game.GameUI;
 import ui.game.SettingsPanel;
@@ -23,9 +27,12 @@ public class InterfaceSystem implements GameSysCycle, ContextProvider<InterfaceC
     private GameContext context;
     private InterfaceContext interfaceContext;
 
+    private final World world;
     private final Window window;
+    private final Viewport viewport;
     private final Stage stage;
     private final Skin skin;
+    private final InputHandler input;
     private final UiInputGate uiInputGate;
     private final InterfaceAction UIaction;
     private final UiHelper uiHelper;
@@ -43,7 +50,10 @@ public class InterfaceSystem implements GameSysCycle, ContextProvider<InterfaceC
 
     public InterfaceSystem(GameContext context) {
         this.context = context;
+        this.world = context.world;
         this.window = context.window;
+        this.viewport = context.viewport;
+        this.input = context.input;
 
         this.skin = new Skin(Gdx.files.internal("ui/uiskin.json"));
         this.stage = new Stage(new FitViewport(window.getWindowWidth(), window.getWindowHeight()));
@@ -61,7 +71,7 @@ public class InterfaceSystem implements GameSysCycle, ContextProvider<InterfaceC
             context.input, context.assets
         );
 
-        gameUI = new GameUI(window, stage, skin);
+        gameUI = new GameUI(world, window, viewport, stage, skin, uiHelper, input);
 
         settingsPanel = new SettingsPanel(skin, uiHelper);
 

@@ -7,6 +7,7 @@ import core.system.context.InterfaceContext;
 import core.system.context.RenderContext;
 import core.system.systems.EntrySystem;
 import core.system.systems.InterfaceSystem;
+import core.utils.ScreenshotCapture;
 
 public class GameLoop {
 
@@ -102,7 +103,7 @@ public class GameLoop {
         context.getContext(RenderContext.class).spriteBatch.end();
         //END batch
 
-
+        ScreenshotCapture.captureIfRequested();
     }
 
     public void resize(int width, int height) {
