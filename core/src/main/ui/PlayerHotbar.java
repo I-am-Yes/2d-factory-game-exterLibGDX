@@ -239,7 +239,8 @@ public class PlayerHotbar {
             2, BuildingType.HAZARD_BLOCK2,
             3, FloorType.SAND,
             4, FloorType.STONE,
-            5, FloorType.MARBLE
+            5, FloorType.MARBLE,
+            6, FloorType.WATER
         );
 
 //        System.out.println(Arrays.toString(getAllHotbarItems()));

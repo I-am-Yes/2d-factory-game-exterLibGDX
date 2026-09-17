@@ -5,9 +5,7 @@ import core.AssetsHandler;
 import core.InputHandler;
 import core.Window;
 import core.system.systems.*;
-import core.utils.ScreenshotCapture;
 import core.world.World;
-import data.debug.DebugType;
 import data.map.MapConfig;
 import data.map.PresetMap;
 
