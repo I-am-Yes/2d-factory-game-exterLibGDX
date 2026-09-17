@@ -1,5 +1,6 @@
 package core.world;
 
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import core.world.chunk.Chunk;
 import core.world.chunk.ChunkManager;
 import core.world.chunk.ChunkRenderer;
@@ -12,7 +13,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
-import core.AssetsHandler;
+import core.assets.AssetsHandler;
 import core.event.Events;
 import core.event.GameEvent;
 
@@ -189,7 +190,7 @@ public class World {
 //            ghostGrid);
 //    }
 
-    public void render(OrthographicCamera camera) {
+    public void update(OrthographicCamera camera) {
         int cameraTileX = MathUtils.floor(camera.position.x / getTileSize());
         int cameraTileY = MathUtils.floor(camera.position.y / getTileSize());
 
@@ -206,10 +207,14 @@ public class World {
             cameraTileX, cameraTileY, chunkRadius
         );
 
-        chunkRenderer.render(camera, chunkManager.getLoadedChunks(), getTileSize());
 
 //        mapRenderer.setView(camera);
 //        mapRenderer.render();
+    }
+
+    public void drawBatch(SpriteBatch batch, OrthographicCamera camera) {
+        chunkRenderer.drawBatch(batch, camera, chunkManager.getLoadedChunks(), getTileSize());
+
     }
 
     public void dispose() {
@@ -487,7 +492,7 @@ public class World {
             }
 
             if (placeBlock(request.tileX, request.tileY, request.type)) {
-                GameEvent.BlockPlaced.fire(request.tileX, request.tileY, request.type);
+                GameEvent.BlockPlaced.fire(request.tileX, request.tileY, request.type, request.direction);
             } else  {
                 request.cancel();
             }

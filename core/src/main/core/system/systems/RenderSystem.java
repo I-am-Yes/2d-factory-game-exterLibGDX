@@ -3,7 +3,7 @@ package core.system.systems;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import core.AssetsHandler;
+import core.assets.AssetsHandler;
 import core.app.GameContext;
 import core.system.ContextProvider;
 import core.system.context.RenderContext;
@@ -36,8 +36,8 @@ public class RenderSystem implements GameSysCycle, ContextProvider<RenderContext
         this.viewport = context.viewport;
         this.assets = context.assets;
 
-        this.renderSpriteBatch = new SpriteBatch();
-        this.shapeRenderer = new ShapeRenderer();
+        this.renderSpriteBatch = context.renderSpriteBatch;
+        this.shapeRenderer = context.shapeRenderer;
 
         this.planManager = new PlanManager(world);
         this.planRenderer = new PlanRenderer<>(
@@ -53,7 +53,6 @@ public class RenderSystem implements GameSysCycle, ContextProvider<RenderContext
             world,
             viewport,
             assets,
-            renderSpriteBatch,
             shapeRenderer,
             planRenderer
         );
@@ -63,28 +62,25 @@ public class RenderSystem implements GameSysCycle, ContextProvider<RenderContext
     @Override
     public void update(float delta) {
         this.delta = delta;
+
+        planRenderer.update();
     }
 
     @Override
     public void render() {
-        draw();
     }
 
-    public void draw() {
-        renderSpriteBatch.setProjectionMatrix(viewport.getCamera().combined);
+    @Override
+    public void drawBatch(SpriteBatch batch) {
         //BEGIN batch
-        renderSpriteBatch.begin();
 
-        planRenderer.render();
+        planRenderer.drawBatch();
 
-        renderSpriteBatch.end();
         //END batch
-
     }
 
     public void dispose() {
-        renderSpriteBatch.dispose();
-        shapeRenderer.dispose();
+
         planRenderer.dispose();
     }
 
@@ -96,6 +92,10 @@ public class RenderSystem implements GameSysCycle, ContextProvider<RenderContext
     @Override
     public RenderContext getContext() {
         return renderContext;
+    }
+
+    public SpriteBatch getBatch() {
+        return renderSpriteBatch;
     }
 
 }

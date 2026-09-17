@@ -1,7 +1,9 @@
 package core.app;
 
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
-import core.AssetsHandler;
+import core.assets.AssetsHandler;
 import core.InputHandler;
 import core.Window;
 import core.system.systems.*;
@@ -27,6 +29,9 @@ public final class GameStart {
 
     public static void finishGameStart(GameContext context) {
 
+        context.renderSpriteBatch = new SpriteBatch();
+        context.shapeRenderer = new ShapeRenderer();
+
         context.mapConfig = MapConfig.createPresetMap(PresetMap.PLAIN);
         //TODO: change to better seed system later
         context.mapConfig.seed = System.currentTimeMillis();
@@ -45,11 +50,13 @@ public final class GameStart {
         context.systems = new GameSystem();
 
         context.addSystem(new InterfaceSystem(context));
-        context.addSystem(new PlayerSystem(context));
         context.addSystem(new RenderSystem(context));
+        context.addSystem(new PlayerSystem(context));
         context.addSystem(new CameraSystem(context, context.getSystemContext(PlayerSystem.class)));
 
         context.addSystem(new EntrySystem(context, context.input));
+
+        context.addSystem(new FactorySystem(context));
 
         context.addSystem(new DebugSystem(context));
 

@@ -18,20 +18,18 @@ public class PlayerContext {
     public PlayerController controller;
     public Overlay overlay;
     public GhostOverlay ghostOverlay;
-    public SpriteBatch playerSpriteBatch;
     public ShapeRenderer playerShapeRenderer;
 
     public PlayerContext(
         Player player, PlayerAction action, PlayerController controller,
         Overlay overlay, GhostOverlay ghostOverlay,
-        SpriteBatch playerSpriteBatch, ShapeRenderer playerShapeRenderer
+        ShapeRenderer playerShapeRenderer
     ) {
         this.player = player;
         this.action = action;
         this.controller = controller;
         this.overlay = overlay;
         this.ghostOverlay = ghostOverlay;
-        this.playerSpriteBatch = playerSpriteBatch;
         this.playerShapeRenderer = playerShapeRenderer;
 
     }

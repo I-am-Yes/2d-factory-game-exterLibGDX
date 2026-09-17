@@ -1,6 +1,5 @@
 package core.render;
 
-import core.app.GameContext;
 import data.map.asset.AssetType;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -8,7 +7,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.utils.Queue;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import core.AssetsHandler;
+import core.assets.AssetsHandler;
 import core.entities.plan.PlanBuilder;
 import core.entities.plan.PlanEntity;
 import core.entities.plan.PlanManager;
@@ -35,13 +34,16 @@ public class PlanRenderer<T extends AssetType> {
         this.tileSize = world.getTileSize();
     }
 
-    public void update() {}
+    public void update() {
+        updatePlanRenderQueue();
+    }
 
     public void render() {
 
-        updatePlanRenderQueue();
-        renderPlan(planRenderQueue);
+    }
 
+    public void drawBatch() {
+        renderPlan(planRenderQueue);
     }
 
     public void dispose() {}

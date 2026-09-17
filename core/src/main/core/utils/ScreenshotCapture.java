@@ -135,7 +135,7 @@ public final class ScreenshotCapture {
             ScreenUtils.clear(0.15f, 0.15f, 0.2f, 1f);
 
             // Renders only the map. No GUI systems are called.
-            world.render(camera);
+            world.update(camera);
 
             byte[] pixels = ScreenUtils.getFrameBufferPixels(
                 0,

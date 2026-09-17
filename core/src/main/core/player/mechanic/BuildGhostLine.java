@@ -12,7 +12,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import core.AssetsHandler;
+import core.assets.AssetsHandler;
 import core.InputHandler;
 import core.player.Player;
 import core.player.PlayerAction;
@@ -27,9 +27,10 @@ public class BuildGhostLine {
     private final World world;
     private final InputHandler input;
     private final Viewport viewport;
-    private final ShapeRenderer shapeRenderer;
     private final AssetsHandler assetsHandler;
     private final PlayerAction playerAction;
+
+    private ShapeRenderer shapeRenderer;
 
     private final TileAlgorithm tileAlgorithm = new TileAlgorithm();
 
@@ -67,12 +68,11 @@ public class BuildGhostLine {
     }
     private PlacingAlgorithm placingAlgorithm = PlacingAlgorithm.THICK_LINE;
 
-    public BuildGhostLine(World world, Player player, Viewport viewport, PlayerAction playerAction, InputHandler input, ShapeRenderer shapeRenderer, AssetsHandler assetsHandler) {
+    public BuildGhostLine(World world, Player player, Viewport viewport, PlayerAction playerAction, InputHandler input, AssetsHandler assetsHandler) {
         this.world = world;
         this.player = player;
         this.input = input;
         this.viewport = viewport;
-        this.shapeRenderer = shapeRenderer;
         this.assetsHandler = assetsHandler;
         this.playerAction = playerAction;
 
@@ -198,11 +198,10 @@ public class BuildGhostLine {
 
     }
 
-    public void draw() {
+    public void drawShapeRenderer(ShapeRenderer shapeRenderer) {
         if (drawLineMode == DrawLineMode.NONE) return;
 
-        shapeRenderer.setProjectionMatrix(viewport.getCamera().combined);
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        this.shapeRenderer = shapeRenderer;
 
         if (drawLineMode == DrawLineMode.FREE_LINE)
             drawFreeLine();
@@ -211,11 +210,10 @@ public class BuildGhostLine {
         else if (drawLineMode == DrawLineMode.TILE_SNAP_LINE)
             drawTileSnappedLine();
 
-        shapeRenderer.end();
     }
 
     public void dispose() {
-        shapeRenderer.dispose();
+
     }
 
     public void drawTilePreview(SpriteBatch spriteBatch, Array<Vector2> tiledLine, AssetType selectedType) {

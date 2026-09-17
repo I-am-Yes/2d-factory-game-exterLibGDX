@@ -35,6 +35,7 @@ public class DebugSystem implements GameSysCycle, ContextProvider<DebugContext> 
         this.viewport = context.viewport;
         this.player = context.getContext(PlayerContext.class).player;
         this.input = context.input;
+
         this.debugShapeRenderer = new ShapeRenderer();
 
         this.debug = new Debug(
@@ -68,6 +69,11 @@ public class DebugSystem implements GameSysCycle, ContextProvider<DebugContext> 
 
         debug.render();
 
+    }
+
+    @Override
+    public void dispose() {
+        debugShapeRenderer.dispose();
     }
 
     public Debug getDebug() {

@@ -1,5 +1,7 @@
 package core.app;
 
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ObjectMap;
 import core.system.ContextProvider;
@@ -105,6 +107,30 @@ public final class GameSystem {
 
                 if (system.renderLayer() == layer) {
                     system.render();
+                }
+            }
+        }
+    }
+
+    public void drawBatch(SpriteBatch batch) {
+        for (RenderLayer layer : RenderLayer.values()) {
+            for (int i = 0; i < systems.size; i++) {
+                GameSysCycle system = systems.get(i);
+
+                if (system.renderLayer() == layer) {
+                    system.drawBatch(batch);
+                }
+            }
+        }
+    }
+
+    public void drawShapeRenderer(ShapeRenderer shapeRenderer) {
+        for (RenderLayer layer : RenderLayer.values()) {
+            for (int i = 0; i < systems.size; i++) {
+                GameSysCycle system = systems.get(i);
+
+                if (system.renderLayer() == layer) {
+                    system.drawShapeRenderer(shapeRenderer);
                 }
             }
         }

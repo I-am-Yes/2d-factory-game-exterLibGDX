@@ -16,7 +16,6 @@ public class Player {
     private final World world;
     private final Sprite sprite;
     private final PlayerController controller;
-    private final SpriteBatch spriteBatch;
 
     private final float worldWidth;
     private final float worldHeight;
@@ -24,12 +23,11 @@ public class Player {
     //TODO: change this player texture to a regis system.
     private final Texture playerTexture = new Texture("unpacked/player/player.png");
 
-    public Player(World world, PlayerController controller, SpriteBatch playerSpriteBatch) {
+    public Player(World world, PlayerController controller) {
         this.controller = controller;
         this.world = world;
         this.worldWidth = world.getWorldWidth();
         this.worldHeight = world.getWorldHeight();
-        this.spriteBatch = playerSpriteBatch;
 
         sprite = new Sprite(playerTexture);
         sprite.setSize(PLAYER_WIDTH, PLAYER_HEIGHT);
@@ -40,8 +38,8 @@ public class Player {
         controller.moveCharacter(getPlayer(), sprite, delta, PLAYER_SPEED, worldWidth, worldHeight);
     }
 
-    public void draw() {
-        sprite.draw(spriteBatch);
+    public void draw(SpriteBatch batch) {
+        sprite.draw(batch);
     }
 
     public PlayerController getController() {

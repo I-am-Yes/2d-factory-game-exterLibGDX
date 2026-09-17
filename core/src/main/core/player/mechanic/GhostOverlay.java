@@ -5,15 +5,15 @@ import core.player.PlayerAction;
 import core.system.systems.PlayerSystem;
 import data.map.asset.AssetType;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import core.AssetsHandler;
+import core.assets.AssetsHandler;
 import core.world.World;
+import ui.PlayerHotbar;
 
 public class GhostOverlay {
 
@@ -22,7 +22,6 @@ public class GhostOverlay {
     private final PlayerAction playerAction;
     private final Player player;
     private final BuildGhostLine buildGhostLine;
-    private final SpriteBatch spriteBatch;
     private final AssetsHandler assetsHandler;
 
     private static final float SLIDE_SPEED = 24f;
@@ -39,16 +38,10 @@ public class GhostOverlay {
 
     private AssetType type;
 
-
-
-
-
-
-    public GhostOverlay(World world, Viewport viewport, Player player, PlayerAction action, SpriteBatch spriteBatch, AssetsHandler assets, BuildGhostLine buildGhostLine) {
+    public GhostOverlay(World world, Viewport viewport, Player player, PlayerAction action, AssetsHandler assets, BuildGhostLine buildGhostLine) {
         this.world = world;
         this.player = player;
         this.playerAction = action;
-        this.spriteBatch = spriteBatch;
         this.viewport = viewport;
         this.assetsHandler = assets;
         this.buildGhostLine = buildGhostLine;
@@ -57,6 +50,7 @@ public class GhostOverlay {
     }
 
     public void update(float delta) {
+        updateSelectedType();
 
         hoverTile.set(
             PlayerSystem.getHoverTileThresholdX(),
@@ -93,33 +87,27 @@ public class GhostOverlay {
         hoverVisible = true;
 
 
-        animInitialized = OverlayHelper.animateMove(delta, targetX, targetY, SLIDE_SPEED, animate, hoverVisible);
+        animInitialized =
+            OverlayHelper.animateMove(
+                delta, targetX, targetY, SLIDE_SPEED, animate, animInitialized
+            );
 
     }
 
     public void render() {
 
-        if (type == null || !hoverVisible) return;
-        updateSelectedType();
-        renderGhostOverlay(world, viewport, spriteBatch, type, assetsHandler);
-
-        //render drag line plans
-//        renderDragLinePlan(world, spriteBatch, assetsHandler);
-
-        //render build queue
-//        renderBuildQueue(world, spriteBatch, blockAssets);
-
     }
 
-    public void draw() {
-        updateSelectedType();
+    public void drawBatch(SpriteBatch spriteBatch) {
+
+        if (type == null || !hoverVisible) return;
+        renderGhostOverlay(world, viewport, type, assetsHandler, spriteBatch);
+        //TODO: render rotation too
         buildGhostLine.drawTilePreview(spriteBatch, buildGhostLine.getCurrentTiledLine(), playerAction.getSelectedType());
 
-        render();
     }
 
-    private void renderGhostOverlay(World world, Viewport viewport, SpriteBatch spriteBatch, AssetType type, AssetsHandler assetsHandler) {
-        updateSelectedType();
+    private void renderGhostOverlay(World world, Viewport viewport , AssetType type, AssetsHandler assetsHandler, SpriteBatch spriteBatch) {
         tmp.set(Gdx.input.getX(), Gdx.input.getY(), 0);
         viewport.unproject(tmp);
 
@@ -136,21 +124,21 @@ public class GhostOverlay {
 
         TextureRegion region = tiled.getTextureRegion();
 
-        Color oldColor = spriteBatch.getColor();
+        float oldColor = spriteBatch.getPackedColor();
         boolean walkAble = world.isWalkable(tx, ty);
 
         if (walkAble) spriteBatch.setColor(1f, 1f, 1f, 0.45f); //ghost normal
         else spriteBatch.setColor(1f, 0.3f, 0.3f, 0.45f); // ghost red
 
         spriteBatch.draw(region, animate.x, animate.y, tile, tile);
-        spriteBatch.setColor(oldColor);
+        spriteBatch.setPackedColor(oldColor);
     }
 
 
     private AssetType getSelectedType() {
         if (playerAction.getSelectedType() == null) return null;
-        if (type == null) return playerAction.getSelectedType();
-        if (type == playerAction.getSelectedType()) return type;
+        if (type == null) return PlayerHotbar.getSelectedType();
+        if (type == PlayerHotbar.getSelectedType()) return type;
         else return null;
     }
 

@@ -23,6 +23,8 @@ public final class AssetPacker {
         settings.maxHeight = 8192*2;
         settings.pot = true;
 
+        settings.useIndexes = false;
+
 //        TexturePacker.process(
 //            settings,
 //            "assets/unpacked/tiles/tiles",
@@ -30,26 +32,32 @@ public final class AssetPacker {
 //            "tiles"
 //        );
 //
-//        TexturePacker.process(
-//            settings,
-//            "assets/unpacked/blocks/industrial",
-//            "assets/unpacked/packed",
-//            "blocks"
-//        );
-
-        //packing tiles
-//        TexturePacker.process(
-//            settings,
-//            "../assets/unpacked/tiles/tiles",
-//            "../assets/packed/tiles/tiles",
-//            "tile assets"
-//        );
+        TexturePacker.process(
+            settings,
+            "assets/unpacked/machines",
+            "assets/packed/machines",
+            "machine atlas"
+        );
 
         TexturePacker.process(
             settings,
-            "../assets/unpacked/ui/hotbar",
-            "../assets/packed/ui/hotbar",
-            "hotbar assets"
+            "assets/unpacked/tiles/tiles",
+            "assets/packed/tiles/tiles",
+            "tile atlas"
+        );
+
+        TexturePacker.process(
+            settings,
+            "assets/unpacked/items",
+            "assets/packed/items",
+            "item atlas"
+        );
+
+        TexturePacker.process(
+            settings,
+            "assets/unpacked/ui/hotbar",
+            "assets/packed/ui/hotbar",
+            "hotbar atlas"
         );
     }
 }

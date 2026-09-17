@@ -1,23 +1,19 @@
 package core.player;
 
 import core.UiInputGate;
-import core.system.systems.InterfaceSystem;
+import core.machine.state.Direction;
 import core.system.systems.PlayerSystem;
 import data.map.asset.AssetType;
-import data.map.asset.BuildingType;
-import data.map.asset.FloorType;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import core.AssetsHandler;
+import core.assets.AssetsHandler;
 import core.InputHandler;
 import core.world.World;
 import core.player.mechanic.BuildGhostLine;
 import core.event.GameEvent;
-import core.event.PlayerEvent;
 import ui.PlayerHotbar;
 
 import static com.badlogic.gdx.Input.Keys.*;
@@ -29,11 +25,11 @@ public class PlayerAction {
     private final ShapeRenderer shapeRenderer;
     private final BuildGhostLine buildGhostLine;
     private final Viewport viewport;
-    private final SpriteBatch spriteBatch;
     private final AssetsHandler assets;
     private final UiInputGate uiInputGate;
 
     private final Vector3 tmp = new Vector3();
+    private static Direction placementDirection = Direction.EAST; //default startup direction
 
     private AssetType selectedType;
 
@@ -45,25 +41,45 @@ public class PlayerAction {
 
     private float delta;
 
-    public PlayerAction(World world, Viewport viewport, Player player, InputHandler input, UiInputGate uiInputGate,
-                        SpriteBatch playerSpriteBatch, ShapeRenderer shapeRenderer, AssetsHandler assets) {
+    public PlayerAction(
+        World world, Viewport viewport, Player player,
+        InputHandler input, UiInputGate uiInputGate,
+        ShapeRenderer shapeRenderer, AssetsHandler assets
+    ) {
         this.world = world;
         this.player = player;
         this.input = input;
         this.viewport = viewport;
         this.shapeRenderer = shapeRenderer;
-        this.spriteBatch = playerSpriteBatch;
         this.assets = assets;
 
         this.uiInputGate = uiInputGate;
 
-        this.buildGhostLine = new BuildGhostLine(world, player, viewport, this, input, shapeRenderer, assets);
+        this.buildGhostLine = new BuildGhostLine(world, player, viewport, this, input, assets);
     }
 
     public void update(float delta) {
         this.delta = delta;
 
         this.selectedType = PlayerHotbar.getSelectedType();
+
+        if (input.isKeyJustPressed(R)) {
+            boolean shift = input.isKeyPressed(SHIFT_LEFT);
+            boolean control = input.isKeyPressed(CONTROL_LEFT);
+
+            if (shift && control) {
+                placementDirection = placementDirection.rotateHalfCounterClockwise();
+            } else if (shift) {
+                placementDirection = placementDirection.rotateCounterClockwise();
+            } else if (control) {
+                placementDirection = placementDirection.rotateHalfClockwise();
+            } else {
+                placementDirection = placementDirection.rotateClockwise();
+            }
+
+            return;
+        }
+
 
         buildGhostLine.update(getSelectedType());
 
@@ -74,8 +90,8 @@ public class PlayerAction {
 
     public void render() {}
 
-    public void draw() {
-        buildGhostLine.draw();
+    public void drawShapeRenderer(ShapeRenderer shapeRenderer) {
+        buildGhostLine.drawShapeRenderer(shapeRenderer);
     }
 
     public void dispose() {
@@ -138,7 +154,11 @@ public class PlayerAction {
 
         selectX = tx;
         selectY = ty;
-        GameEvent.BlockPlaceRequest.fire(tx, ty, selectedType);
+        GameEvent.BlockPlaceRequest.fire(tx, ty, selectedType, placementDirection);
+    }
+
+    public static Direction getPlacementDirection() {
+        return placementDirection;
     }
 
     private int screenToTileX(Viewport viewport, World world) {

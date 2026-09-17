@@ -16,15 +16,12 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Scaling;
-import core.AssetsHandler;
+import core.assets.AssetsHandler;
 import core.InputHandler;
 import core.Window;
 import data.map.asset.AssetType;
 import data.map.asset.BuildingType;
 import data.map.asset.FloorType;
-import data.map.asset.GhostType;
-
-import java.util.Arrays;
 
 public class PlayerHotbar {
     private final Window window;
@@ -42,7 +39,6 @@ public class PlayerHotbar {
     private final Image selectionBorder;
 
     private final TextureAtlas hotbarSkin;
-    private final TextureAtlas tilesAtlas;
     private final InputHandler input;
     private final AssetsHandler assets;
 
@@ -74,11 +70,9 @@ public class PlayerHotbar {
         //TODO: later add text label to show item name and description
         //TODO: later add text label on top of hotbar to temporary show selected item name
 
-        this.tilesAtlas = assets.getTilesAtlas();
-
         textStyle1 = Style.getTextStyle(Style.textStyle.TEXT_STYLE_1);
 
-        hotbarSkin = new TextureAtlas(Gdx.files.internal("packed/ui/hotbar/hotbar assets.atlas"));
+        hotbarSkin = new TextureAtlas(Gdx.files.internal("packed/ui/hotbar/hotbar atlas.atlas"));
 
         TextureRegionDrawable hotbarBox = new TextureRegionDrawable(hotbarSkin.findRegion("box background"));
         TextureRegionDrawable hotbarBoxSelected = new TextureRegionDrawable(hotbarSkin.findRegion("box selected"));
@@ -235,12 +229,14 @@ public class PlayerHotbar {
 
 
         setHotbarItems(
-            1, BuildingType.HAZARD_BLOCK,
-            2, BuildingType.HAZARD_BLOCK2,
-            3, FloorType.SAND,
+            1, BuildingType.CONVEYOR_BELT_2,
+            2, BuildingType.CREATIVE_SOURCE,
+            3, BuildingType.STORAGE_CHEST_2,
             4, FloorType.STONE,
             5, FloorType.MARBLE,
-            6, FloorType.WATER
+            6, FloorType.WATER,
+            7, FloorType.GRASS,
+            8, BuildingType.STORAGE_CHEST_2
         );
 
 //        System.out.println(Arrays.toString(getAllHotbarItems()));
@@ -266,7 +262,7 @@ public class PlayerHotbar {
             return;
         }
 
-        selectionLabel.setText(type.getNamePNG());
+        selectionLabel.setText(type.getName());
         selectionLabel.getColor().a = 0f;
         selectionLabel.setVisible(true);
         selectionLabel.addAction(Actions.sequence(

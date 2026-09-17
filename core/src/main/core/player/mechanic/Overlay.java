@@ -8,7 +8,7 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import core.AssetsHandler;
+import core.assets.AssetsHandler;
 import core.InputHandler;
 import core.Window;
 import core.player.PlayerAction;
@@ -22,7 +22,6 @@ public class Overlay {
     private final InputHandler input;
     private final PlayerAction playerAction;
     private final AssetsHandler assetsHandler;
-    private final ShapeRenderer shapeRenderer;
 
     private final Vector3 tmp = new Vector3();
     private final Vector2 bracketAnimate = new Vector2();
@@ -58,14 +57,13 @@ public class Overlay {
     private boolean animInitialized;
     private boolean isOverlayRenderAnimationEnabled = true; //true by default
 
-    public Overlay(World world, Window window, Viewport viewport, InputHandler input, PlayerAction action, AssetsHandler assets, ShapeRenderer shapeRenderer) {
+    public Overlay(World world, Window window, Viewport viewport, InputHandler input, PlayerAction action, AssetsHandler assets) {
         this.world = world;
         this.window = window;
         this.viewport = viewport;
         this.input = input;
         this.playerAction = action;
         this.assetsHandler = assets;
-        this.shapeRenderer = shapeRenderer;
 
         //TODO: change bracket color to light blue when hovering overlay on ghost tile
         setBracketPaddingMode(defaultPaddingMode);
@@ -111,14 +109,13 @@ public class Overlay {
     }
 
     public void render() {
-        OrthographicCamera camera = (OrthographicCamera) viewport.getCamera();
+    }
 
-        shapeRenderer.setProjectionMatrix(camera.combined);
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+    public void drawShapeRenderer(ShapeRenderer shapeRenderer) {
+
 
         drawCornerBrackets(world, viewport, shapeRenderer, cornerBracketGapRatio, cornerBracketThickness);
 
-        shapeRenderer.end();
     }
 
 

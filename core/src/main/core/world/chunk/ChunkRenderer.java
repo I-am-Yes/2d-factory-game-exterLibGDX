@@ -5,50 +5,45 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
-import core.AssetsHandler;
+import core.assets.AssetsHandler;
 import data.map.asset.AssetType;
 import data.map.asset.GhostType;
 
 public final class ChunkRenderer {
 
     private final AssetsHandler assets;
-    private final SpriteBatch batch;
 
     public ChunkRenderer(AssetsHandler assets) {
         this.assets = assets;
-        this.batch = new SpriteBatch();
 
         //TODO: add context to this
         //TODO: convert to a chunk system
     }
 
-    public void render(OrthographicCamera camera, Iterable<Chunk> chunks, float tileSize) {
-        batch.setProjectionMatrix(camera.combined);
-        batch.begin();
+    public void drawBatch(SpriteBatch batch, OrthographicCamera camera, Iterable<Chunk> chunks, float tileSize) {
 
         for (Chunk chunk : chunks) {
             if (isVisible(chunk, camera, tileSize)) {
-                drawFloors(chunk, tileSize);
+                drawFloors(batch, chunk, tileSize);
             }
         }
         for (Chunk chunk : chunks) {
             if (isVisible(chunk, camera, tileSize)) {
-                drawBuildings(chunk, tileSize);
+                drawBuildings(batch, chunk, tileSize);
             }
         }
         for (Chunk chunk : chunks) {
             if (isVisible(chunk, camera, tileSize)) {
-                drawGhosts(chunk, tileSize);
+                drawGhosts(batch, chunk, tileSize);
             }
         }
-
-        batch.end();
     }
 
-    private void drawFloors(Chunk chunk, float tileSize) {
+    private void drawFloors(SpriteBatch batch, Chunk chunk, float tileSize) {
         for (int x = 0; x < Chunk.SIZE; x++) {
             for (int y = 0; y < Chunk.SIZE; y++) {
                 draw(
+                    batch,
                     chunk.floors[x][y],
                     worldX(chunk, x, tileSize),
                     worldY(chunk, y, tileSize),
@@ -59,10 +54,11 @@ public final class ChunkRenderer {
         }
     }
 
-    private void drawBuildings(Chunk chunk, float tileSize) {
+    private void drawBuildings(SpriteBatch batch, Chunk chunk, float tileSize) {
         for (int x = 0; x < Chunk.SIZE; x++) {
             for (int y = 0; y < Chunk.SIZE; y++) {
                 draw(
+                    batch,
                     chunk.buildings[x][y],
                     worldX(chunk, x, tileSize),
                     worldY(chunk, y, tileSize),
@@ -73,13 +69,14 @@ public final class ChunkRenderer {
         }
     }
 
-    private void drawGhosts(Chunk chunk, float tileSize) {
+    private void drawGhosts(SpriteBatch batch, Chunk chunk, float tileSize) {
         for (int x = 0; x < Chunk.SIZE; x++) {
             for (int y = 0; y < Chunk.SIZE; y++) {
                 GhostType<AssetType> ghost = chunk.ghosts[x][y];
 
                 if (ghost != null) {
                     draw(
+                        batch,
                         ghost.getSourceType(),
                         worldX(chunk, x, tileSize),
                         worldY(chunk, y, tileSize),
@@ -99,7 +96,7 @@ public final class ChunkRenderer {
         return (chunk.chunkY * Chunk.SIZE + localY) * tileSize;
     }
 
-    private void draw(AssetType type, float worldX, float worldY, float tileSize, Color color) {
+    private void draw(SpriteBatch batch, AssetType type, float worldX, float worldY, float tileSize, Color color) {
         if (type == null) return;
         TiledMapTile tile = assets.getTile(type);
         if (tile == null) return;
@@ -131,7 +128,7 @@ public final class ChunkRenderer {
     }
 
     public void dispose() {
-        batch.dispose();
+
     }
 
 }

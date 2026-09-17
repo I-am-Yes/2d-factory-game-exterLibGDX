@@ -6,7 +6,7 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import core.AssetsHandler;
+import core.assets.AssetsHandler;
 import core.InputHandler;
 import core.UiInputGate;
 import core.Window;
@@ -35,8 +35,7 @@ public class PlayerSystem implements GameSysCycle, ContextProvider<PlayerContext
     private PlayerController controller;
     private Overlay overlay;
     private GhostOverlay ghostOverlay;
-    private SpriteBatch playerSpriteBatch;
-    private ShapeRenderer playerShapeRenderer;
+    private ShapeRenderer shapeRenderer;
     private UiInputGate uiInputGate;
 
     private PlayerContext playerContext;
@@ -60,23 +59,21 @@ public class PlayerSystem implements GameSysCycle, ContextProvider<PlayerContext
 
         this.uiInputGate = context.getSystem(InterfaceSystem.class).getUiInputGate();
 
-        this.playerSpriteBatch = new SpriteBatch();
-        this.playerShapeRenderer = new ShapeRenderer();
+        this.shapeRenderer = context.shapeRenderer;
 
         this.controller = new PlayerController(
             input,
             window
         );
 
-        this.player = new Player(world, controller, playerSpriteBatch);
+        this.player = new Player(world, controller);
         this.action = new PlayerAction(
             world,
             viewport,
             player,
             input,
             uiInputGate,
-            playerSpriteBatch,
-            playerShapeRenderer,
+            shapeRenderer,
             assets
         );
 
@@ -86,15 +83,13 @@ public class PlayerSystem implements GameSysCycle, ContextProvider<PlayerContext
             viewport,
             input,
             action,
-            assets,
-            new com.badlogic.gdx.graphics.glutils.ShapeRenderer()
+            assets
         );
         this.ghostOverlay = new GhostOverlay(
             world,
             viewport,
             player,
             action,
-            playerSpriteBatch,
             assets,
             action.getBuildGhostLine()
         );
@@ -106,8 +101,7 @@ public class PlayerSystem implements GameSysCycle, ContextProvider<PlayerContext
             controller,
             overlay,
             ghostOverlay,
-            playerSpriteBatch,
-            playerShapeRenderer
+            shapeRenderer
         );
     }
 
@@ -123,24 +117,25 @@ public class PlayerSystem implements GameSysCycle, ContextProvider<PlayerContext
 
     @Override
     public void render() {
-        draw();
         overlay.render();
     }
 
-    public void draw() {
-
-        playerSpriteBatch.setProjectionMatrix(context.viewport.getCamera().combined);
+    @Override
+    public void drawBatch(SpriteBatch batch) {
         //BEGIN batch
-        playerSpriteBatch.begin();
-
-        player.draw();
-        ghostOverlay.draw();
-
-        playerSpriteBatch.end();
+        //deprecated!
+        //only needed when there is separate sprite batch for player
         //END batch
 
+        ghostOverlay.drawBatch(batch);
+        player.draw(batch);
 
-        action.draw();
+    }
+
+    @Override
+    public void drawShapeRenderer(ShapeRenderer shapeRenderer) {
+        action.drawShapeRenderer(shapeRenderer);
+        overlay.drawShapeRenderer(shapeRenderer);
     }
 
     @Override

@@ -54,6 +54,7 @@ public class GameUI {
     private final Label worldMouseHoverPosLabel;
     private final Label worldMouseTileLabel;
     private final Label worldMouseTileNameLabel;
+    private final Label worldTileRotationLabel;
 
     private final Table WorldInfoList;
     private final Table PerformanceList;
@@ -83,7 +84,8 @@ public class GameUI {
             worldLoadedChunkLabel = uiHelper.createTextLabel("loaded Chunk: ", textStyle1),
             worldChunkSizeLabel = uiHelper.createTextLabel("Chunk Size: ", textStyle1),
             worldMouseTileLabel = uiHelper.createTextLabel("Mouse Tile: ", textStyle1),
-            worldMouseTileNameLabel = uiHelper.createTextLabel("Tile Name: ", textStyle1)
+            worldMouseTileNameLabel = uiHelper.createTextLabel("Tile Name: ", textStyle1),
+            worldTileRotationLabel = uiHelper.createTextLabel("Tile Rotation: ", textStyle1)
         );
 
         WorldInfoList.setTouchable(Touchable.disabled);
@@ -155,6 +157,11 @@ public class GameUI {
 
         worldMouseHoverPosLabel.setText(
             "Hover Tile: " + PlayerSystem.getHoverTileThresholdX() + "x, " + PlayerSystem.getHoverTileThresholdY() + "y"
+        );
+
+        worldTileRotationLabel.setText(
+            //TODO: add rotation getter to this text label
+            "Tile Rotation: " + "null"
         );
     }
 

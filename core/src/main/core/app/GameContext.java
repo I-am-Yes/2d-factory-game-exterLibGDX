@@ -1,19 +1,18 @@
 package core.app;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import core.AssetsHandler;
+import core.assets.AssetsHandler;
 import core.InputHandler;
 import core.Window;
 import core.system.ContextProvider;
 import core.controller.camera.CameraController;
 import core.controller.camera.CursorController;
-import core.render.Renderer;
 import core.system.GameSysCycle;
-import core.utils.ScreenshotCapture;
 import core.world.World;
 import data.map.MapConfig;
-import core.system.systems.InterfaceSystem;
 
 public final class GameContext {
 
@@ -22,6 +21,9 @@ public final class GameContext {
     public Window window;
     public World world;
     public Viewport viewport;
+
+    public SpriteBatch renderSpriteBatch;
+    public ShapeRenderer shapeRenderer;
 
     public AssetsHandler assets;
     public InputHandler input;
@@ -53,6 +55,10 @@ public final class GameContext {
 
     public float getDeltaTime() {
         return Gdx.graphics.getDeltaTime();
+    }
+
+    public SpriteBatch getBatch() {
+        return renderSpriteBatch;
     }
 
 }

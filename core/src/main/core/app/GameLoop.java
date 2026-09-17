@@ -1,12 +1,9 @@
 package core.app;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.ScreenUtils;
-import core.system.context.InterfaceContext;
-import core.system.context.RenderContext;
-import core.system.systems.EntrySystem;
-import core.system.systems.InterfaceSystem;
 import core.utils.ScreenshotCapture;
 
 public class GameLoop {
@@ -81,27 +78,43 @@ public class GameLoop {
         context.input.endFrame();
 
     }
-    private void logic() {}
+    private void logic() {
+        context.world.update(getCamera());
+
+    }
 
     private void draw() {
         ScreenUtils.clear(0.15f, 0.15f, 0.2f, 1f);
         context.viewport.apply();
 
-        context.world.render((OrthographicCamera) context.viewport.getCamera());
 
-        context.systems.render();
-
-        //Deprecated batch drawing method..
-        context.getContext(RenderContext.class).spriteBatch.setProjectionMatrix(context.viewport.getCamera().combined);
 
         //BEGIN batch
-        context.getContext(RenderContext.class).spriteBatch.begin();
+        context.renderSpriteBatch.setProjectionMatrix(getCamera().combined);
+        context.renderSpriteBatch.begin();
 
-        //usually don't use this here, do inside the system render itself.
-        //if we have to use, just create new sprite batch instead.
+        //general spriteBatch for all world contents
+        context.world.drawBatch(context.renderSpriteBatch, getCamera());
+        context.systems.drawBatch(context.renderSpriteBatch);
 
-        context.getContext(RenderContext.class).spriteBatch.end();
+        context.renderSpriteBatch.end();
         //END batch
+
+
+        //BEGIN shapeRender
+        context.shapeRenderer.setProjectionMatrix(getCamera().combined);
+        context.shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        //Note: add another ShapeType if needed.
+
+        context.systems.drawShapeRenderer(context.shapeRenderer);
+
+        context.shapeRenderer.end();
+        //END shapeRender
+
+
+
+        //some systems such as scene2D, so this should be at very end.
+        context.systems.render();
 
         ScreenshotCapture.captureIfRequested();
     }
@@ -123,10 +136,18 @@ public class GameLoop {
 
     public void dispose() {
 
-        context.assets.dispose();
+        context.systems.dispose();
         context.world.dispose();
 
-        context.systems.dispose();
+        context.assets.dispose();
+
+        context.renderSpriteBatch.dispose();
+        context.shapeRenderer.dispose();
+
+    }
+
+    public float getTickRemaining() {
+        return MathUtils.clamp(tickAccumulator / UPDATE_INTERVAL, 0f, 1f);
     }
 
     public static void setGameSpeed(float gameSpeed) {
@@ -167,6 +188,10 @@ public class GameLoop {
 
     public static boolean isGamePaused() {
         return paused;
+    }
+
+    public OrthographicCamera getCamera() {
+        return (OrthographicCamera) context.viewport.getCamera();
     }
 
 }

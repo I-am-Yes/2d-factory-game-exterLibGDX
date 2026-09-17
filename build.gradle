@@ -57,7 +57,7 @@ configure(subprojects) {
 
 subprojects {
   version = "$projectVersion"
-  ext.appName = '2D factory game'
+  ext.appName = '2D machines game'
   plugins.withType(JavaPlugin).configureEach {
     sourceSets.named('main') {
       java.srcDirs = ['src/main']
@@ -72,4 +72,4 @@ subprojects {
   }
 }
 
-eclipse.project.name = '2D factory game' + '-parent'
+eclipse.project.name = '2D machines game' + '-parent'
