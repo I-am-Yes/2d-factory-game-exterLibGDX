@@ -34,6 +34,9 @@ public class World {
     private final ChunkRenderer chunkRenderer;
     private final ChunkManager chunkManager;
 
+    private static final int MAX_CHUNK_LOAD_RADIUS = 64;
+    private static final int UNLOAD_CHUNK_PADDING = 2;
+
     // tile map layer variables
     private final TiledMapTileLayer floorLayer;
     private final TiledMapTileLayer buildingLayer;
@@ -196,17 +199,34 @@ public class World {
 
         float visibleWidth = camera.viewportWidth * camera.zoom;
         float visibleHeight = camera.viewportHeight * camera.zoom;
-        int chunkRadius = Math.max(
+        int requestedRadius = Math.max(
             1,
             MathUtils.ceil(
-                Math.max(visibleWidth, visibleHeight) / getTileSize() / Chunk.SIZE / 2f
+                Math.max(visibleWidth, visibleHeight)
+                    / getTileSize()
+                    / Chunk.SIZE
+                    / 2f
             )
         );
 
+        int loadRadius = Math.min(requestedRadius, MAX_CHUNK_LOAD_RADIUS);
+
+        int centerChunkX = Math.floorDiv(cameraTileX, Chunk.SIZE);
+        int centerChunkY = Math.floorDiv(cameraTileY, Chunk.SIZE);
+
         chunkManager.loadChunksAroundTile(
-            cameraTileX, cameraTileY, chunkRadius
+            cameraTileX,
+            cameraTileY,
+            loadRadius
         );
 
+
+
+        chunkManager.unloadOutsideChunk(
+            centerChunkX,
+            centerChunkY,
+            loadRadius + UNLOAD_CHUNK_PADDING
+        );
 
 //        mapRenderer.setView(camera);
 //        mapRenderer.render();

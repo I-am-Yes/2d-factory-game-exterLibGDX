@@ -34,6 +34,25 @@ public final class ChunkManager {
     }
 
     /**
+     * Unloads chunks outside a given radius from the center chunk.
+     *
+     * @param centerChunkX The x-coordinate of the center chunk.
+     * @param centerChunkY The y-coordinate of the center chunk.
+     * @param keepRadius   The radius of the area to keep chunks for.
+     */
+    public void unloadOutsideChunk(int centerChunkX, int centerChunkY, int keepRadius) {
+        chunks.entrySet().removeIf(entry -> {
+            ChunkPos pos = entry.getKey();
+            Chunk chunk = entry.getValue();
+
+            if (chunk.dirty) return false;
+
+            return Math.abs(pos.x() - centerChunkX) > keepRadius
+                || Math.abs(pos.y() - centerChunkY) > keepRadius;
+        });
+    }
+
+    /**
      * Loads chunks around a given tile position.
      *
      * @param centerTileX The x-coordinate of the center tile.
