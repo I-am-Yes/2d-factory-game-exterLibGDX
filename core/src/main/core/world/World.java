@@ -1,8 +1,10 @@
 package core.world;
 
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import core.controller.camera.CameraController;
+import core.controller.camera.CameraViewMode;
 import core.world.chunk.Chunk;
 import core.world.chunk.ChunkManager;
+import core.world.chunk.ChunkRenderDetail;
 import core.world.chunk.ChunkRenderer;
 import data.map.asset.BuildingType;
 import data.map.asset.FloorType;
@@ -21,6 +23,8 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 
+import java.util.function.Supplier;
+
 public class World {
 
     private static final String FLOOR_LAYER_NAME = "Floor Layer";
@@ -34,8 +38,14 @@ public class World {
     private final ChunkRenderer chunkRenderer;
     private final ChunkManager chunkManager;
 
-    private static final int MAX_CHUNK_LOAD_RADIUS = 64;
+    private static final int MAX_CHUNK_LOAD_RADIUS = 32;
     private static final int UNLOAD_CHUNK_PADDING = 2;
+    private static final int CHUNK_LOAD_BUDGET = 128; //max chunks load per frame
+
+    private int lastStreamChunkX = Integer.MIN_VALUE;
+    private int lastStreamChunkY = Integer.MIN_VALUE;
+    private int lastStreamRadius = Integer.MIN_VALUE;
+    private boolean chunkStreamComplete;
 
     // tile map layer variables
     private final TiledMapTileLayer floorLayer;
@@ -125,7 +135,7 @@ public class World {
     }
 
     public static class ColoredCell extends TiledMapTileLayer.Cell {
-        private Color color = new Color(Color.WHITE);
+        private final Color color = new Color(Color.WHITE);
 
         public ColoredCell(Color color) {
             this.color.set(color);
@@ -210,31 +220,52 @@ public class World {
         );
 
         int loadRadius = Math.min(requestedRadius, MAX_CHUNK_LOAD_RADIUS);
-
         int centerChunkX = Math.floorDiv(cameraTileX, Chunk.SIZE);
         int centerChunkY = Math.floorDiv(cameraTileY, Chunk.SIZE);
 
-        chunkManager.loadChunksAroundTile(
-            cameraTileX,
-            cameraTileY,
-            loadRadius
-        );
+        boolean streamTargetChanged =
+            centerChunkX != lastStreamChunkX
+                || centerChunkY != lastStreamChunkY
+                || loadRadius != lastStreamRadius;
 
+        if (streamTargetChanged) {
+            lastStreamChunkX = centerChunkX;
+            lastStreamChunkY = centerChunkY;
+            lastStreamRadius = loadRadius;
+            chunkStreamComplete = false;
 
+            chunkManager.unloadOutsideChunk(
+                centerChunkX,
+                centerChunkY,
+                loadRadius + UNLOAD_CHUNK_PADDING,
+                chunkRenderer::unload
+            );
+        }
 
-        chunkManager.unloadOutsideChunk(
-            centerChunkX,
-            centerChunkY,
-            loadRadius + UNLOAD_CHUNK_PADDING
-        );
+        if (chunkStreamComplete) {
+            return;
+        }
+
+        chunkStreamComplete =
+            chunkManager.loadChunksAroundTile(
+                cameraTileX,
+                cameraTileY,
+                loadRadius,
+                CHUNK_LOAD_BUDGET
+            );
+
+        chunkRenderer.invalidateVisibleChunks();
 
 //        mapRenderer.setView(camera);
 //        mapRenderer.render();
     }
 
-    public void drawBatch(SpriteBatch batch, OrthographicCamera camera) {
-        chunkRenderer.drawBatch(batch, camera, chunkManager.getLoadedChunks(), getTileSize());
-
+    public void drawCached(OrthographicCamera camera, Supplier<CameraController> cameraControllerSupplier) {
+        CameraViewMode viewMode = cameraControllerSupplier.get().getCurrentViewMode();
+        ChunkRenderDetail renderDetail = cameraControllerSupplier.get().getMapRenderDetail();
+        chunkRenderer.drawCached(
+            camera, chunkManager, viewMode, renderDetail, getTileSize()
+        );
     }
 
     public void dispose() {
@@ -388,6 +419,8 @@ public class World {
 
         chunk.floors[localX][localY] = floorType;
         chunk.dirty = true;
+        chunk.markRenderDirty();
+        chunkRenderer.invalidateOverview();
         return true;
     }
 
@@ -404,6 +437,7 @@ public class World {
 
         chunk.buildings[localX][localY] = buildingType;
         chunk.dirty = true;
+        chunk.markRenderDirty();
         return true;
     }
 
@@ -422,6 +456,7 @@ public class World {
 
         chunk.ghosts[localX][localY] = storedGhost;
         chunk.dirty = true;
+        chunk.markRenderDirty();
         return true;
     }
 
@@ -564,8 +599,12 @@ public class World {
     public BuildingType[][] getBuildingGrid() {
         return buildingGrid;
     }
-    public GhostType[][] getGhostGrid() {
+    public GhostType<? extends AssetType>[][] getGhostGrid() {
         return ghostGrid;
+    }
+
+    public ChunkRenderDetail getCurrentRenderDetail() {
+        return chunkRenderer.getCurrentDetail();
     }
 
 }

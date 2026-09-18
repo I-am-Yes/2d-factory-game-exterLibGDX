@@ -15,6 +15,7 @@ import core.app.UpdateDomain;
 import core.render.RenderLayer;
 import core.system.ContextProvider;
 import core.system.GameSysCycle;
+import core.system.context.CameraContext;
 import core.system.context.InterfaceContext;
 import core.system.context.PlayerContext;
 import core.world.World;
@@ -72,7 +73,10 @@ public class InterfaceSystem implements GameSysCycle, ContextProvider<InterfaceC
             context.input, context.assets
         );
 
-        gameUI = new GameUI(world, window, viewport, stage, skin, uiHelper, input);
+        gameUI = new GameUI(world, window, viewport, stage, skin, uiHelper, input,
+            () -> context
+            .getContext(CameraContext.class)
+            .cameraController);
 
         settingsPanel = new SettingsPanel(skin, uiHelper);
 

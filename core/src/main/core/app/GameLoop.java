@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.ScreenUtils;
+import core.system.context.CameraContext;
 import core.utils.ScreenshotCapture;
 
 public class GameLoop {
@@ -89,12 +90,17 @@ public class GameLoop {
 
 
 
+        context.world.drawCached(getCamera(),
+            () -> context
+            .getContext(CameraContext.class)
+            .cameraController
+        );
+
         //BEGIN batch
         context.renderSpriteBatch.setProjectionMatrix(getCamera().combined);
         context.renderSpriteBatch.begin();
 
         //general spriteBatch for all world contents
-        context.world.drawBatch(context.renderSpriteBatch, getCamera());
         context.systems.drawBatch(context.renderSpriteBatch);
 
         context.renderSpriteBatch.end();

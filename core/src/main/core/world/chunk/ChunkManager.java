@@ -4,10 +4,13 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.MathUtils;
 import core.world.map.MapGenerator;
 import data.map.MapConfig;
+import data.map.asset.FloorType;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.function.Consumer;
 
 public final class ChunkManager {
 
@@ -22,6 +25,26 @@ public final class ChunkManager {
 
     public Collection<Chunk> getLoadedChunks() {
         return chunks.values();
+    }
+
+    /**
+     * Samples the floor type at a given tile position.
+     *
+     * @param tileX The x-coordinate of the tile.
+     * @param tileY The y-coordinate of the tile.
+     * @return The sample floor type at the specified tile position.
+     */
+    public FloorType sampleFloorAt(int tileX, int tileY) {
+        int chunkX = Math.floorDiv(tileX, Chunk.SIZE);
+        int chunkY = Math.floorDiv(tileY, Chunk.SIZE);
+        Chunk loadedChunk = getLoadedChunk(chunkX, chunkY);
+        if (loadedChunk != null) {
+            int localX = getLocalX(tileX);
+            int localY = getLocalY(tileY);
+            return loadedChunk.floors[localX][localY];
+        }
+
+        return MapGenerator.generateFloorAt(tileX, tileY, mapConfig);
     }
 
     /**
@@ -40,16 +63,36 @@ public final class ChunkManager {
      * @param centerChunkY The y-coordinate of the center chunk.
      * @param keepRadius   The radius of the area to keep chunks for.
      */
-    public void unloadOutsideChunk(int centerChunkX, int centerChunkY, int keepRadius) {
-        chunks.entrySet().removeIf(entry -> {
+    public void unloadOutsideChunk(
+        int centerChunkX,
+        int centerChunkY,
+        int keepRadius,
+        Consumer<Chunk> onUnload
+    ) {
+        Iterator<Map.Entry<ChunkPos, Chunk>> iterator =
+            chunks.entrySet().iterator();
+
+        while (iterator.hasNext()) {
+            Map.Entry<ChunkPos, Chunk> entry =
+                iterator.next();
+
             ChunkPos pos = entry.getKey();
             Chunk chunk = entry.getValue();
 
-            if (chunk.dirty) return false;
+            // Keep modified chunks until chunk saving exists.
+            if (chunk.dirty) {
+                continue;
+            }
 
-            return Math.abs(pos.x() - centerChunkX) > keepRadius
-                || Math.abs(pos.y() - centerChunkY) > keepRadius;
-        });
+            boolean outside =
+                Math.abs(pos.x() - centerChunkX) > keepRadius
+                    || Math.abs(pos.y() - centerChunkY) > keepRadius;
+
+            if (outside) {
+                onUnload.accept(chunk);
+                iterator.remove();
+            }
+        }
     }
 
     /**
@@ -58,50 +101,75 @@ public final class ChunkManager {
      * @param centerTileX The x-coordinate of the center tile.
      * @param centerTileY The y-coordinate of the center tile.
      * @param radius      The radius of the area to load chunks for.
+     * @param maxNewChunks The maximum number of new chunks to load.
+     * @return true if all chunks were loaded, false otherwise.
      */
-    public void loadChunksAroundTile(int centerTileX, int centerTileY, int radius) {
+    public boolean loadChunksAroundTile(int centerTileX, int centerTileY, int radius, int maxNewChunks) {
+        if (maxNewChunks <= 0) {
+            throw new IllegalArgumentException(
+                "maxNewChunks must be positive"
+            );
+        }
         int centerChunkX = Math.floorDiv(centerTileX, Chunk.SIZE);
         int centerChunkY = Math.floorDiv(centerTileY, Chunk.SIZE);
+        int loaded = 0;
+        // Load from the center outward.
+        for (int ring = 0; ring <= radius; ring++) {
+            for (int offsetX = -ring; offsetX <= ring; offsetX++) {
+                for (int offsetY = -ring; offsetY <= ring; offsetY++) {
+                    if (Math.max(Math.abs(offsetX), Math.abs(offsetY)) != ring) {
+                        continue;
+                    }
+                    int chunkX = centerChunkX + offsetX;
+                    int chunkY = centerChunkY + offsetY;
 
-        for (int chunkX = centerChunkX - radius; chunkX <= centerChunkX + radius; chunkX++) {
-            for (int chunkY = centerChunkY - radius; chunkY <= centerChunkY + radius; chunkY++) {
-                getOrCreateChunk(chunkX, chunkY);
+                    if (getLoadedChunk(chunkX, chunkY) != null) {
+                        continue;
+                    }
+
+                    getOrCreateChunk(chunkX, chunkY);
+                    loaded++;
+
+                    if (loaded >= maxNewChunks) {
+                        return false;
+                    }
+                }
             }
         }
+        return true;
     }
 
     /**
      * Gets the number of visible tiles based on the camera's viewport and zoom level.
      *
-     * @param camera
-     * @param tileSize
-     * @return
+     * @param camera   The camera to use for determining visibility.
+     * @param tileSize The size of each tile.
+     * @return The number of visible tiles.
      */
-    public int getVisibleTileCount(
+    public long getVisibleTileCount(
         OrthographicCamera camera,
         float tileSize
     ) {
-        float halfWidth = camera.viewportWidth * camera.zoom * 0.5f;
-        float halfHeight = camera.viewportHeight * camera.zoom * 0.5f;
+        float halfWidth =
+            camera.viewportWidth * camera.zoom * 0.5f;
+        float halfHeight =
+            camera.viewportHeight * camera.zoom * 0.5f;
 
         int minTileX = MathUtils.floor(
             (camera.position.x - halfWidth) / tileSize
         );
-
         int maxTileX = MathUtils.ceil(
             (camera.position.x + halfWidth) / tileSize
         );
-
         int minTileY = MathUtils.floor(
             (camera.position.y - halfHeight) / tileSize
         );
-
         int maxTileY = MathUtils.ceil(
             (camera.position.y + halfHeight) / tileSize
         );
 
-        int visibleWidth = maxTileX - minTileX;
-        int visibleHeight = maxTileY - minTileY;
+        long visibleWidth = (long) maxTileX - minTileX;
+        long visibleHeight = (long) maxTileY - minTileY;
 
         return visibleWidth * visibleHeight;
     }
@@ -112,38 +180,19 @@ public final class ChunkManager {
      * @param tileSize
      * @return
      */
-    public int getVisibleChunkCount(
-        OrthographicCamera camera,
-        float tileSize
-    ) {
+    public long getVisibleChunkCount(OrthographicCamera camera, float tileSize) {
+        float chunkWorldSize = Chunk.SIZE * tileSize;
         float halfWidth = camera.viewportWidth * camera.zoom * 0.5f;
         float halfHeight = camera.viewportHeight * camera.zoom * 0.5f;
 
-        float cameraMinX = camera.position.x - halfWidth;
-        float cameraMaxX = camera.position.x + halfWidth;
-        float cameraMinY = camera.position.y - halfHeight;
-        float cameraMaxY = camera.position.y + halfHeight;
+        int minChunkX = MathUtils.floor((camera.position.x - halfWidth) / chunkWorldSize);
+        int maxChunkX = MathUtils.floor((camera.position.x + halfWidth) / chunkWorldSize);
+        int minChunkY = MathUtils.floor((camera.position.y - halfHeight) / chunkWorldSize);
+        int maxChunkY = MathUtils.floor((camera.position.y + halfHeight) / chunkWorldSize);
 
-        int visibleCount = 0;
-
-        for (Chunk chunk : chunks.values()) {
-            float chunkMinX = chunk.chunkX * Chunk.SIZE * tileSize;
-            float chunkMinY = chunk.chunkY * Chunk.SIZE * tileSize;
-            float chunkMaxX = chunkMinX + Chunk.SIZE * tileSize;
-            float chunkMaxY = chunkMinY + Chunk.SIZE * tileSize;
-
-            boolean visible =
-                chunkMaxX >= cameraMinX
-                    && chunkMinX <= cameraMaxX
-                    && chunkMaxY >= cameraMinY
-                    && chunkMinY <= cameraMaxY;
-
-            if (visible) {
-                visibleCount++;
-            }
-        }
-
-        return visibleCount;
+        long visibleWidth = (long) maxChunkX - minChunkX + 1L;
+        long visibleHeight = (long) maxChunkY - minChunkY + 1L;
+        return visibleWidth * visibleHeight;
     }
 
     /**
@@ -201,6 +250,10 @@ public final class ChunkManager {
         public int heightInTiles() {
             return heightInChunks() * Chunk.SIZE;
         }
+    }
+
+    public Chunk getLoadedChunk(int chunkX, int chunkY) {
+        return chunks.get(new ChunkPos(chunkX, chunkY));
     }
 
     public Chunk getOrCreateChunk(int chunkX, int chunkY) {

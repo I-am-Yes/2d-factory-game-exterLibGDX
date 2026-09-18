@@ -4,4 +4,8 @@ camera.setPanSpeed(700);
 camera.setDefaultZoom(0.025);
 
 
+
+// camera.setMapViewThresholds(2);
+// camera.setMapRenderDetail("VERY_LOW");
+
 //TODO; should be global script maybe.

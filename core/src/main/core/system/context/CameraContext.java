@@ -8,7 +8,6 @@ public class CameraContext {
 
     public CameraController cameraController;
     public CursorController cursor;
-
     public CameraSettings cameraSettings;
 
     public CameraContext(CameraController cameraController, CameraSettings cameraSettings, CursorController cursor) {

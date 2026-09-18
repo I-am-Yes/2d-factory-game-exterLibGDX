@@ -19,10 +19,18 @@ public class Chunk {
     public final GhostType<AssetType>[][] ghosts = (GhostType<AssetType>[][]) new GhostType[SIZE][SIZE];
 
     public boolean dirty;
+    private long renderRevision = 1L;
 
     public Chunk(int chunkX, int chunkY) {
         this.chunkX = chunkX;
         this.chunkY = chunkY;
     }
 
+    public long getRenderRevision() {
+        return renderRevision;
+    }
+
+    public void markRenderDirty() {
+        renderRevision++;
+    }
 }

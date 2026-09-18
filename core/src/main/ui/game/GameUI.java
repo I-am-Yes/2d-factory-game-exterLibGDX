@@ -10,6 +10,7 @@ import core.Window;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import core.app.GameLoop;
+import core.controller.camera.CameraController;
 import core.system.systems.PlayerSystem;
 import core.world.World;
 import core.world.chunk.Chunk;
@@ -17,6 +18,7 @@ import ui.Style;
 import ui.UiHelper;
 
 import java.util.Locale;
+import java.util.function.Supplier;
 
 
 public class GameUI {
@@ -27,6 +29,7 @@ public class GameUI {
     private final Skin skin;
     private final UiHelper uiHelper;
     private final InputHandler input;
+    private final Supplier<CameraController> cameraControllerProvider;
 
     private final Label.LabelStyle textStyle1;
 
@@ -42,6 +45,10 @@ public class GameUI {
     private final Label usedMemoryLabel;
     private final Label totalMemoryLabel;
     private final Label maxMemoryLabel;
+
+    private final Label viewModeLabel;
+    private final Label cameraZoomLabel;
+    private final Label cameraQualityLabel;
 
     private final Label worldSeedLabel;
     private final Label worldSizeLabel;
@@ -62,7 +69,7 @@ public class GameUI {
     private Vector2 hoverThreshold = new Vector2();
     private final int memoryUpdateDelay = 1000;
 
-    public GameUI(World world, Window window, Viewport viewport, Stage stage, Skin skin, UiHelper uiHelper, InputHandler input) {
+    public GameUI(World world, Window window, Viewport viewport, Stage stage, Skin skin, UiHelper uiHelper, InputHandler input, Supplier<CameraController> cameraControllerProvider) {
         this.world = world;
         this.window = window;
         this.viewport = viewport;
@@ -70,6 +77,7 @@ public class GameUI {
         this.skin = skin;
         this.uiHelper = uiHelper;
         this.input = input;
+        this.cameraControllerProvider = cameraControllerProvider;
 
         textStyle1 = Style.getTextStyle(Style.textStyle.TEXT_STYLE_1);
 
@@ -103,7 +111,11 @@ public class GameUI {
 
             usedMemoryLabel = uiHelper.createTextLabel("Used Mem: ", textStyle1),
             totalMemoryLabel = uiHelper.createTextLabel("Total Mem: ", textStyle1),
-            maxMemoryLabel = uiHelper.createTextLabel("Max Mem: ", textStyle1)
+            maxMemoryLabel = uiHelper.createTextLabel("Max Mem: ", textStyle1),
+
+            cameraZoomLabel = uiHelper.createTextLabel("Camera Zoom: ", textStyle1),
+            cameraQualityLabel = uiHelper.createTextLabel("Camera Quality: ", textStyle1),
+            viewModeLabel = uiHelper.createTextLabel("View Mode: ", textStyle1)
         );
 
         PerformanceList.setTouchable(Touchable.disabled);
@@ -118,6 +130,7 @@ public class GameUI {
         updateFPSLabel();
         updateMemoriesLabel();
         updateVSyncLabel();
+        updateCameraLabel();
     }
 
     public void setDebugInfoVisible(boolean visible) {
@@ -130,18 +143,28 @@ public class GameUI {
     }
 
     private void updateWorldInfoLabel() {
+        var chunkManager = world.getChunkManager();
+        var camera = (OrthographicCamera) viewport.getCamera();
+        var loadedBounds = chunkManager.getLoadedMapBounds();
+
         worldSeedLabel.setText("Seed: " + world.getSeed());
-        worldVisibleTileslabel.setText("Visible Tiles: " + formatNumber(world.getChunkManager().getVisibleTileCount((OrthographicCamera) viewport.getCamera(), world.getTileSize())));
-        worldVisibleChunksLabel.setText("Visible Chunks: " + formatNumber(world.getChunkManager().getVisibleChunkCount((OrthographicCamera) viewport.getCamera(), world.getTileSize())));
-        worldLoadedChunkLabel.setText("Loaded Chunks: " + formatNumber(world.getChunkManager().getChunkCounts()));
+        worldVisibleTileslabel.setText(
+            "Visible Tiles: " + formatNumber(chunkManager.getVisibleTileCount(camera, world.getTileSize()))
+        );
+        worldVisibleChunksLabel.setText(
+            "Visible Chunks: " + formatNumber(chunkManager.getVisibleChunkCount(camera, world.getTileSize()))
+        );
+        worldLoadedChunkLabel.setText("Loaded Chunks: " + formatNumber(chunkManager.getChunkCounts()));
         worldChunkSizeLabel.setText("Chunk Size: " + Chunk.SIZE);
-
         worldSizeLabel.setText(
-            "World Size: " + world.getChunkManager().getLoadedMapBounds().widthInTiles() + "x" + world.getChunkManager().getLoadedMapBounds().heightInTiles());
-
+            "World Size: " + loadedBounds.widthInTiles() + "x" + loadedBounds.heightInTiles()
+        );
         worldChunkBoundsLabel.setText(
-            "Chunk Bounds: " + world.getChunkManager().getLoadedMapBounds().widthInChunks()
-                + "x" + world.getChunkManager().getLoadedMapBounds().heightInChunks());
+            "Chunk Bounds: "
+                + loadedBounds.widthInChunks()
+                + "x"
+                + loadedBounds.heightInChunks()
+        );
 
         worldMouseTileLabel.setText(
             "Mouse Tile: " + world.getTileAssetName(PlayerSystem.getHoverTileThreshold())
@@ -190,6 +213,14 @@ public class GameUI {
         maxMemoryLabel.setText("Max Mem: " + formatMemoryMB(window.getMaxMemory()));
     }
 
+    private void updateCameraLabel() {
+        CameraController cameraController = cameraControllerProvider.get();
+
+        viewModeLabel.setText("View Mode: " + cameraController.getCurrentViewMode());
+        cameraZoomLabel.setText("Camera Zoom: " + cameraController.getZoomValue());
+        cameraQualityLabel.setText("Camera Quality: " + world.getCurrentRenderDetail());
+    }
+
     private String formatMemoryMB(long megabytes) {
         return String.format(
             Locale.ROOT,
@@ -198,7 +229,7 @@ public class GameUI {
         );
     }
 
-    private String formatNumber(float number) {
+    private String formatNumber(double number) {
         if (number >= 1_000_000f) {
             return String.format("%.1fM", number / 1_000_000f);
         }

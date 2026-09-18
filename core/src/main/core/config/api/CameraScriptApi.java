@@ -2,6 +2,7 @@ package core.config.api;
 
 import core.config.camera.CameraSettings;
 import com.badlogic.gdx.math.MathUtils;
+import core.world.chunk.ChunkRenderDetail;
 
 public class CameraScriptApi {
 
@@ -9,6 +10,20 @@ public class CameraScriptApi {
 
     public CameraScriptApi(CameraSettings settings) {
         this.settings = settings;
+    }
+
+    public void setMapViewEnterThreshold(float threshold) {
+        settings.mapViewEnterThreshold = threshold;
+    }
+
+    public void setNormalRenderDetail(String name) {
+        settings.normalViewDetail =
+            ChunkRenderDetail.valueOf(name.trim().toUpperCase());
+    }
+
+    public void setMapRenderDetail(String name) {
+        settings.mapViewDetail =
+            ChunkRenderDetail.valueOf(name.trim().toUpperCase());
     }
 
     public void setFollowSmoothness(double value) {

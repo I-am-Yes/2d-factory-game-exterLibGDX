@@ -12,11 +12,11 @@ import static core.helper.PrintConsoleHelper.*;
 public class EventsDebugger {
     public EventsDebugger() {}
 
-    private static final List<Object> firedEvents = new ArrayList<>();
+    private final List<Object> firedEvents = new ArrayList<>();
 
-    private static boolean installed;
+    private boolean installed;
 
-    public static void install() {
+    public void install() {
         if (installed) return;
         installed = true;
 
@@ -72,7 +72,7 @@ public class EventsDebugger {
         return "[" + event.getClass().getSimpleName() + "]";
     }
 
-    private static Object getAllFiredEvents() {
+    private Object getAllFiredEvents() {
         for (Object event : firedEvents) {
             return event;
         }
