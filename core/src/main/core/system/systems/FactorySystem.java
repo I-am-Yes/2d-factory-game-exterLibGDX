@@ -1,19 +1,24 @@
 package core.system.systems;
 
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.LongMap;
 import core.app.GameContext;
 import core.event.Events;
 import core.event.GameEvent;
-import core.machine.FactoryBuilding;
+import core.machine.Conveyor;
+import core.machine.Machine;
 import core.machine.ItemManager;
 import core.machine.ItemRender;
 import core.machine.state.Direction;
-import core.machine.state.FactoryType;
+import core.machine.state.MachineType;
 import core.machine.state.ItemType;
 import core.machine.utils.Item;
+import core.render.RenderLayer;
 import core.system.ContextProvider;
 import core.system.GameSysCycle;
 import core.system.context.FactoryContext;
+import core.world.World;
 import data.map.asset.BuildingType;
 
 public class FactorySystem implements GameSysCycle, ContextProvider<FactoryContext> {
@@ -21,35 +26,55 @@ public class FactorySystem implements GameSysCycle, ContextProvider<FactoryConte
     private final GameContext context;
     private FactoryContext factoryContext;
 
-    private final LongMap<FactoryBuilding> buildings = new LongMap<>();
+    private final World world;
+    private final ItemRender itemRender;
 
-    private static final float SOURCE_INTERVAL_SECONDS = 1f;
-    private static final float BELT_TILES_PER_SECOND = 1f;
+    private final LongMap<Machine> buildings = new LongMap<>();
+    private final LongMap<Machine> pendingConveyorTransfers = new LongMap<>();
+
+    //TODO: later migrate this to each machine behavior system for optimizing
+    private final Array<Machine> conveyors = new Array<>();
+    private final Array<Machine> sources = new Array<>();
+
+    private static final float SOURCE_INTERVAL_SECONDS = 0.1f;
+    private static final float BELT_TILES_PER_SECOND = 10f;
+
+    private static final float VISUAL_CATCHUP_MULTIPLIER = 1.25f;
 
     public FactorySystem(GameContext context) {
         this.context = context;
+        this.world = context.world;
 
         Events.on(GameEvent.BlockPlaced.class, event -> {
             if (!(event.type instanceof BuildingType buildingType)) return;
 
-            FactoryType factoryType = FactoryType.from((buildingType));
-            if (factoryType == null) return;
+            MachineType machineType = MachineType.from((buildingType));
+            if (machineType == null) return;
 
-            FactoryBuilding building = new FactoryBuilding(
+            Machine building = new Machine(
                 event.tileX,
                 event.tileY,
-                factoryType,
+                machineType,
                 event.direction
             );
 
             buildings.put(tileKey(event.tileX, event.tileY), building);
-            System.out.println("FactorySystem: Added building at (" + event.tileX + ", " + event.tileY + ") of type " + factoryType);
-            System.out.println("Building count: " + getBuildingCount());
-            System.out.println("Built: " + getBuildingAt(event.tileX, event.tileY).type);
-            System.out.println("Direction: " + getBuildingDirectionAt(event.tileX, event.tileY));
+
+            switch (building.type) {
+                case CONVEYOR -> conveyors.add(building);
+                case CREATIVE_SOURCE -> sources.add(building);
+            }
+
+//            System.out.println("FactorySystem: Added building at (" + event.tileX + ", " + event.tileY + ") of type " + machineType);
+
+            if (getBuildingCount() % 1000 == 0) {
+                System.out.println("Building count: " + getBuildingCount());
+                System.out.println("Built: " + getBuildingAt(event.tileX, event.tileY).type);
+            }
+            //            System.out.println("Direction: " + getBuildingDirectionAt(event.tileX, event.tileY));
         });
 
-        ItemRender itemRender = new ItemRender();
+        itemRender = new ItemRender(world);
         ItemManager itemManager = new ItemManager(itemRender);
 
         factoryContext = new FactoryContext(
@@ -60,52 +85,84 @@ public class FactorySystem implements GameSysCycle, ContextProvider<FactoryConte
 
     @Override
     public void update(float delta) {
+        float visualSpeed = BELT_TILES_PER_SECOND * VISUAL_CATCHUP_MULTIPLIER;
+
+        for (Machine conveyor : conveyors) {
+            if (conveyor.item == null) {
+                continue;
+            }
+            Conveyor.updateVisual(conveyor.item, delta, visualSpeed);
+        }
 
     }
 
     @Override
-    public void tickUpdate(float delta) {
-        updateSource(delta);
-        updateConveyors(delta);
+    public void tickUpdate(float tickDelta) {
+        updateSource(tickDelta);
+        updateConveyor(tickDelta);
+        transferConveyorOutputs();
         transferSourceOutputs();
     }
 
+    @Override
+    public void drawBatch(SpriteBatch batch) {
+
+        for (Machine conveyor : conveyors) {
+            if (conveyor.item == null) {
+                continue;
+            }
+            //TODO: only draw items in visible chunk
+            itemRender.drawBatch(
+                batch,
+                conveyor.item,
+                context.assets
+            );
+        }
+    }
+
+    private void updateConveyor(float tickDelta) {
+        for (Machine conveyor : conveyors) {
+            if (conveyor.item == null) continue;
+            Conveyor.advancedLogical(conveyor, tickDelta, BELT_TILES_PER_SECOND);
+        }
+    }
+
     private void updateSource(float delta) {
-        for (FactoryBuilding building : buildings.values()) {
-            if (building.type != FactoryType.CREATIVE_SOURCE) continue;
+        for (Machine source : sources) {
+            if (source.type != MachineType.CREATIVE_SOURCE) continue;
+            //if this source already contains an item, skip item creation for now.
+            if (source.item != null) continue;
 
-            if (building.item != null) continue;
+            source.productionTimer += delta;
 
-            building.productionTimer += delta;
+            if (source.productionTimer < SOURCE_INTERVAL_SECONDS) continue;
 
-            if (building.productionTimer < SOURCE_INTERVAL_SECONDS) continue;
-
-            building.productionTimer -= SOURCE_INTERVAL_SECONDS;
+            source.productionTimer -= SOURCE_INTERVAL_SECONDS;
 
             Item newItem = new Item(ItemType.TEST_ITEM);
 
-            float centerX = building.tileX + 0.5f;
-            float centerY = building.tileY + 0.5f;
+            float centerX = source.tileX + 0.5f;
+            float centerY = source.tileY + 0.5f;
 
-            newItem.previousX = centerX;
-            newItem.previousY = centerY;
             newItem.currentX = centerX;
             newItem.currentY = centerY;
+            newItem.visualX = centerX;
+            newItem.visualY = centerY;
             newItem.progress = 0f;
 
-            building.item = newItem;
+            source.item = newItem;
 
-            System.out.println(
-                "Source produced " + newItem.type +
-                    " at (" + building.tileX + ", " + building.tileY + ")"
-            );
+//            System.out.println(
+//                "Source produced " + newItem.type +
+//                    " at (" + building.tileX + ", " + building.tileY + ")"
+//            );
 
         }
     }
 
     private void transferSourceOutputs() {
-        for (FactoryBuilding source : buildings.values()) {
-            if (source.type != FactoryType.CREATIVE_SOURCE) {
+        for (Machine source : sources) {
+            if (source.type != MachineType.CREATIVE_SOURCE) {
                 continue;
             }
 
@@ -116,13 +173,17 @@ public class FactorySystem implements GameSysCycle, ContextProvider<FactoryConte
             int targetX = source.tileX + source.direction.dx;
             int targetY = source.tileY + source.direction.dy;
 
-            FactoryBuilding target = getBuildingAt(targetX, targetY);
+            Machine target = getBuildingAt(targetX, targetY);
 
             if (target == null) {
                 continue;
             }
 
-            if (target.type != FactoryType.CONVEYOR) {
+            if (target.type != MachineType.CONVEYOR) {
+                continue;
+            }
+
+            if (target.direction != source.direction) {
                 continue;
             }
 
@@ -132,11 +193,9 @@ public class FactorySystem implements GameSysCycle, ContextProvider<FactoryConte
 
             Item transferredItem = source.item;
 
-            float targetCenterX = target.tileX + 0.5f;
-            float targetCenterY = target.tileY + 0.5f;
-
-            transferredItem.previousX = source.tileX + 0.5f;
-            transferredItem.previousY = source.tileY + 0.5f;
+            float size = target.type.getSize();
+            float targetCenterX = target.tileX + size * 0.5f;
+            float targetCenterY = target.tileY + size * 0.5f;
 
             transferredItem.currentX =
                 targetCenterX - target.direction.dx * 0.5f;
@@ -144,60 +203,121 @@ public class FactorySystem implements GameSysCycle, ContextProvider<FactoryConte
             transferredItem.currentY =
                 targetCenterY - target.direction.dy * 0.5f;
 
+            transferredItem.visualX = transferredItem.currentX;
+            transferredItem.visualY = transferredItem.currentY;
+
             transferredItem.progress = 0f;
 
             target.item = transferredItem;
             source.item = null;
 
-            System.out.println(
-                "Transferred " + transferredItem.type +
-                    " to conveyor at (" +
-                    target.tileX + ", " + target.tileY + ")"
-            );
+//            System.out.println(
+//                "Transferred " + transferredItem.type +
+//                    " to conveyor at (" +
+//                    target.tileX + ", " + target.tileY + ")"
+//            );
         }
     }
 
-    private void updateConveyors(float delta) {
-        for (FactoryBuilding conveyor : buildings.values()) {
-            if (conveyor.type != FactoryType.CONVEYOR) {
+    private void transferConveyorOutputs() {
+        pendingConveyorTransfers.clear();
+
+        //find valid transfers target
+        for (Machine current : conveyors) {
+            if (current.item == null || current.item.progress < 1f) {
                 continue;
             }
 
-            if (conveyor.item == null) {
+            int targetX = current.tileX + current.direction.dx;
+            int targetY = current.tileY + current.direction.dy;
+
+            Machine target = getBuildingAt(targetX, targetY);
+            if (target == null) {
                 continue;
             }
 
-            Item item = conveyor.item;
+            boolean targetIsConveyor = target.type == MachineType.CONVEYOR;
 
-            item.previousX = item.currentX;
-            item.previousY = item.currentY;
-
-            float previousProgress = item.progress;
-
-            item.progress = Math.min(
-                1f,
-                item.progress + BELT_TILES_PER_SECOND * delta
-            );
-
-            float centerX = conveyor.tileX + 0.5f;
-            float centerY = conveyor.tileY + 0.5f;
-
-            // Start at the conveyor's input edge.
-            float inputX = centerX - conveyor.direction.dx * 0.5f;
-            float inputY = centerY - conveyor.direction.dy * 0.5f;
-
-            item.currentX =
-                inputX + conveyor.direction.dx * item.progress;
-
-            item.currentY =
-                inputY + conveyor.direction.dy * item.progress;
-
-            if (previousProgress < 1f && item.progress >= 1f) {
-                System.out.println(
-                    "Item reached conveyor output at (" +
-                        conveyor.tileX + ", " + conveyor.tileY + ")"
-                );
+            if (targetIsConveyor) {
+                if (target.item != null) {
+                    continue;
+                }
+                // basically straight conveyor transfer only
+                if (target.direction != current.direction) {
+                    continue;
+                }
+            } else {
+                if (!target.acceptItem(current.item.type)) {
+                    continue;
+                }
             }
+
+
+            long targetKey = tileKey(targetX, targetY);
+            Machine currentPending = pendingConveyorTransfers.get(targetKey);
+            // Deterministic winner if two outputs target one conveyor.
+            if (currentPending == null
+                || Long.compare(
+                    tileKey(current.tileX, current.tileY),
+                    tileKey(currentPending.tileX, currentPending.tileY)
+                ) < 0) {
+                pendingConveyorTransfers.put(targetKey, current);
+            }
+        }
+
+        //apply accepted transfers
+        for (LongMap.Entry<Machine> entry : pendingConveyorTransfers.entries()) {
+            Machine current = entry.value;
+            Machine target = buildings.get(entry.key);
+
+            if (current.item == null || target == null) {
+                continue;
+            }
+
+            //handle item to target that has storage and isn't conveyor
+            if (target.type != MachineType.CONVEYOR) {
+                Item receivedItem = current.item;
+                if (target.handleItem(receivedItem.type)) {
+                    current.item = null;
+
+//                    System.out.println(
+//                        target.type + " at (" +
+//                            target.tileX + ", " + target.tileY +
+//                            ") received " + receivedItem.type +
+//                            ". Total: " +
+//                            target.storage.getTotalItems() +
+//                            "/" + target.storage.getCapacity()
+//                    );
+                }
+                continue;
+            }
+
+            //from here onward is for targeting conveyor
+            if (target.item != null) {
+                continue;
+            }
+
+            Item transferredItem = current.item;
+
+            float size = target.type.getSize();
+            float targetCenterX = target.tileX + size * 0.5f;
+            float targetCenterY = target.tileY + size * 0.5f;
+
+            transferredItem.currentX =
+                targetCenterX - target.direction.dx * 0.5f;
+            transferredItem.currentY =
+                targetCenterY - target.direction.dy * 0.5f;
+            transferredItem.progress = 0f;
+            //keep visualX/Y unchanged. Both conveyor edges share
+            // the same position, so the visual motion stays seamless.
+            target.item = transferredItem;
+            current.item = null;
+
+//            System.out.println(
+//                "Conveyor transferred " + transferredItem.type +
+//                    " from (" + current.tileX + ", " + current.tileY + ")" +
+//                    " to (" + target.tileX + ", " + target.tileY + ")"
+//            );
         }
     }
 
@@ -205,7 +325,7 @@ public class FactorySystem implements GameSysCycle, ContextProvider<FactoryConte
         return ((long) x << 32) ^ (y & 0xffffffffL);
     }
 
-    public FactoryBuilding getBuildingAt(int tileX, int tileY) {
+    public Machine getBuildingAt(int tileX, int tileY) {
         return buildings.get(tileKey(tileX, tileY));
     }
 
@@ -217,6 +337,11 @@ public class FactorySystem implements GameSysCycle, ContextProvider<FactoryConte
         return buildings.size;
     }
 
+
+    @Override
+    public RenderLayer renderLayer() {
+        return RenderLayer.OBJECT_LAYER_2;
+    }
 
     @Override
     public FactoryContext getContext() {
