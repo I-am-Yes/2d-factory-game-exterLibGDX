@@ -1,5 +1,7 @@
 package core.app;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.GL20;
 import core.entities.plan.PlanBuilder;
 import core.entities.plan.PlanManager;
 import core.event.GameEvent;
@@ -36,6 +38,22 @@ public class GameTest implements GameSysCycle {
 //        GameEvent.PlanBuilderRequest.fire(planBuilderTest1);
 
 //        planManager.addPlanToRenderQueue(planBuilder);
+
+
+//        Gdx.app.log(
+//            "Graphics",
+//            "Vendor: " + Gdx.gl.glGetString(GL20.GL_VENDOR)
+//        );
+//
+//        Gdx.app.log(
+//            "Graphics",
+//            "Renderer: " + Gdx.gl.glGetString(GL20.GL_RENDERER)
+//        );
+//
+//        Gdx.app.log(
+//            "Graphics",
+//            "Version: " + Gdx.gl.glGetString(GL20.GL_VERSION)
+//        );
     }
 
     @Override

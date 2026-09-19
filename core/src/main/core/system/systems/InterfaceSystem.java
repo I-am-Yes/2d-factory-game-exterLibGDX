@@ -6,6 +6,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import core.InputHandler;
 import core.UiInputGate;
@@ -50,6 +51,10 @@ public class InterfaceSystem implements GameSysCycle, ContextProvider<InterfaceC
     private final BitmapFont aldrichFont;
 
 
+    //TODO: migrate this to a setting class later
+    private static float UiScale = 100 / 100f;
+
+
     public InterfaceSystem(GameContext context) {
         this.context = context;
         this.world = context.world;
@@ -58,7 +63,10 @@ public class InterfaceSystem implements GameSysCycle, ContextProvider<InterfaceC
         this.input = context.input;
 
         this.skin = new Skin(Gdx.files.internal("ui/uiskin.json"));
-        this.stage = new Stage(new FitViewport(window.getWindowWidth(), window.getWindowHeight()));
+
+        ScreenViewport UiViewPort = new ScreenViewport();
+        UiViewPort.setUnitsPerPixel(UiViewPort.getUnitsPerPixel() / getUiScale());
+        this.stage = new Stage(UiViewPort);
 
         this.uiInputGate = new UiInputGate(stage);
         this.uiHelper = new UiHelper();
@@ -99,6 +107,17 @@ public class InterfaceSystem implements GameSysCycle, ContextProvider<InterfaceC
         act();
         gameUI.update(delta);
         playerHotbar.update();
+    }
+
+    /**
+     * Refreshes UI values that do not need to update every rendered frame.
+     *
+     * @param delta duration of the fixed update tick, in seconds
+     */
+    @Override
+    public void tickUpdate(float delta) {
+
+        gameUI.tickUpdate();
     }
 
     @Override
@@ -156,6 +175,13 @@ public class InterfaceSystem implements GameSysCycle, ContextProvider<InterfaceC
 
     public AssetType getSelectedType() {
         return playerHotbar.getSelectedType();
+    }
+
+    public static void setUiScale(float scale) {
+        UiScale = scale;
+    }
+    public static float getUiScale() {
+        return UiScale;
     }
 
 }

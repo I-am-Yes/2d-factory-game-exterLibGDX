@@ -38,9 +38,9 @@ public class World {
     private final ChunkRenderer chunkRenderer;
     private final ChunkManager chunkManager;
 
-    private static final int MAX_CHUNK_LOAD_RADIUS = 32;
+    private static final int MAX_CHUNK_LOAD_RADIUS = 16;
     private static final int UNLOAD_CHUNK_PADDING = 2;
-    private static final int CHUNK_LOAD_BUDGET = 128; //max chunks load per frame
+    private static final int CHUNK_LOAD_BUDGET = 1; //max chunks load per frame
 
     private int lastStreamChunkX = Integer.MIN_VALUE;
     private int lastStreamChunkY = Integer.MIN_VALUE;

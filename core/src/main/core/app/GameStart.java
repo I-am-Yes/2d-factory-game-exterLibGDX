@@ -18,7 +18,7 @@ public final class GameStart {
 
         context.window = new Window();
         context.window.createGameWindow();
-        context.window.setVSync(true);
+        context.window.setVSync(false);
         context.window.setForegroundFPS(0);
 
         context.assets = new AssetsHandler();

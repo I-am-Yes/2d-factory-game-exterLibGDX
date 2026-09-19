@@ -34,6 +34,7 @@ public class UiHelper {
                 table.add(actor).align(Align.left).padLeft(10).padTop(10).row();
             }
         }
+
         table.setFillParent(true);
         stage.addActor(table);
         return table;

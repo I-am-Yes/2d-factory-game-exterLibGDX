@@ -7,9 +7,10 @@ public class CameraSettings {
     public float zoomSmoothness = 0.10f;
     public float panSpeed = 700f;
     public float defaultZoom = 0.025f;
+    public float defaultZoomStep = 0.4f;
 
     public float mapViewEnterThreshold = 0.5f;
 
     public ChunkRenderDetail normalViewDetail = ChunkRenderDetail.EXTREME;
-    public ChunkRenderDetail mapViewDetail = ChunkRenderDetail.BEYOND_COMPREHENSION;
+    public ChunkRenderDetail mapViewDetail = ChunkRenderDetail.HIGHEST;
 }

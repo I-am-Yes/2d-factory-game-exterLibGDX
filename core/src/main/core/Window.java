@@ -68,6 +68,7 @@ public class Window {
     }
 
     public void setForegroundFPS(int fps) {
+        this.foregroundFPS = fps;
         Gdx.graphics.setForegroundFPS(fps);
     }
 

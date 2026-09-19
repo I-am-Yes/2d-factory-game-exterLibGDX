@@ -2,6 +2,7 @@ package ui.game;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -11,12 +12,13 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import core.app.GameLoop;
 import core.controller.camera.CameraController;
+import core.system.systems.InterfaceSystem;
 import core.system.systems.PlayerSystem;
 import core.world.World;
 import core.world.chunk.Chunk;
 import ui.Style;
 import ui.UiHelper;
-
+import java.util.List;
 import java.util.Locale;
 import java.util.function.Supplier;
 
@@ -63,11 +65,27 @@ public class GameUI {
     private final Label worldMouseTileNameLabel;
     private final Label worldTileRotationLabel;
 
-    private final Table WorldInfoList;
-    private final Table PerformanceList;
+    private Table WorldInfoList = new Table();
+    private Table PerformanceList = new Table();
+    private List<Table> panelsList = List.of(
+        WorldInfoList,
+        PerformanceList
+    );
 
     private Vector2 hoverThreshold = new Vector2();
     private final int memoryUpdateDelay = 1000;
+
+    private enum DebugInfoModes {
+        OFF,
+        SIMPLE,
+        DEFAULT,
+        MINIMAL,
+        MEDIUM,
+        HIGH,
+        FULL,
+        CUSTOM
+    }
+    private DebugInfoModes currentMode = DebugInfoModes.OFF;
 
     public GameUI(World world, Window window, Viewport viewport, Stage stage, Skin skin, UiHelper uiHelper, InputHandler input, Supplier<CameraController> cameraControllerProvider) {
         this.world = world;
@@ -81,7 +99,7 @@ public class GameUI {
 
         textStyle1 = Style.getTextStyle(Style.textStyle.TEXT_STYLE_1);
 
-        WorldInfoList = uiHelper.createAndAddItems(stage, Align.right,
+        uiHelper.addTableRows(stage, WorldInfoList.top().right(), Align.right,
             worldSeedLabel = uiHelper.createTextLabel("Seed: ", textStyle1),
             worldSizeLabel = uiHelper.createTextLabel("World Size: ", textStyle1),
             worldChunkBoundsLabel = uiHelper.createTextLabel("Chunk Bounds: ", textStyle1),
@@ -96,10 +114,7 @@ public class GameUI {
             worldTileRotationLabel = uiHelper.createTextLabel("Tile Rotation: ", textStyle1)
         );
 
-        WorldInfoList.setTouchable(Touchable.disabled);
-        WorldInfoList.top().right();
-
-        PerformanceList = uiHelper.createAndAddItems(stage, Align.left,
+        uiHelper.addTableRows(stage, PerformanceList.top().left(), Align.left,
             gameSpeedlabel = uiHelper.createTextLabel("Game Speed: ", textStyle1),
             gameTimelabel = uiHelper.createTextLabel("Game Time: ", textStyle1),
             realTimelabel = uiHelper.createTextLabel("Real Time: ", textStyle1),
@@ -118,28 +133,79 @@ public class GameUI {
             viewModeLabel = uiHelper.createTextLabel("View Mode: ", textStyle1)
         );
 
-        PerformanceList.setTouchable(Touchable.disabled);
-        PerformanceList.top().left();
+        for (Actor panel : panelsList) {
+            panel.setTouchable(Touchable.disabled);
+        }
 
+        setDebugInfoMode(DebugInfoModes.SIMPLE);
     }
 
     public void update(float deltaTime) {
+
         updateWorldInfoLabel();
-        updateTimerLabel();
+
         updateUPSLabel();
         updateFPSLabel();
-        updateMemoriesLabel();
+
+    }
+
+    public void tickUpdate() {
+        //for expensive operations that don't need to be updated every frame
+        //or for operations that need to be updated frequently
+
+        updateTimerLabel();
         updateVSyncLabel();
+        updateMemoriesLabel();
         updateCameraLabel();
     }
 
     public void setDebugInfoVisible(boolean visible) {
-        PerformanceList.setVisible(visible);
-        WorldInfoList.setVisible(visible);
+        panelsList.forEach(panel -> panel.setVisible(visible));
     }
 
     public boolean isDebugInfoVisible() {
-        return PerformanceList.isVisible() && WorldInfoList.isVisible();
+        return panelsList.stream().allMatch(Actor::isVisible);
+    }
+
+    ////Deprecated
+    private void updateUiScaling() {
+        float oldScale = 0.0f;
+        float scale = InterfaceSystem.getUiScale();
+//        if (scale < 1) {
+//            throw new IllegalStateException("UI scale must be >= than 1. Current scale: " + scale);
+//        }
+//        if (WorldInfoList.getChild(0) != null) {
+//            oldScale = WorldInfoList.getChild(0).getScaleX();
+//            if (scale == oldScale) return;
+//        }
+//
+//        WorldInfoList.setScale(scale);
+//        for (Actor actor : WorldInfoList.getChildren()) {
+//            if (actor instanceof Label label) {
+//                label.setFontScale(oldScale*scale);;
+//            }
+//        }
+//
+//        PerformanceList.setScale(scale);
+//        for (Actor actor : PerformanceList.getChildren()) {
+//            if (actor instanceof Label label) {
+//                label.setFontScale(oldScale*scale);
+//            }
+//        }
+    }
+
+    //check if the label actually needs to be updated,
+    // if it's not visible or removed from stage, no need to update it
+    private boolean shouldUpdate(Actor actor) {
+        if (actor.getStage() == null) {
+            return false; // Removed from its table/stage
+        }
+        for (Actor current = actor; current != null; current = current.getParent()) {
+            if (!current.isVisible()) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private void updateWorldInfoLabel() {
@@ -147,78 +213,125 @@ public class GameUI {
         var camera = (OrthographicCamera) viewport.getCamera();
         var loadedBounds = chunkManager.getLoadedMapBounds();
 
-        worldSeedLabel.setText("Seed: " + world.getSeed());
-        worldVisibleTileslabel.setText(
-            "Visible Tiles: " + formatNumber(chunkManager.getVisibleTileCount(camera, world.getTileSize()))
-        );
-        worldVisibleChunksLabel.setText(
-            "Visible Chunks: " + formatNumber(chunkManager.getVisibleChunkCount(camera, world.getTileSize()))
-        );
-        worldLoadedChunkLabel.setText("Loaded Chunks: " + formatNumber(chunkManager.getChunkCounts()));
-        worldChunkSizeLabel.setText("Chunk Size: " + Chunk.SIZE);
-        worldSizeLabel.setText(
-            "World Size: " + loadedBounds.widthInTiles() + "x" + loadedBounds.heightInTiles()
-        );
-        worldChunkBoundsLabel.setText(
-            "Chunk Bounds: "
-                + loadedBounds.widthInChunks()
-                + "x"
-                + loadedBounds.heightInChunks()
-        );
+        if (shouldUpdate(worldSeedLabel)) worldSeedLabel.setText("Seed: " + world.getSeed());
 
-        worldMouseTileLabel.setText(
-            "Mouse Tile: " + world.getTileAssetName(PlayerSystem.getHoverTileThreshold())
-        );
+        if (shouldUpdate(worldVisibleTileslabel))
+            worldVisibleTileslabel.setText(
+                "Visible Tiles: " + formatNumber(chunkManager.getVisibleTileCount(camera, world.getTileSize()))
+            );
+        if (shouldUpdate(worldVisibleChunksLabel)) {
+            worldVisibleChunksLabel.setText(
+                "Visible Chunks: " + formatNumber(chunkManager.getVisibleChunkCount(camera, world.getTileSize()))
+            );
+        }
+        if (shouldUpdate(worldLoadedChunkLabel)) {
+            worldLoadedChunkLabel.setText("Loaded Chunks: " + formatNumber(chunkManager.getChunkCounts()));
+        }
+        if (shouldUpdate(worldChunkSizeLabel)) {
+            worldChunkSizeLabel.setText("Chunk Size: " + Chunk.SIZE);
+        }
+        if (shouldUpdate(worldSizeLabel)) {
+            worldSizeLabel.setText(
+                "World Size: " + loadedBounds.widthInTiles() + "x" + loadedBounds.heightInTiles()
+            );
+        }
+        if (shouldUpdate(worldChunkBoundsLabel)) {
+            worldChunkBoundsLabel.setText(
+                "Chunk Bounds: "
+                    + loadedBounds.widthInChunks()
+                    + "x"
+                    + loadedBounds.heightInChunks()
+            );
+        }
 
-        worldMouseTileNameLabel.setText(
-            "Tile Name: " + world.getTileName(PlayerSystem.getHoverTileThreshold())
-        );
+        if (shouldUpdate(worldMouseTileLabel)) {
+            worldMouseTileLabel.setText(
+                "Mouse Tile: " + world.getTileAssetName(PlayerSystem.getHoverTileThreshold())
+            );
+        }
+
+        if (shouldUpdate(worldMouseTileNameLabel)) {
+            worldMouseTileNameLabel.setText(
+                "Tile Name: " + world.getTileName(PlayerSystem.getHoverTileThreshold())
+            );
+        }
 
         worldMousePosLabel.setText(
             "mouse Tile: " + world.worldToTileX((int) input.getMouseWorldPos(viewport).x) + "x, " + world.worldToTileY((int) input.getMouseWorldPos(viewport).y) + "y"
         );
+        if (shouldUpdate(worldMousePosLabel)) {
+            worldMousePosLabel.setText(
+                "mouse Tile: " + world.worldToTileX((int) input.getMouseWorldPos(viewport).x) + "x, " + world.worldToTileY((int) input.getMouseWorldPos(viewport).y) + "y"
+            );
+        }
 
-        worldMouseHoverPosLabel.setText(
-            "Hover Tile: " + PlayerSystem.getHoverTileThresholdX() + "x, " + PlayerSystem.getHoverTileThresholdY() + "y"
-        );
+        if (shouldUpdate(worldMouseHoverPosLabel)) {
+            worldMouseHoverPosLabel.setText(
+                "Hover Tile: " + PlayerSystem.getHoverTileThresholdX() + "x, " + PlayerSystem.getHoverTileThresholdY() + "y"
+            );
+        }
 
-        worldTileRotationLabel.setText(
-            //TODO: add rotation getter to this text label
-            "Tile Rotation: " + "null"
-        );
+        if (shouldUpdate(worldTileRotationLabel)) {
+            worldTileRotationLabel.setText(
+                //TODO: add rotation getter to this text label
+                "Tile Rotation: " + "null"
+            );
+        }
     }
 
     private void updateVSyncLabel() {
-        VSyncLabel.setText("V-Sync: " + (window.isVSync() ? "on" : "off"));
+        if (shouldUpdate(VSyncLabel)) {
+            VSyncLabel.setText("V-Sync: " + (window.isVSync() ? "on" : "off"));
+        }
     }
 
     private void updateUPSLabel() {
-        UPSLabel.setText("UPS: " + GameLoop.getCurrentUPS() + "/" + GameLoop.getTargetUPS());
+        if (shouldUpdate(UPSLabel)) {
+            UPSLabel.setText("UPS: " + GameLoop.getCurrentUPS() + "/" + GameLoop.getTargetUPS());
+        }
     }
 
     private void updateFPSLabel() {
-        FPSLabel.setText("FPS: " + window.getLatestFrameRateAfterDelay(100));
-        avgFPSLabel.setText("Avg FPS: " + (int) window.getAverageFrameRate(1000));
+        if (shouldUpdate(FPSLabel)) {
+            FPSLabel.setText("FPS: " + window.getLatestFrameRateAfterDelay(400));
+        }
+        if (shouldUpdate(avgFPSLabel)) {
+            avgFPSLabel.setText("Avg FPS: " + (int) window.getAverageFrameRate(1000));
+        }
     }
 
     private void updateTimerLabel() {
-        gameSpeedlabel.setText("Game Speed: " + GameLoop.getGameSpeed() + "x");
-        gameTimelabel.setText("Game Time: " + formatTime(GameLoop.getTotalGameTime()));
-        realTimelabel.setText("Real Time: " + formatTime(GameLoop.getTotalRealTime()));
+        if (shouldUpdate(gameSpeedlabel))
+            gameSpeedlabel.setText("Game Speed: " + GameLoop.getGameSpeed() + "x");
+        if (shouldUpdate(gameTimelabel))
+            gameTimelabel.setText("Game Time: " + formatTime(GameLoop.getTotalGameTime()));
+        if (shouldUpdate(realTimelabel))
+            realTimelabel.setText("Real Time: " + formatTime(GameLoop.getTotalRealTime()));
+
     }
 
     private void updateMemoriesLabel() {
-        usedMemoryLabel.setText("Used Mem: " + formatMemoryMB(window.getUsedMemory()));
-        totalMemoryLabel.setText("Total Mem: " + formatMemoryMB(window.getTotalMemory()));
-        maxMemoryLabel.setText("Max Mem: " + formatMemoryMB(window.getMaxMemory()));
+        if (shouldUpdate(usedMemoryLabel))
+            usedMemoryLabel.setText("Used Mem: " + formatMemoryMB(window.getUsedMemory()));
+        if (shouldUpdate(totalMemoryLabel))
+            totalMemoryLabel.setText("Total Mem: " + formatMemoryMB(window.getTotalMemory()));
+        if (shouldUpdate(maxMemoryLabel))
+            maxMemoryLabel.setText("Max Mem: " + formatMemoryMB(window.getMaxMemory()));
+
     }
 
     private void updateCameraLabel() {
         CameraController cameraController = cameraControllerProvider.get();
 
-        viewModeLabel.setText("View Mode: " + cameraController.getCurrentViewMode());
-        cameraZoomLabel.setText("Camera Zoom: " + cameraController.getZoomValue());
-        cameraQualityLabel.setText("Camera Quality: " + world.getCurrentRenderDetail());
+        if (shouldUpdate(viewModeLabel)) {
+            viewModeLabel.setText("View Mode: " + cameraController.getCurrentViewMode());
+        }
+        if (shouldUpdate(worldSizeLabel)) {
+            cameraZoomLabel.setText("Camera Zoom: " + cameraController.getZoomValue());
+        }
+        if (shouldUpdate(cameraQualityLabel)) {
+            cameraQualityLabel.setText("Camera Quality: " + world.getCurrentRenderDetail());
+        }
     }
 
     private String formatMemoryMB(long megabytes) {
@@ -249,5 +362,146 @@ public class GameUI {
 
         return String.format("%02d:%02d:%02d", hours, minutes, secs);
     }
+
+    private void clearDebugPanels() {
+        for (Table panel : panelsList) {
+            panel.clearChildren();
+        }
+    }
+
+    private void addLabels(Table panel, int alignment, Actor... labels) {
+        uiHelper.addTableRows(
+            stage, panel,
+            alignment, labels
+        );
+    }
+
+    public void setCustomDebugInfo(Actor[] labelsLefts, Actor[] labelsRights) {
+        currentMode = DebugInfoModes.CUSTOM;
+        clearDebugPanels();
+
+        addLabels(
+            PerformanceList, Align.left,
+            labelsLefts
+        );
+
+        addLabels(
+            WorldInfoList, Align.right,
+            labelsRights
+        );
+    }
+
+    public void setDebugInfoMode(DebugInfoModes mode) {
+        currentMode = mode;
+
+        clearDebugPanels();
+
+        switch (mode) {
+            case OFF -> {
+                // Both tables remain empty.
+            }
+
+            case SIMPLE -> {
+                addLabels(
+                    PerformanceList, Align.left,
+                    FPSLabel, UPSLabel, usedMemoryLabel
+                );
+            }
+
+            case MINIMAL -> {
+                addLabels(
+                    PerformanceList, Align.left,
+                    FPSLabel,
+                    UPSLabel
+                );
+
+                addLabels(
+                    WorldInfoList, Align.right,
+                    worldMouseTileLabel
+                );
+            }
+
+            case DEFAULT -> {
+                addLabels(
+                    PerformanceList, Align.left,
+                    FPSLabel,
+                    avgFPSLabel,
+                    UPSLabel,
+                    usedMemoryLabel
+                );
+
+                addLabels(
+                    WorldInfoList, Align.right,
+                    worldMouseTileLabel,
+                    worldMousePosLabel
+                );
+            }
+
+            case MEDIUM -> {
+                addLabels(
+                    PerformanceList, Align.left,
+                    FPSLabel,
+                    avgFPSLabel,
+                    UPSLabel,
+                    VSyncLabel,
+                    usedMemoryLabel,
+                    cameraZoomLabel,
+                    cameraQualityLabel
+                );
+
+                addLabels(
+                    WorldInfoList, Align.right,
+                    worldMouseTileLabel,
+                    worldMouseTileNameLabel,
+                    worldVisibleChunksLabel,
+                    worldLoadedChunkLabel
+                );
+            }
+
+            case HIGH -> {
+                // Add your HIGH labels here.
+            }
+
+            case FULL -> {
+                addLabels(
+                    PerformanceList, Align.left,
+                    gameSpeedlabel,
+                    gameTimelabel,
+                    realTimelabel,
+                    VSyncLabel,
+                    UPSLabel,
+                    FPSLabel,
+                    avgFPSLabel,
+                    usedMemoryLabel,
+                    totalMemoryLabel,
+                    maxMemoryLabel,
+                    cameraZoomLabel,
+                    cameraQualityLabel,
+                    viewModeLabel
+                );
+
+                addLabels(
+                    WorldInfoList, Align.right,
+                    worldSeedLabel,
+                    worldSizeLabel,
+                    worldChunkBoundsLabel,
+                    worldMousePosLabel,
+                    worldMouseHoverPosLabel,
+                    worldVisibleTileslabel,
+                    worldVisibleChunksLabel,
+                    worldLoadedChunkLabel,
+                    worldChunkSizeLabel,
+                    worldMouseTileLabel,
+                    worldMouseTileNameLabel,
+                    worldTileRotationLabel
+                );
+            }
+
+            case CUSTOM -> {
+                // Add custom labels separately.
+            }
+        }
+    }
+
 
 }
