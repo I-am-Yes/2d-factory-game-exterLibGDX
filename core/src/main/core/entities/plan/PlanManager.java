@@ -17,6 +17,7 @@ public class PlanManager {
         this.world = world;
 
         Events.on(GameEvent.PlanBuilderRenderRequest.class, request -> {
+            //TODO: fix this warning
             addPlanToRenderQueue(request.planBuilder);
         });
 
@@ -24,7 +25,7 @@ public class PlanManager {
 
             for (int i = 0; i < request.planBuilder.getPlanQueue().size; i++) {
                 PlanEntity<?> currentPlanEntity = request.planBuilder.getPlanEntityAt(i);
-                world.placeGhost(
+                world.getPlacementService().placeGhost(
                     currentPlanEntity.getX(),
                     currentPlanEntity.getY(),
                     currentPlanEntity.getDirection(),

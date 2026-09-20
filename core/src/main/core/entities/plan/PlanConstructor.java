@@ -23,7 +23,7 @@ public class PlanConstructor<T extends AssetType> {
 
             PlanEntity<T> plan = planBuilder.getPlanEntityAt(i);
 
-            boolean placed = world.placeBlock(
+            boolean placed = world.getPlacementService().placeBlock(
                 plan.getX(), plan.getY(), plan.getDirection(),
                 plan.getGhostType().getSourceType()
             );

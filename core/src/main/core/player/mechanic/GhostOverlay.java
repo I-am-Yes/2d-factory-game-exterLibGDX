@@ -1,6 +1,7 @@
 package core.player.mechanic;
 
 import com.badlogic.gdx.math.MathUtils;
+import core.helper.RenderUtils;
 import core.machine.state.Direction;
 import core.player.Player;
 import core.player.PlayerAction;
@@ -149,17 +150,6 @@ public class GhostOverlay {
         spriteBatch.setPackedColor(oldColor);
     }
 
-    private float getRotationDegree(Direction direction) {
-        if (direction == null) return 0f;
-
-        return switch (direction) {
-            case EAST -> 0f;
-            case NORTH -> 90f;
-            case WEST -> 180f;
-            case SOUTH -> -90f;
-        };
-    }
-
     private AssetType getSelectedType() {
         if (playerAction.getSelectedType() == null) return null;
         if (type == null) return PlayerHotbar.getSelectedType();
@@ -178,7 +168,7 @@ public class GhostOverlay {
     }
 
     private void updateGhostRotation(float delta) {
-        float targetRotation = getRotationDegree(
+        float targetRotation = RenderUtils.getRotationDegree(
             getDirection()
         );
 

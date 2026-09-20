@@ -86,7 +86,7 @@ public class GameUI {
         FULL,
         CUSTOM
     }
-    private DebugInfoModes currentMode = DebugInfoModes.FULL;
+    private DebugInfoModes currentMode = DebugInfoModes.SIMPLE;
 
     public GameUI(World world, Window window, Viewport viewport, Stage stage, Skin skin, UiHelper uiHelper, InputHandler input, Supplier<CameraController> cameraControllerProvider) {
         this.world = world;

@@ -7,6 +7,7 @@ import core.world.chunk.Chunk;
 import core.world.chunk.ChunkManager;
 import core.world.chunk.ChunkRenderDetail;
 import core.world.chunk.ChunkRenderer;
+import core.world.services.PlacementService;
 import data.map.asset.BuildingType;
 import data.map.asset.FloorType;
 import data.map.MapConfig;
@@ -38,6 +39,7 @@ public class World {
     private final ColoredTiledMapRenderer mapRenderer;
     private final ChunkRenderer chunkRenderer;
     private final ChunkManager chunkManager;
+    private final PlacementService placementService;
 
     private static final int MAX_CHUNK_LOAD_RADIUS = 16;
     private static final int UNLOAD_CHUNK_PADDING = 2;
@@ -91,8 +93,7 @@ public class World {
         this.mapRenderer = null;
         this.chunkRenderer = new ChunkRenderer(assets);
         this.chunkManager = new ChunkManager(mapConfig);
-
-        registPlacement();
+        this.placementService = new PlacementService(this, chunkManager, chunkRenderer);
     }
 
     public World(
@@ -131,8 +132,7 @@ public class World {
         this.mapRenderer = new ColoredTiledMapRenderer(map,  unitScale);
         this.chunkRenderer = new ChunkRenderer(assets);
         this.chunkManager = new ChunkManager(mapConfig);
-
-        registPlacement();
+        this.placementService = new PlacementService(this, chunkManager, chunkRenderer);
     }
 
     public static class ColoredCell extends TiledMapTileLayer.Cell {
@@ -154,6 +154,7 @@ public class World {
         return new World(mapConfig, assets);
     }
 
+    ////old world creation method, will use again for loading preset map
 //    public static World generateWorld(MapConfig mapConfig, AssetsHandler assets) {
 //        TiledMap map = new TiledMap();
 //
@@ -270,13 +271,19 @@ public class World {
     }
 
     public void dispose() {
+        placementService.dispose();
+
         if (mapRenderer != null) mapRenderer.dispose();
         if (map != null) map.dispose();
         if (chunkRenderer != null) chunkRenderer.dispose();
     }
 
-    private Chunk getChunkAt(int tileX, int tileY) {
+    public Chunk getChunkAt(int tileX, int tileY) {
         return chunkManager.getOrCreateChunkForTile(tileX, tileY);
+    }
+
+    public PlacementService getPlacementService() {
+        return placementService;
     }
 
     public BuildingType getBuildingAt(int tileX, int tileY) {
@@ -292,12 +299,6 @@ public class World {
         return getBuildingAt(tileX, tileY) != null;
     }
 
-    public boolean canPlaceBuildingAt(int tileX, int tileY) {
-        return isWalkable(tileX, tileY)
-            && isInBounds(tileX, tileY)
-            && !hasBuildingAt(tileX, tileY);
-    }
-
     public GhostType<AssetType> getGhostTileAt(int tileX, int tileY) {
         Chunk chunk = getChunkAt(tileX, tileY);
 
@@ -305,6 +306,11 @@ public class World {
         int localY = chunkManager.getLocalY(tileY);
 
         return chunk.ghosts[localX][localY];
+    }
+
+    public boolean isWalkable(int tileX, int tileY) {
+        FloorType floor = getFloorAt(tileX, tileY);
+        return floor != null && floor != FloorType.WATER;
     }
 
     public boolean isInBounds(int tileX, int tileY) {
@@ -351,7 +357,6 @@ public class World {
     public FloorType getFloorAt(float tileX, float tileY) {
         return getFloorAt((int)tileX, (int)tileY);
     }
-
     public FloorType getFloorAt(Vector2 tile) {
         return getFloorAt((int)tile.x, (int)tile.y);
     }
@@ -359,24 +364,19 @@ public class World {
     public String getTileAssetName(Vector2 tile) {
         return getTileAssetName((int)tile.x, (int)tile.y);
     }
-
     public String getTileAssetName(int tileX, int tileY) {
         GhostType<AssetType> ghost = getGhostTileAt(tileX, tileY);
-
         if (ghost != null) {
             return "Ghost " + ghost.getSourceType().getNamePNG();
         }
-
         BuildingType building = getBuildingAt(tileX, tileY);
         if (building != null) {
             return building.getNamePNG();
         }
-
         FloorType floor = getFloorAt(tileX, tileY);
         if (floor != null) {
             return floor.getNamePNG();
         }
-
         return "None";
     }
 
@@ -386,183 +386,18 @@ public class World {
 
     public String getTileName(int tileX, int tileY) {
         GhostType<AssetType> ghost = getGhostTileAt(tileX, tileY);
-
         if (ghost != null) {
             return "Ghost " + ghost.getSourceType().getName();
         }
-
         BuildingType building = getBuildingAt(tileX, tileY);
         if (building != null) {
             return building.getName();
         }
-
         FloorType floor = getFloorAt(tileX, tileY);
         if (floor != null) {
             return floor.getName();
         }
-
         return "None";
-    }
-
-    public boolean isWalkable(int tileX, int tileY) {
-        FloorType floor = getFloorAt(tileX, tileY);
-        return floor != null && floor != FloorType.WATER;
-    }
-
-    public boolean placeFloor(int tileX, int tileY, FloorType floorType) {
-        if (floorType == null) return false;
-
-        Chunk chunk = getChunkAt(tileX, tileY);
-        int localX = chunkManager.getLocalX(tileX);
-        int localY = chunkManager.getLocalY(tileY);
-
-        if (chunk.floors[localX][localY] == floorType) return false;
-
-        chunk.floors[localX][localY] = floorType;
-
-        chunk.dirty = true;
-        chunk.markRenderDirty();
-        chunkRenderer.invalidateOverview();
-        return true;
-    }
-
-    public boolean placeBuilding(
-        int tileX, int tileY, Direction direction, BuildingType buildingType
-    ) {
-        if (buildingType == null || !canPlaceBuildingAt(tileX, tileY)) {
-            return false;
-        }
-
-        Chunk chunk = getChunkAt(tileX, tileY);
-        int localX = chunkManager.getLocalX(tileX);
-        int localY = chunkManager.getLocalY(tileY);
-
-        chunk.buildings[localX][localY] = buildingType;
-        chunk.buildingDirection[localX][localY] =
-            direction == null ? Direction.EAST : direction;
-
-        chunk.dirty = true;
-        chunk.markRenderDirty();
-        return true;
-    }
-
-    public boolean placeGhost(
-        int tileX, int tileY, Direction direction,
-        GhostType<? extends AssetType> ghostType
-    ) {
-        if (ghostType == null) return false;
-
-        Chunk chunk = getChunkAt(tileX, tileY);
-        int localX = chunkManager.getLocalX(tileX);
-        int localY = chunkManager.getLocalY(tileY);
-
-        @SuppressWarnings("unchecked")
-        GhostType<AssetType> storedGhost =
-            (GhostType<AssetType>) ghostType;
-
-        chunk.ghosts[localX][localY] = storedGhost;
-        chunk.ghostDirection[localX][localY] =
-            direction == null ? Direction.EAST : direction;
-
-        chunk.dirty = true;
-        chunk.markRenderDirty();
-        return true;
-    }
-
-    public boolean placeBlock(int tileX, int tileY, Direction direction, AssetType type) {
-        if (type instanceof FloorType floorType) {
-            return placeFloor(tileX, tileY, floorType);
-        }
-
-        if (type instanceof BuildingType buildingType) {
-            return placeBuilding(tileX, tileY, direction, buildingType);
-        }
-
-        return false;
-    }
-
-    private boolean placeGhostBlock(
-        int tileX, int tileY,
-        GhostType<? extends AssetType> ghostType,
-        Direction direction
-    ) {
-        if (ghostType != null) {
-
-            return placeInGhostLayer(tileX, tileY, ghostType, ghostGrid, ghostLayer, direction);
-        }
-
-        return false;
-    }
-
-    private <T extends AssetType> boolean placeInLayer(
-        int tileX, int tileY,
-        T type, T[][] grid, TiledMapTileLayer layer
-    ) {
-        if (!isInBounds(tileX, tileY) || type == null) return false;
-
-        if (grid[tileX][tileY] == type) return false;
-
-        TiledMapTile tile = assets.getTile(type);
-        if (tile == null) return false;
-
-        TiledMapTileLayer.Cell cell = new TiledMapTileLayer.Cell();
-        cell.setTile(tile);
-
-        grid[tileX][tileY] = type;
-        layer.setCell(tileX, tileY, cell);
-
-        return true;
-    }
-
-    private boolean placeInGhostLayer(
-        int tileX, int tileY,
-        GhostType<? extends AssetType> ghostType,
-        GhostType<? extends AssetType>[][] grid,
-        TiledMapTileLayer ghostLayer,
-        Direction direction
-    ) {
-        if (!isInBounds(tileX, tileY) || ghostType == null) return false;
-        if (grid[tileX][tileY] == ghostType) return false;
-        TiledMapTile tile = assets.getTile(ghostType.getSourceType());
-
-
-        if (tile == null) return false;
-
-        ColoredCell cell = new ColoredCell(ghostType.getState().getColor());
-        cell.setTile(tile);
-        grid[tileX][tileY] = ghostType;
-        ghostLayer.setCell(tileX, tileY, cell);
-        return true;
-    }
-
-    public void registPlacement() {
-        Events.on(GameEvent.BlockPlaceRequest.class, request -> {
-
-            if (request.isCancelled()) return;
-
-            if (!isWalkable(request.tileX, request.tileY)) {
-                request.cancel();
-                return;
-            }
-
-            //TODO: get a dynamic multi layer checker system.
-            //floor tile type already there
-            if (getFloorAt(request.tileX,  request.tileY) == request.type) {
-                request.cancel();
-                return;
-            }
-
-            if (getBuildingAt(request.tileX,  request.tileY) == request.type) {
-                request.cancel();
-                return;
-            }
-
-            if (placeBlock(request.tileX, request.tileY, request.direction, request.type)) {
-                GameEvent.BlockPlaced.fire(request.tileX, request.tileY, request.direction, request.type);
-            } else  {
-                request.cancel();
-            }
-        });
     }
 
     public ChunkManager getChunkManager() {
