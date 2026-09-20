@@ -29,6 +29,8 @@ public final class PlacementService {
         Events.on(GameEvent.BlockPlaceRequest.class, blockPlaceListener);
     }
 
+    //TODO: add removeBuilding/Floor/Ghost methods.
+
     public boolean placeFloor(int tileX, int tileY, FloorType floorType) {
         if (floorType == null) return false;
 

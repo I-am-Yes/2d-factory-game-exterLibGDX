@@ -211,14 +211,9 @@ public class World {
 
         float visibleWidth = camera.viewportWidth * camera.zoom;
         float visibleHeight = camera.viewportHeight * camera.zoom;
-        int requestedRadius = Math.max(
-            1,
+        int requestedRadius = Math.max(1,
             MathUtils.ceil(
-                Math.max(visibleWidth, visibleHeight)
-                    / getTileSize()
-                    / Chunk.SIZE
-                    / 2f
-            )
+                Math.max(visibleWidth, visibleHeight) / getTileSize() / Chunk.SIZE / 2f)
         );
 
         int loadRadius = Math.min(requestedRadius, MAX_CHUNK_LOAD_RADIUS);
@@ -226,9 +221,7 @@ public class World {
         int centerChunkY = Math.floorDiv(cameraTileY, Chunk.SIZE);
 
         boolean streamTargetChanged =
-            centerChunkX != lastStreamChunkX
-                || centerChunkY != lastStreamChunkY
-                || loadRadius != lastStreamRadius;
+            centerChunkX != lastStreamChunkX || centerChunkY != lastStreamChunkY || loadRadius != lastStreamRadius;
 
         if (streamTargetChanged) {
             lastStreamChunkX = centerChunkX;
@@ -243,7 +236,6 @@ public class World {
                 chunkRenderer::unload
             );
         }
-
         if (chunkStreamComplete) {
             return;
         }
@@ -282,10 +274,6 @@ public class World {
         return chunkManager.getOrCreateChunkForTile(tileX, tileY);
     }
 
-    public PlacementService getPlacementService() {
-        return placementService;
-    }
-
     public BuildingType getBuildingAt(int tileX, int tileY) {
         Chunk chunk = getChunkAt(tileX, tileY);
 
@@ -294,11 +282,6 @@ public class World {
 
         return chunk.buildings[localX][localY];
     }
-
-    public boolean hasBuildingAt(int tileX, int tileY) {
-        return getBuildingAt(tileX, tileY) != null;
-    }
-
     public GhostType<AssetType> getGhostTileAt(int tileX, int tileY) {
         Chunk chunk = getChunkAt(tileX, tileY);
 
@@ -308,15 +291,17 @@ public class World {
         return chunk.ghosts[localX][localY];
     }
 
-    public boolean isWalkable(int tileX, int tileY) {
-        FloorType floor = getFloorAt(tileX, tileY);
-        return floor != null && floor != FloorType.WATER;
+    public boolean hasBuildingAt(int tileX, int tileY) {
+        return getBuildingAt(tileX, tileY) != null;
     }
 
     public boolean isInBounds(int tileX, int tileY) {
         return true;
     }
-
+    public boolean isWalkable(int tileX, int tileY) {
+        FloorType floor = getFloorAt(tileX, tileY);
+        return floor != null && floor != FloorType.WATER;
+    }
     public boolean hasTile(int tileX, int tileY) {
         if (!isInBounds(tileX, tileY)) return false;
         if (getFloorAt(tileX, tileY) != null) return true;
@@ -353,7 +338,6 @@ public class World {
 
         return chunk.floors[localX][localY];
     }
-
     public FloorType getFloorAt(float tileX, float tileY) {
         return getFloorAt((int)tileX, (int)tileY);
     }
@@ -383,7 +367,6 @@ public class World {
     public String getTileName(Vector2 tile) {
         return getTileName((int)tile.x, (int)tile.y);
     }
-
     public String getTileName(int tileX, int tileY) {
         GhostType<AssetType> ghost = getGhostTileAt(tileX, tileY);
         if (ghost != null) {
@@ -400,25 +383,15 @@ public class World {
         return "None";
     }
 
-    public ChunkManager getChunkManager() {
-        return chunkManager;
-    }
-
     public int worldToTileX(int worldX) {
         return (int) (worldX / tileSize);
     }
     public int worldToTileY(int worldY) {
         return (int) (worldY / tileSize);
     }
-
-    public long getSeed() {
-        return seed;
-    }
-
     public int getChunkSize() {
         return Chunk.SIZE;
     }
-
     public float getTileSize() {
         return tileSize;
     }
@@ -428,29 +401,47 @@ public class World {
     public float getTilesHeight() {
         return tilesHeight;
     }
+
     public float getWorldWidth() {
         return worldWidth;
     }
     public float getWorldHeight() {
         return worldHeight;
     }
-
     public MapConfig getMapConfig() {
         return mapConfig;
     }
-
+    public long getSeed() {
+        return seed;
+    }
     public FloorType[][] getFloorGrid() {
         return floorGrid;
     }
+
     public BuildingType[][] getBuildingGrid() {
         return buildingGrid;
     }
     public GhostType<? extends AssetType>[][] getGhostGrid() {
         return ghostGrid;
     }
-
     public ChunkRenderDetail getCurrentRenderDetail() {
         return chunkRenderer.getCurrentDetail();
+    }
+    public ChunkManager getChunkManager() {
+        return chunkManager;
+    }
+    public PlacementService getPlacementService() {
+        return placementService;
+    }
+
+    public static String getFLOOR_LAYER_NAME() {
+        return FLOOR_LAYER_NAME;
+    }
+    public static String getBUILDING_LAYER_NAME() {
+        return BUILDING_LAYER_NAME;
+    }
+    public static String getGHOST_LAYER_NAME() {
+        return GHOST_LAYER_NAME;
     }
 
 }
