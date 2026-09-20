@@ -309,6 +309,10 @@ public class World {
         return getGhostTileAt(tileX, tileY) != null;
     }
 
+    public boolean isFloorAt(int tileX, int tileY) {
+        return getFloorAt(tileX, tileY) != null;
+    }
+
     public boolean isGhostTile(int tileX, int tileY) {
         return getGhostTileAt(tileX, tileY) != null;
     }

@@ -2,6 +2,7 @@ package core.player;
 
 import core.UiInputGate;
 import core.machine.state.Direction;
+import core.player.mechanic.PlayerInteraction;
 import core.system.systems.PlayerSystem;
 import data.map.asset.AssetType;
 import com.badlogic.gdx.Input;
@@ -27,6 +28,7 @@ public class PlayerAction {
     private final Viewport viewport;
     private final AssetsHandler assets;
     private final UiInputGate uiInputGate;
+    private final PlayerInteraction playerInteraction;
 
     private final Vector3 tmp = new Vector3();
     private static Direction placementDirection = Direction.EAST; //default startup direction
@@ -56,74 +58,79 @@ public class PlayerAction {
         this.uiInputGate = uiInputGate;
 
         this.buildGhostLine = new BuildGhostLine(world, player, viewport, this, input, assets);
+        this.playerInteraction = new PlayerInteraction(world, player, viewport, this, input);
     }
 
     public void update(float delta) {
         this.delta = delta;
 
-        this.selectedType = PlayerHotbar.getSelectedType();
-        if (selectedType == null) placementDirection = Direction.EAST;
-
-        if (input.isKeyJustPressed(R)) {
-            boolean shift = input.isKeyPressed(SHIFT_LEFT);
-            boolean control = input.isKeyPressed(CONTROL_LEFT);
-
-            if (shift && control) {
-                placementDirection = placementDirection.rotateHalfCounterClockwise();
-            } else if (shift) {
-                placementDirection = placementDirection.rotateCounterClockwise();
-            } else if (control) {
-                placementDirection = placementDirection.rotateHalfClockwise();
-            } else {
-                placementDirection = placementDirection.rotateClockwise();
-            }
-
+        if (uiInputGate.isPointerOverGUI()) {
+            placeMode = PlaceMode.none;
             return;
         }
 
-
+        updateRotateBlock();
         buildGhostLine.update(getSelectedType());
-
-
-
+        updateRemovingBlock();
         updatePlacingBlock();
     }
 
-    public void render() {}
+    public void render() {
+        playerInteraction.render();
+    }
 
     public void drawShapeRenderer(ShapeRenderer shapeRenderer) {
         buildGhostLine.drawShapeRenderer(shapeRenderer);
     }
 
     public void dispose() {
+        playerInteraction.dispose();
         buildGhostLine.dispose();
     }
 
-    public PlaceMode getPlacingMode() {
-        return placeMode;
-    }
-
-    public void setPlaceMode(PlaceMode placeMode) {
-        this.placeMode = placeMode;
-    }
-
-    public AssetType getSelectedType() {
-        return selectedType;
-    }
-
-    public BuildGhostLine getBuildGhostLine() {
-        return buildGhostLine;
-    }
-
-    private void updatePlacingBlock() {
-        if (input.isMouseReleased(Input.Buttons.LEFT)) {
-            if (placeMode == PlaceMode.placing) {
+    private void updateRemovingBlock() {
+        if (placeMode == PlaceMode.placing || selectedType != null) {
+            if (placeMode == PlaceMode.breaking) {
                 placeMode = PlaceMode.none;
             }
             return;
         }
 
-        if (uiInputGate.isPointerOverGUI()) {
+        if (!input.isMousePressed(Input.Buttons.RIGHT)) {
+            if (placeMode == PlaceMode.breaking) {
+                placeMode = PlaceMode.none;
+            }
+            return;
+        }
+
+        int tx = PlayerSystem.getHoverTileThresholdX();
+        int ty = PlayerSystem.getHoverTileThresholdY();
+
+        if (!world.isInBounds(tx, ty)) {
+            placeMode = PlaceMode.none;
+            return;
+        }
+
+        boolean justPressed =
+            input.isMouseJustPressed(Input.Buttons.RIGHT);
+
+        if (justPressed) {
+            placeMode = PlaceMode.breaking;
+        }
+
+        if (placeMode != PlaceMode.breaking) return;
+
+        // Remove once on the initial click or after entering another tile.
+        if (justPressed || tx != selectX || ty != selectY) {
+            selectX = tx;
+            selectY = ty;
+
+            GameEvent.BlockRemoveRequest.fire(tx, ty);
+        }
+    }
+
+    private void updatePlacingBlock() {
+        if (input.isMouseReleased(Input.Buttons.LEFT)) {
             if (placeMode == PlaceMode.placing) {
                 placeMode = PlaceMode.none;
             }
@@ -156,6 +163,41 @@ public class PlayerAction {
         selectX = tx;
         selectY = ty;
         GameEvent.BlockPlaceRequest.fire(tx, ty, placementDirection, selectedType);
+    }
+
+    private void updateRotateBlock() {
+        this.selectedType = PlayerHotbar.getSelectedType();
+        if (selectedType == null) placementDirection = Direction.EAST;
+
+        if (input.isKeyJustPressed(R)) {
+            boolean shift = input.isKeyPressed(SHIFT_LEFT);
+            boolean control = input.isKeyPressed(CONTROL_LEFT);
+
+            if (shift && control) {
+                placementDirection = placementDirection.rotateHalfCounterClockwise();
+            } else if (shift) {
+                placementDirection = placementDirection.rotateCounterClockwise();
+            } else if (control) {
+                placementDirection = placementDirection.rotateHalfClockwise();
+            } else {
+                placementDirection = placementDirection.rotateClockwise();
+            }
+
+            return;
+        }
+    }
+
+    public PlaceMode getPlacingMode() {
+        return placeMode;
+    }
+    public void setPlaceMode(PlaceMode placeMode) {
+        this.placeMode = placeMode;
+    }
+    public AssetType getSelectedType() {
+        return selectedType;
+    }
+    public BuildGhostLine getBuildGhostLine() {
+        return buildGhostLine;
     }
 
     public static Direction getPlacementDirection() {

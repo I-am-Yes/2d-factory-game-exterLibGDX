@@ -20,6 +20,7 @@ public final class PlacementService {
     private final ChunkRenderer chunkRenderer;
 
     private final Consumer<GameEvent.BlockPlaceRequest> blockPlaceListener = this::handlePlacementRequest;
+    private final Consumer<GameEvent.BlockRemoveRequest> blockRemoveListener = this::handleBlockRemoveRequest;
 
     public PlacementService(World world, ChunkManager chunkManager, ChunkRenderer chunkRenderer) {
         this.world = world;
@@ -27,9 +28,58 @@ public final class PlacementService {
         this.chunkRenderer = chunkRenderer;
 
         Events.on(GameEvent.BlockPlaceRequest.class, blockPlaceListener);
+        Events.on(GameEvent.BlockRemoveRequest.class, blockRemoveListener);
     }
 
-    //TODO: add removeBuilding/Floor/Ghost methods.
+    public boolean removeBlock(int tileX, int tileY) {
+        if (removeGhost(tileX, tileY)) return true;
+        if (removeBuilding(tileX, tileY)) return true;
+        return removeFloor(tileX, tileY);
+    }
+
+    public boolean removeFloor(int tileX, int tileY) {
+        Chunk chunk = chunkManager.getOrCreateChunkForTile(tileX, tileY);
+        int localX = chunkManager.getLocalX(tileX);
+        int localY = chunkManager.getLocalY(tileY);
+
+        if (chunk.floors[localX][localY] == null) return false;
+
+        //TODO: maybe we should have a default floor type instead of null, like grass or dirt
+        // later change this, temp using grass for now
+        chunk.floors[localX][localY] = FloorType.GRASS;
+        chunk.dirty = true;
+        chunk.markRenderDirty();
+        chunkRenderer.invalidateOverview();
+        return true;
+    }
+
+    public boolean removeBuilding(int tileX, int tileY) {
+        Chunk chunk = chunkManager.getOrCreateChunkForTile(tileX, tileY);
+        int localX = chunkManager.getLocalX(tileX);
+        int localY = chunkManager.getLocalY(tileY);
+
+        if (chunk.buildings[localX][localY] == null) return false;
+
+        chunk.buildings[localX][localY] = null;
+        chunk.dirty = true;
+        chunk.markRenderDirty();
+        chunkRenderer.invalidateOverview();
+        return true;
+    }
+
+    public boolean removeGhost(int tileX, int tileY) {
+        Chunk chunk = chunkManager.getOrCreateChunkForTile(tileX, tileY);
+        int localX = chunkManager.getLocalX(tileX);
+        int localY = chunkManager.getLocalY(tileY);
+
+        if (chunk.ghosts[localX][localY] == null) return false;
+
+        chunk.ghosts[localX][localY] = null;
+        chunk.dirty = true;
+        chunk.markRenderDirty();
+        chunkRenderer.invalidateOverview();
+        return true;
+    }
 
     public boolean placeFloor(int tileX, int tileY, FloorType floorType) {
         if (floorType == null) return false;
@@ -65,6 +115,7 @@ public final class PlacementService {
 
         chunk.dirty = true;
         chunk.markRenderDirty();
+        chunkRenderer.invalidateOverview();
         return true;
     }
 
@@ -88,6 +139,7 @@ public final class PlacementService {
 
         chunk.dirty = true;
         chunk.markRenderDirty();
+        chunkRenderer.invalidateOverview();
         return true;
     }
 
@@ -133,8 +185,48 @@ public final class PlacementService {
 
     }
 
+    private void handleBlockRemoveRequest(GameEvent.BlockRemoveRequest request) {
+        if (request.isCancelled()) return;
+
+        Chunk chunk = chunkManager.getOrCreateChunkForTile(request.tileX, request.tileY);
+        int localX = chunkManager.getLocalX(request.tileX);
+        int localY = chunkManager.getLocalY(request.tileY);
+
+        AssetType removedType;
+        Direction removedDirection;
+
+         if (chunk.buildings[localX][localY] != null) {
+            removedType = chunk.buildings[localX][localY];
+            removedDirection = chunk.buildingDirection[localX][localY];
+
+        } else if (chunk.floors[localX][localY] != null
+            //// later use better default floor type instead of grass,for now using grass as default
+            && chunk.floors[localX][localY] != FloorType.GRASS) {
+
+            removedType = chunk.floors[localX][localY];
+            removedDirection = null;
+
+        } else {
+            request.cancel();
+            return;
+        }
+
+        if (!removeBlock(request.tileX, request.tileY)) {
+            request.cancel();
+            return;
+        }
+
+        GameEvent.BlockRemoved.fire(
+            request.tileX,
+            request.tileY,
+            removedDirection,
+            removedType
+        );
+    }
+
     public void dispose() {
         Events.remove(GameEvent.BlockPlaceRequest.class, blockPlaceListener);
+        Events.remove(GameEvent.BlockRemoveRequest.class, blockRemoveListener);
     }
 
 }

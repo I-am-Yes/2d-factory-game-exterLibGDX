@@ -36,10 +36,41 @@ public class GameEvent {
 
     }
 
+    public static final class BlockRemoveRequest extends CancellableEvent {
+        public final int tileX, tileY;
+
+        public BlockRemoveRequest(int tileX, int tileY) {
+            this.tileX = tileX;
+            this.tileY = tileY;
+        }
+
+        public static void fire(int tileX, int tileY) {
+            Events.fire(new BlockRemoveRequest(tileX, tileY));
+        }
+    }
+
+    public static final class BlockRemoved {
+        public final int tileX;
+        public final int tileY;
+        public final Direction direction;
+        public final AssetType type;
+
+        public BlockRemoved(int tileX, int tileY, Direction direction, AssetType type) {
+            this.tileX = tileX;
+            this.tileY = tileY;
+            this.direction = direction;
+            this.type = type;
+        }
+
+        public static void fire(int tileX, int tileY, Direction direction, AssetType type) {
+            Events.fire(new BlockRemoved(tileX, tileY, direction, type));
+        }
+    }
+
      public static final class BlockPlaceRequest extends CancellableEvent {
          public final int tileX, tileY;
-         public final AssetType type;
          public final Direction direction;
+         public final AssetType type;
 
          public BlockPlaceRequest(int tileX, int tileY, Direction direction, AssetType type) {
              this.tileX = tileX;

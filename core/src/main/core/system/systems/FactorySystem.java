@@ -37,7 +37,7 @@ public class FactorySystem implements GameSysCycle, ContextProvider<FactoryConte
     private final Array<Machine> sources = new Array<>();
 
     private static final float SOURCE_INTERVAL_SECONDS = 0.1f;
-    private static final float BELT_TILES_PER_SECOND = 10f;
+    private static final float BELT_TILES_PER_SECOND = 20f;
 
     private static final float VISUAL_CATCHUP_MULTIPLIER = 1.25f;
 
@@ -50,6 +50,9 @@ public class FactorySystem implements GameSysCycle, ContextProvider<FactoryConte
     private long visualUpdateNanos;
     private int visualUpdateSamples;
     private float performanceTimer;
+
+    //TODO: later use a better extends system see mindustry/world/Block.java
+    // should be like Conveyor extends Block
 
     public FactorySystem(GameContext context) {
         this.context = context;
@@ -84,6 +87,25 @@ public class FactorySystem implements GameSysCycle, ContextProvider<FactoryConte
             //            System.out.println("Direction: " + getBuildingDirectionAt(event.tileX, event.tileY));
         });
 
+        Events.on(GameEvent.BlockRemoved.class, event -> {
+            //TODO: implement Block class for general logic on class that extends Block
+            // for it's dedicated removal logic
+            // the cases in switch should be auto detected
+            if (!(event.type instanceof BuildingType)) return;
+
+            Machine removed = buildings.remove(tileKey(event.tileX, event.tileY));
+            if (removed == null) return;
+
+            switch (removed.type) {
+                case CREATIVE_SOURCE -> sources.removeValue(removed, true);
+                case CONVEYOR -> conveyors.removeValue(removed, true);
+            }
+            // Decide later whether held items should disappear or drop.
+            removed.item = null;
+            // Prevent a pending transfer from using the removed machine.
+            pendingConveyorTransfers.clear();
+        });
+
         itemRender = new ItemRender(world);
         ItemManager itemManager = new ItemManager(itemRender);
 
@@ -113,9 +135,6 @@ public class FactorySystem implements GameSysCycle, ContextProvider<FactoryConte
         updateConveyor(tickDelta);
         transferConveyorOutputs();
         transferSourceOutputs();
-
-
-
 
     }
 
@@ -168,6 +187,19 @@ public class FactorySystem implements GameSysCycle, ContextProvider<FactoryConte
             Conveyor.updateVisuals(conveyors, delta, visualSpeed);
         }
     }
+    ////testing purpose
+//    private void updateConveyorVisual(float delta) {
+//        for (Machine conveyor : conveyors) {
+//            if (conveyor.item == null) {
+//                continue;
+//            }
+//            conveyor.item.visualX =
+//                conveyor.item.currentX;
+//
+//            conveyor.item.visualY =
+//                conveyor.item.currentY;
+//        }
+//    }
 
     private void updateConveyor(float tickDelta) {
         for (Machine conveyor : conveyors) {
@@ -228,7 +260,9 @@ public class FactorySystem implements GameSysCycle, ContextProvider<FactoryConte
                 continue;
             }
 
-            if (target.type != MachineType.CONVEYOR) {
+            //TODO: the item transfer from source to target should be
+            // item appearing from source's output gate to current target's input gate
+            if (target.type != MachineType.CONVEYOR && target.item != null) {
                 continue;
             }
 
@@ -288,6 +322,7 @@ public class FactorySystem implements GameSysCycle, ContextProvider<FactoryConte
             boolean targetIsConveyor = target.type == MachineType.CONVEYOR;
 
             if (targetIsConveyor) {
+                //TODO: maybe this slow down the loop
                 if (target.item != null) {
                     continue;
                 }
