@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.utils.FloatArray;
 import com.badlogic.gdx.utils.ShortArray;
+import core.machine.state.Direction;
 
 public final class ChunkMeshBuilder {
 
@@ -26,45 +27,112 @@ public final class ChunkMeshBuilder {
         return vertexCount + 4 <= MAX_VERTEX_COUNT;
     }
 
-    public void add(TextureRegion region, float x, float y, float size, float packedColor) {
+    public void add(
+        TextureRegion region,
+        float x,
+        float y,
+        Direction direction,
+        float size,
+        float packedColor
+    ) {
         if (!canAddQuad()) {
-            throw new IllegalStateException("Chunk mesh has reached its vertex limit");
+            throw new IllegalStateException(
+                "Chunk mesh has reached its vertex limit"
+            );
         }
 
         if (region.getTexture() != texture) {
-            throw new IllegalArgumentException("TextureRegion belongs to a different texture");
+            throw new IllegalArgumentException(
+                "TextureRegion belongs to a different texture"
+            );
+        }
+
+        if (direction == null) {
+            direction = Direction.EAST;
         }
 
         int base = vertexCount;
 
+        float u = region.getU();
+        float u2 = region.getU2();
+        float topV = region.getV();
+        float bottomV = region.getV2();
+
+        // Default EAST orientation.
+        float blU = u;
+        float blV = bottomV;
+
+        float tlU = u;
+        float tlV = topV;
+
+        float trU = u2;
+        float trV = topV;
+
+        float brU = u2;
+        float brV = bottomV;
+
+        switch (direction) {
+            case NORTH -> {
+                // 90 degrees counterclockwise.
+                blU = u;
+                blV = topV;
+
+                tlU = u2;
+                tlV = topV;
+
+                trU = u2;
+                trV = bottomV;
+
+                brU = u;
+                brV = bottomV;
+            }
+
+            case SOUTH -> {
+                // 90 degrees clockwise.
+                blU = u2;
+                blV = bottomV;
+
+                tlU = u;
+                tlV = bottomV;
+
+                trU = u;
+                trV = topV;
+
+                brU = u2;
+                brV = topV;
+            }
+
+            case WEST -> {
+                // 180 degrees.
+                blU = u2;
+                blV = topV;
+
+                tlU = u2;
+                tlV = bottomV;
+
+                trU = u;
+                trV = bottomV;
+
+                brU = u;
+                brV = topV;
+            }
+
+            case EAST -> {
+                // Keep the default UV coordinates.
+            }
+        }
 
         // Bottom-left
-        addVertex(
-            x, y,
-            packedColor,
-            region.getU(), region.getV2()
-        );
+        addVertex(x, y, packedColor, blU, blV);
 
         // Top-left
-        addVertex(
-            x, y + size,
-            packedColor,
-            region.getU(), region.getV()
-        );
+        addVertex(x, y + size, packedColor, tlU, tlV);
 
         // Top-right
-        addVertex(
-            x + size, y + size,
-            packedColor,
-            region.getU2(), region.getV()
-        );
+        addVertex(x + size, y + size, packedColor, trU, trV);
 
         // Bottom-right
-        addVertex(
-            x + size, y,
-            packedColor,
-            region.getU2(), region.getV2()
-        );
+        addVertex(x + size, y, packedColor, brU, brV);
 
         indices.add(base);
         indices.add(base + 1);

@@ -1,5 +1,6 @@
 package core.entities.plan;
 
+import core.machine.state.Direction;
 import data.map.asset.AssetType;
 import data.map.asset.GhostType;
 import com.badlogic.gdx.math.Vector2;
@@ -7,11 +8,13 @@ import com.badlogic.gdx.math.Vector2;
 public class PlanEntity<T extends AssetType> {
 
     private int x, y;
+    private final Direction direction;
     private final GhostType<T> ghostType;
 
-    public PlanEntity(int x, int y, GhostType<T> ghostType) {
+    public PlanEntity(int x, int y, Direction direction, GhostType<T> ghostType) {
         this.x = x;
         this.y = y;
+        this.direction = direction;
         this.ghostType = ghostType;
     }
 
@@ -29,6 +32,9 @@ public class PlanEntity<T extends AssetType> {
 
     public GhostType<T> getGhostType() {
         return ghostType;
+    }
+    public Direction getDirection() {
+        return direction;
     }
 
 

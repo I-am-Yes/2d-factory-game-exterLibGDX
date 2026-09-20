@@ -41,6 +41,16 @@ public class FactorySystem implements GameSysCycle, ContextProvider<FactoryConte
 
     private static final float VISUAL_CATCHUP_MULTIPLIER = 1.25f;
 
+    private static final boolean SMOOTH_CONVEYORS = true;
+    private static final float VISUAL_SMOOTHNESS = 20f;
+
+
+    //debug update time measure
+    private boolean measureUpdate = false;
+    private long visualUpdateNanos;
+    private int visualUpdateSamples;
+    private float performanceTimer;
+
     public FactorySystem(GameContext context) {
         this.context = context;
         this.world = context.world;
@@ -85,15 +95,16 @@ public class FactorySystem implements GameSysCycle, ContextProvider<FactoryConte
 
     @Override
     public void update(float delta) {
-        float visualSpeed = BELT_TILES_PER_SECOND * VISUAL_CATCHUP_MULTIPLIER;
+        long start = System.nanoTime();
 
-        for (Machine conveyor : conveyors) {
-            if (conveyor.item == null) {
-                continue;
-            }
-            Conveyor.updateVisual(conveyor.item, delta, visualSpeed);
+
+        updateConveyorVisual(delta);
+
+
+
+        if (measureUpdate) {
+            updateTimeMeasure(delta, start);
         }
-
     }
 
     @Override
@@ -102,6 +113,10 @@ public class FactorySystem implements GameSysCycle, ContextProvider<FactoryConte
         updateConveyor(tickDelta);
         transferConveyorOutputs();
         transferSourceOutputs();
+
+
+
+
     }
 
     @Override
@@ -117,6 +132,40 @@ public class FactorySystem implements GameSysCycle, ContextProvider<FactoryConte
                 conveyor.item,
                 context.assets
             );
+        }
+    }
+
+    private void updateTimeMeasure(float delta, long start) {
+        visualUpdateNanos += System.nanoTime() - start;
+        visualUpdateSamples++;
+        performanceTimer += delta;
+
+        if (performanceTimer >= 5f) {
+            double averageMilliseconds =
+                visualUpdateNanos /
+                    1_000_000.0 /
+                    visualUpdateSamples;
+
+            System.out.printf(
+                "Visual update average: %.4f ms%n",
+                averageMilliseconds
+            );
+
+            visualUpdateNanos = 0L;
+            visualUpdateSamples = 0;
+            performanceTimer -= 5f;
+        }
+    }
+
+    private void updateConveyorVisual(float delta) {
+        if (SMOOTH_CONVEYORS) {
+            float smoothAlpha =
+                1f - (float) Math.exp(-VISUAL_SMOOTHNESS * delta);
+
+            Conveyor.updateSmoothVisuals(conveyors, smoothAlpha);
+        } else {
+            float visualSpeed = BELT_TILES_PER_SECOND * VISUAL_CATCHUP_MULTIPLIER;
+            Conveyor.updateVisuals(conveyors, delta, visualSpeed);
         }
     }
 
@@ -183,9 +232,9 @@ public class FactorySystem implements GameSysCycle, ContextProvider<FactoryConte
                 continue;
             }
 
-            if (target.direction != source.direction) {
-                continue;
-            }
+//            if (target.direction != source.direction) {
+//                continue;
+//            }
 
             if (target.item != null) {
                 continue;
@@ -243,9 +292,9 @@ public class FactorySystem implements GameSysCycle, ContextProvider<FactoryConte
                     continue;
                 }
                 // basically straight conveyor transfer only
-                if (target.direction != current.direction) {
-                    continue;
-                }
+//                if (target.direction != current.direction) {
+//                    continue;
+//                }
             } else {
                 if (!target.acceptItem(current.item.type)) {
                     continue;

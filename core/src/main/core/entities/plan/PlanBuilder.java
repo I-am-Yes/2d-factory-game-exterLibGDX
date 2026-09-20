@@ -1,5 +1,6 @@
 package core.entities.plan;
 
+import core.machine.state.Direction;
 import data.map.asset.AssetType;
 import data.map.asset.GhostType;
 import com.badlogic.gdx.math.Vector2;
@@ -9,17 +10,17 @@ public class PlanBuilder<T extends AssetType> {
 
     private final Queue<PlanEntity<T>> planQueue = new Queue<>();
 
-    public void addPlan(int x, int y, T currentPlan) {
+    public void addPlan(int x, int y, Direction direction, T currentPlan) {
         planQueue.addLast(
-            new PlanEntity<>(x, y, GhostType.translateToGhost(currentPlan)));
+            new PlanEntity<>(x, y, direction, GhostType.translateToGhost(currentPlan)));
     }
 
-    public void addPlan(float x, float y, T currentPlan) {
-        addPlan((int) x, (int) y, currentPlan);
+    public void addPlan(float x, float y, Direction direction, T currentPlan) {
+        addPlan((int) x, (int) y, direction, currentPlan);
     }
 
-    public void addPlan(Vector2 vector2, T currentPlan) {
-        addPlan((int) vector2.x, (int) vector2.y, currentPlan);
+    public void addPlan(Vector2 vector2, Direction direction, T currentPlan) {
+        addPlan((int) vector2.x, (int) vector2.y, direction, currentPlan);
     }
 
     public Queue<PlanEntity<T>> getPlanQueue() {

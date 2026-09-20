@@ -41,37 +41,37 @@ public class GameEvent {
          public final AssetType type;
          public final Direction direction;
 
-         public BlockPlaceRequest(int tileX, int tileY, AssetType type, Direction direction) {
+         public BlockPlaceRequest(int tileX, int tileY, Direction direction, AssetType type) {
              this.tileX = tileX;
              this.tileY = tileY;
-             this.type = type;
              this.direction = direction;
+             this.type = type;
          }
 
-         public static void fire(int tileX, int tileY, AssetType type, Direction direction) {
-             Events.fire(new BlockPlaceRequest(tileX, tileY, type, direction));
+         public static void fire(int tileX, int tileY, Direction direction, AssetType type) {
+             Events.fire(new BlockPlaceRequest(tileX, tileY, direction, type));
          }
 
          public static void fire(int tileX, int tileY, AssetType type) {
-             Events.fire(new BlockPlaceRequest(tileX, tileY, type, Direction.EAST));
+             Events.fire(new BlockPlaceRequest(tileX, tileY, Direction.EAST, type));
              // handler runs synchronously during fire(); cancelled = placement blocked
          }
      }
 
      public static final class BlockPlaced {
         public final int tileX, tileY;
-        public final AssetType type;
         public final Direction direction;
+        public final AssetType type;
 
-        public BlockPlaced(int tileX, int tileY, AssetType type, Direction direction) {
+        public BlockPlaced(int tileX, int tileY, Direction direction, AssetType type) {
             this.tileX = tileX;
             this.tileY = tileY;
-            this.type = type;
             this.direction = direction;
+            this.type = type;
         }
 
-        public static void fire(int tileX, int tileY, AssetType type, Direction direction) {
-            Events.fire(new BlockPlaced(tileX, tileY, type, direction));
+        public static void fire(int tileX, int tileY, Direction direction, AssetType type) {
+            Events.fire(new BlockPlaced(tileX, tileY, direction, type));
         }
 
      }

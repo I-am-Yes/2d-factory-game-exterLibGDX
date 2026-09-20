@@ -27,6 +27,7 @@ public class PlanManager {
                 world.placeGhost(
                     currentPlanEntity.getX(),
                     currentPlanEntity.getY(),
+                    currentPlanEntity.getDirection(),
                     currentPlanEntity.getGhostType()
                 );
             }

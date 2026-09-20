@@ -62,6 +62,7 @@ public class PlayerAction {
         this.delta = delta;
 
         this.selectedType = PlayerHotbar.getSelectedType();
+        if (selectedType == null) placementDirection = Direction.EAST;
 
         if (input.isKeyJustPressed(R)) {
             boolean shift = input.isKeyPressed(SHIFT_LEFT);
@@ -154,7 +155,7 @@ public class PlayerAction {
 
         selectX = tx;
         selectY = ty;
-        GameEvent.BlockPlaceRequest.fire(tx, ty, selectedType, placementDirection);
+        GameEvent.BlockPlaceRequest.fire(tx, ty, placementDirection, selectedType);
     }
 
     public static Direction getPlacementDirection() {

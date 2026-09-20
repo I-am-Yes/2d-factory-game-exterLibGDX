@@ -216,7 +216,7 @@ public class BuildGhostLine {
 
     }
 
-    public void drawTilePreview(SpriteBatch spriteBatch, Array<Vector2> tiledLine, AssetType selectedType) {
+    public void drawTilePreview(SpriteBatch spriteBatch, Array<Vector2> tiledLine, AssetType selectedType, float rotation) {
         if (tiledLine == null || selectedType == null) return;
 
         TiledMapTile tiledTile = assetsHandler.getTile(selectedType);
@@ -229,7 +229,12 @@ public class BuildGhostLine {
 
         for (Vector2 tile : tiledLine) {
             spriteBatch.draw(
-                region, tile.x * tileSize, tile.y * tileSize, tileSize, tileSize);
+                region, tile.x * tileSize, tile.y * tileSize,
+                //keep rotation in the center of the tile
+                tileSize / 2, tileSize / 2,
+                tileSize, tileSize,
+                1f, 1f, rotation
+            );
         }
         spriteBatch.setColor(oldColor);
 
@@ -260,7 +265,7 @@ public class BuildGhostLine {
         PlanBuilder<AssetType> plan = new PlanBuilder<>();
         for (int i = 0; i < tiledLine.size; i++) {
             Vector2 tile = tiledLine.get(i);
-            plan.addPlan((int) tile.x, (int) tile.y, type);
+            plan.addPlan((int) tile.x, (int) tile.y, PlayerAction.getPlacementDirection(), type);
         }
         return plan;
     }

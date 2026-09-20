@@ -9,6 +9,7 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.ObjectMap;
 import core.assets.AssetsHandler;
+import core.machine.state.Direction;
 import core.world.chunk.Chunk;
 import core.world.chunk.ChunkManager;
 import core.world.chunk.ChunkRenderDetail;
@@ -114,7 +115,7 @@ public final class ChunkOverviewCache implements Disposable {
             builders.put(texture, builder);
         }
 
-        builder.add(region, worldX, worldY, worldSize, WHITE);
+        builder.add(region, worldX, worldY, null, worldSize, WHITE);
     }
 
     private void clearMeshes() {

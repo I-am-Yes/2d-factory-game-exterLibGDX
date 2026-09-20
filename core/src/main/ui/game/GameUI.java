@@ -12,6 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import core.app.GameLoop;
 import core.controller.camera.CameraController;
+import core.player.PlayerAction;
 import core.system.systems.InterfaceSystem;
 import core.system.systems.PlayerSystem;
 import core.world.World;
@@ -85,7 +86,7 @@ public class GameUI {
         FULL,
         CUSTOM
     }
-    private DebugInfoModes currentMode = DebugInfoModes.OFF;
+    private DebugInfoModes currentMode = DebugInfoModes.FULL;
 
     public GameUI(World world, Window window, Viewport viewport, Stage stage, Skin skin, UiHelper uiHelper, InputHandler input, Supplier<CameraController> cameraControllerProvider) {
         this.world = world;
@@ -137,7 +138,7 @@ public class GameUI {
             panel.setTouchable(Touchable.disabled);
         }
 
-        setDebugInfoMode(DebugInfoModes.SIMPLE);
+        setDebugInfoMode(currentMode);
     }
 
     public void update(float deltaTime) {
@@ -273,8 +274,7 @@ public class GameUI {
 
         if (shouldUpdate(worldTileRotationLabel)) {
             worldTileRotationLabel.setText(
-                //TODO: add rotation getter to this text label
-                "Tile Rotation: " + "null"
+                "Tile Rotation: " + PlayerAction.getPlacementDirection()
             );
         }
     }

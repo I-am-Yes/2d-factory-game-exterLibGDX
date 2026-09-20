@@ -1,5 +1,7 @@
 package core.player.mechanic;
 
+import com.badlogic.gdx.math.MathUtils;
+import core.machine.state.Direction;
 import core.player.Player;
 import core.player.PlayerAction;
 import core.system.systems.PlayerSystem;
@@ -25,6 +27,10 @@ public class GhostOverlay {
     private final AssetsHandler assetsHandler;
 
     private static final float SLIDE_SPEED = 24f;
+    private static final float ROTATION_SPEED = 24f;
+
+    private float animateRotation;
+    private boolean rotationInitialized;
 
     private final Vector3 tmp = new Vector3();
     private final Vector2 animate = new Vector2();
@@ -51,6 +57,12 @@ public class GhostOverlay {
 
     public void update(float delta) {
         updateSelectedType();
+
+        if (type != null) {
+            updateGhostRotation(delta);
+        } else {
+            rotationInitialized = false;
+        }
 
         hoverTile.set(
             PlayerSystem.getHoverTileThresholdX(),
@@ -103,7 +115,7 @@ public class GhostOverlay {
         if (type == null || !hoverVisible) return;
         renderGhostOverlay(world, viewport, type, assetsHandler, spriteBatch);
         //TODO: render rotation too
-        buildGhostLine.drawTilePreview(spriteBatch, buildGhostLine.getCurrentTiledLine(), playerAction.getSelectedType());
+        buildGhostLine.drawTilePreview(spriteBatch, buildGhostLine.getCurrentTiledLine(), playerAction.getSelectedType(), animateRotation);
 
     }
 
@@ -130,10 +142,23 @@ public class GhostOverlay {
         if (walkAble) spriteBatch.setColor(1f, 1f, 1f, 0.45f); //ghost normal
         else spriteBatch.setColor(1f, 0.3f, 0.3f, 0.45f); // ghost red
 
-        spriteBatch.draw(region, animate.x, animate.y, tile, tile);
+        spriteBatch.draw(region, animate.x, animate.y,
+            // tile / 2 to keep the animation within 1 tile
+            tile / 2, tile / 2,
+            tile, tile, 1f, 1f, animateRotation);
         spriteBatch.setPackedColor(oldColor);
     }
 
+    private float getRotationDegree(Direction direction) {
+        if (direction == null) return 0f;
+
+        return switch (direction) {
+            case EAST -> 0f;
+            case NORTH -> 90f;
+            case WEST -> 180f;
+            case SOUTH -> -90f;
+        };
+    }
 
     private AssetType getSelectedType() {
         if (playerAction.getSelectedType() == null) return null;
@@ -144,6 +169,30 @@ public class GhostOverlay {
 
     private void updateSelectedType() {
         this.type = getSelectedType();
+    }
+
+    private Direction getDirection() {
+        if (playerAction.getSelectedType() == null) return Direction.EAST;
+        if (PlayerAction.getPlacementDirection() == null) return Direction.EAST;
+        return PlayerAction.getPlacementDirection();
+    }
+
+    private void updateGhostRotation(float delta) {
+        float targetRotation = getRotationDegree(
+            getDirection()
+        );
+
+        if (!rotationInitialized) {
+            animateRotation = targetRotation;
+            rotationInitialized = true;
+            return;
+        }
+
+        float interpolation =
+            1f - (float)Math.exp(-ROTATION_SPEED * delta);
+
+        animateRotation =
+            MathUtils.lerpAngleDeg(animateRotation, targetRotation, interpolation);
     }
 
 

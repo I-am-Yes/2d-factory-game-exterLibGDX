@@ -2,6 +2,7 @@ package core.world;
 
 import core.controller.camera.CameraController;
 import core.controller.camera.CameraViewMode;
+import core.machine.state.Direction;
 import core.world.chunk.Chunk;
 import core.world.chunk.ChunkManager;
 import core.world.chunk.ChunkRenderDetail;
@@ -418,6 +419,7 @@ public class World {
         if (chunk.floors[localX][localY] == floorType) return false;
 
         chunk.floors[localX][localY] = floorType;
+
         chunk.dirty = true;
         chunk.markRenderDirty();
         chunkRenderer.invalidateOverview();
@@ -425,7 +427,7 @@ public class World {
     }
 
     public boolean placeBuilding(
-        int tileX, int tileY, BuildingType buildingType
+        int tileX, int tileY, Direction direction, BuildingType buildingType
     ) {
         if (buildingType == null || !canPlaceBuildingAt(tileX, tileY)) {
             return false;
@@ -436,13 +438,17 @@ public class World {
         int localY = chunkManager.getLocalY(tileY);
 
         chunk.buildings[localX][localY] = buildingType;
+        chunk.buildingDirection[localX][localY] =
+            direction == null ? Direction.EAST : direction;
+
         chunk.dirty = true;
         chunk.markRenderDirty();
         return true;
     }
 
     public boolean placeGhost(
-        int tileX, int tileY, GhostType<? extends AssetType> ghostType
+        int tileX, int tileY, Direction direction,
+        GhostType<? extends AssetType> ghostType
     ) {
         if (ghostType == null) return false;
 
@@ -455,18 +461,21 @@ public class World {
             (GhostType<AssetType>) ghostType;
 
         chunk.ghosts[localX][localY] = storedGhost;
+        chunk.ghostDirection[localX][localY] =
+            direction == null ? Direction.EAST : direction;
+
         chunk.dirty = true;
         chunk.markRenderDirty();
         return true;
     }
 
-    public boolean placeBlock(int tileX, int tileY, AssetType type) {
+    public boolean placeBlock(int tileX, int tileY, Direction direction, AssetType type) {
         if (type instanceof FloorType floorType) {
             return placeFloor(tileX, tileY, floorType);
         }
 
         if (type instanceof BuildingType buildingType) {
-            return placeBuilding(tileX, tileY, buildingType);
+            return placeBuilding(tileX, tileY, direction, buildingType);
         }
 
         return false;
@@ -474,11 +483,12 @@ public class World {
 
     private boolean placeGhostBlock(
         int tileX, int tileY,
-        GhostType<? extends AssetType> ghostType
+        GhostType<? extends AssetType> ghostType,
+        Direction direction
     ) {
         if (ghostType != null) {
 
-            return placeInGhostLayer(tileX, tileY, ghostType, ghostGrid, ghostLayer);
+            return placeInGhostLayer(tileX, tileY, ghostType, ghostGrid, ghostLayer, direction);
         }
 
         return false;
@@ -508,7 +518,8 @@ public class World {
         int tileX, int tileY,
         GhostType<? extends AssetType> ghostType,
         GhostType<? extends AssetType>[][] grid,
-        TiledMapTileLayer ghostLayer
+        TiledMapTileLayer ghostLayer,
+        Direction direction
     ) {
         if (!isInBounds(tileX, tileY) || ghostType == null) return false;
         if (grid[tileX][tileY] == ghostType) return false;
@@ -546,8 +557,8 @@ public class World {
                 return;
             }
 
-            if (placeBlock(request.tileX, request.tileY, request.type)) {
-                GameEvent.BlockPlaced.fire(request.tileX, request.tileY, request.type, request.direction);
+            if (placeBlock(request.tileX, request.tileY, request.direction, request.type)) {
+                GameEvent.BlockPlaced.fire(request.tileX, request.tileY, request.direction, request.type);
             } else  {
                 request.cancel();
             }

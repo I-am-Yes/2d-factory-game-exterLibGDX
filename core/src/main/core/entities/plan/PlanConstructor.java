@@ -24,7 +24,8 @@ public class PlanConstructor<T extends AssetType> {
             PlanEntity<T> plan = planBuilder.getPlanEntityAt(i);
 
             boolean placed = world.placeBlock(
-                plan.getX(), plan.getY(), plan.getGhostType().getSourceType()
+                plan.getX(), plan.getY(), plan.getDirection(),
+                plan.getGhostType().getSourceType()
             );
 
             if (!placed) dispose(); return false;
