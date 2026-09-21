@@ -1,4 +1,4 @@
-package core.utils;
+package core.controller.camera;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;

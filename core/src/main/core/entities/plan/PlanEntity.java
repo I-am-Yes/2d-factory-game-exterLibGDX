@@ -11,6 +11,9 @@ public class PlanEntity<T extends AssetType> {
     private final Direction direction;
     private final GhostType<T> ghostType;
 
+    //TODO: set removed to true when the plan is removed from the world
+    private boolean removed;
+
     public PlanEntity(int x, int y, Direction direction, GhostType<T> ghostType) {
         this.x = x;
         this.y = y;
@@ -35,6 +38,14 @@ public class PlanEntity<T extends AssetType> {
     }
     public Direction getDirection() {
         return direction;
+    }
+
+    public boolean isRemoved() {
+        return removed;
+    }
+
+    public void remove() {
+        this.removed = true;
     }
 
 

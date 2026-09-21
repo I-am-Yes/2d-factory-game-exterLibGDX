@@ -5,7 +5,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.ScreenUtils;
 import core.system.context.CameraContext;
-import core.utils.ScreenshotCapture;
+import core.controller.camera.ScreenshotCapture;
 
 public class GameLoop {
 

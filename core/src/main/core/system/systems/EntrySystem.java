@@ -8,7 +8,7 @@ import core.system.ContextProvider;
 import core.system.GameSysCycle;
 import core.system.context.EntryContext;
 import core.system.context.InterfaceContext;
-import core.utils.ScreenshotCapture;
+import core.controller.camera.ScreenshotCapture;
 
 public class EntrySystem implements GameSysCycle, ContextProvider<EntryContext> {
 
