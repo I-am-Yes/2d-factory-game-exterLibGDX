@@ -9,23 +9,20 @@ import core.world.World;
 import static core.machine.ItemRender.ITEM_SIZE;
 
 public final class Artist {
-    public World world;
+    public static World world;
     public static AssetsHandler assets;
-    public SpriteBatch batch;
+    public static SpriteBatch batch;
     private static float tileSize;
 
     private static boolean initialized = false;
 
     public Artist(World world, AssetsHandler assets, SpriteBatch batch) {
-        this.world = world;
-        this.assets = assets;
-        this.batch = batch;
+        Artist.world = world;
+        Artist.assets = assets;
+        Artist.batch = batch;
         tileSize = world.getTileSize();
 
         initialized = true;
-    }
-    public Artist createArtist(World world, AssetsHandler assets, SpriteBatch batch) {
-        return new Artist(world, assets, batch);
     }
 
     public static void Draw() {

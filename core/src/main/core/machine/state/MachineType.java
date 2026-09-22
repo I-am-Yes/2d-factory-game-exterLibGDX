@@ -5,7 +5,7 @@ import data.map.asset.BuildingType;
 public enum MachineType {
     CONVEYOR(1, 0),
     CREATIVE_SOURCE(1, 0),
-    STORAGE_CHEST(1, 1000),
+    STORAGE_BLOCK(1, 1000),
 
     ;
 
@@ -21,7 +21,7 @@ public enum MachineType {
         return switch (type) {
             case CONVEYOR_BELT_2 -> MachineType.CONVEYOR;
             case CREATIVE_SOURCE -> MachineType.CREATIVE_SOURCE;
-            case STORAGE_CHEST_2 -> MachineType.STORAGE_CHEST;
+            case STORAGE_CHEST_2 -> MachineType.STORAGE_BLOCK;
             default -> null;
         };
     }

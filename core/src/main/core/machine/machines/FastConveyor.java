@@ -1,6 +1,6 @@
 package core.machine.machines;
 
-import core.machine.Conveyor;
+import core.machine.machines.cores.Conveyor;
 
 public class FastConveyor extends Conveyor {
     public FastConveyor() {

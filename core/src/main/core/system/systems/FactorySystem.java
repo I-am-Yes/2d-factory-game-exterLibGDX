@@ -9,6 +9,7 @@ import core.blocks.Blocks;
 import core.event.Events;
 import core.event.GameEvent;
 import core.machine.*;
+import core.machine.machines.cores.Conveyor;
 import core.machine.state.Direction;
 import core.machine.state.MachineType;
 import core.machine.state.ItemType;

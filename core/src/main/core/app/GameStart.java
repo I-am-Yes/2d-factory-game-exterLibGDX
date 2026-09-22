@@ -7,6 +7,7 @@ import core.assets.AssetsHandler;
 import core.InputHandler;
 import core.Window;
 import core.system.systems.*;
+import core.utils.Artist;
 import core.world.World;
 import data.map.MapConfig;
 import data.map.PresetMap;
@@ -39,6 +40,8 @@ public final class GameStart {
             context.mapConfig,
             context.assets
         );
+
+        new Artist(context.world, context.assets, context.renderSpriteBatch);
 
         context.viewport = new ExtendViewport(
             context.world.getWorldWidth(),

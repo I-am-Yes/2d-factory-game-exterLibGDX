@@ -1,5 +1,6 @@
 package core.machine;
 
+import core.machine.category.ExposeInfo;
 import core.machine.state.Direction;
 
 //TODO: implement exposable this block content
@@ -19,7 +20,7 @@ public class Block {
     public boolean multiBlock;
     public boolean update;
     public boolean tickUpdate;
-    public boolean rotatable;
+    public boolean rotatable = true;
     public boolean breakable = true;
 
     public Block() {}

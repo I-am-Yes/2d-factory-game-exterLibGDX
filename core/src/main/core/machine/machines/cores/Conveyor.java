@@ -1,8 +1,10 @@
-package core.machine;
+package core.machine.machines.cores;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.LongMap;
+import core.machine.Block;
+import core.machine.Machine;
 import core.machine.category.Batching;
 import core.machine.category.Delting;
 import core.machine.category.Tickable;
@@ -32,8 +34,6 @@ public class Conveyor extends Block implements ExposeInfo {
     protected Conveyor(float speed) {
         super();
         this.speed = speed;
-        rotatable = true;
-        breakable = true;
     }
 
     @Override
@@ -47,11 +47,12 @@ public class Conveyor extends Block implements ExposeInfo {
     }
 
     public class ConveyorMachine extends Machine implements Delting, Tickable, Batching {
-
         public ConveyorMachine(int tileX, int tileY, Direction direction) {
             super(tileX, tileY, direction, MachineType.CONVEYOR);
         }
 
+        //TODO: add arraylist to each conveyor to allow multiple items on a single conveyor
+        // with entrance accept and exit pushing
         @Override
         public void update(float delta) {
             if (this.item == null) return;
@@ -61,7 +62,7 @@ public class Conveyor extends Block implements ExposeInfo {
 
                 updateSmoothVisual(item, smoothAlpha);
             } else {
-                float visualSpeed = DEFAULT_SPEED * VISUAL_CATCHUP_MULTIPLIER;
+                float visualSpeed = speed * VISUAL_CATCHUP_MULTIPLIER;
                 updateVisual(item, delta, visualSpeed);
             }
         }
@@ -126,7 +127,7 @@ public class Conveyor extends Block implements ExposeInfo {
         }
 
         public void collectTransfer(MachineLookup machines, TransferBatch batch) {
-            if (!canPushNext()) return;
+            if (!canPushLoad()) return;
 
             int targetX = tileX + direction.dx;
             int targetY = tileY + direction.dy;
@@ -140,29 +141,14 @@ public class Conveyor extends Block implements ExposeInfo {
             batch.offer(this, target);
         }
 
-        public boolean canPushNext() {
-            return item != null && item.progress >= 1f;
-        }
-
-        public boolean pushNext(Machine target) {
-            if (!canPushNext() || target == null) {
-                return false;
-            }
-
-            Item outgoing = item;
-
-            // Rechecks the target during the apply phase.
-            if (!target.acceptLoad(outgoing)) {
-                return false;
-            }
-
-            item = null;
-            return true;
-        }
-
         @Override
         public boolean shouldStayActive() {
             return this.item != null;
+        }
+
+        @Override
+        public boolean canPushLoad() {
+            return item != null && item.progress >= 1f;
         }
 
         @Override
@@ -232,7 +218,7 @@ public class Conveyor extends Block implements ExposeInfo {
                 Machine target = machineByKey.apply(entry.key);
 
                 if (target != null) {
-                    source.pushNext(target);
+                    source.pushLoadTo(target);
                 }
             }
         }
