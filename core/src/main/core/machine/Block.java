@@ -1,6 +1,5 @@
 package core.machine;
 
-import core.machine.category.ExposeInfo;
 import core.machine.state.Direction;
 
 //TODO: implement exposable this block content
@@ -35,7 +34,7 @@ public class Block {
         return new Block(tileX, tileY, direction);
     }
 
-    public Machine createMachine(int tileX, int tileY, Direction direction) {
+    public Machine createBlock(int tileX, int tileY, Direction direction) {
         throw new UnsupportedOperationException(
             getClass().getSimpleName() + " cannot create a machine"
         );

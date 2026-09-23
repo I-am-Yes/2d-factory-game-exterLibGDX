@@ -2,7 +2,6 @@ package core.machine.machines.cores;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.utils.LongMap;
 import core.machine.Block;
 import core.machine.Machine;
 import core.machine.category.Batching;
@@ -14,16 +13,8 @@ import core.machine.state.MachineType;
 import core.machine.utils.Item;
 import core.utils.Artist;
 
-import java.util.function.LongFunction;
-
-import static core.system.systems.FactorySystem.tileKey;
-
 public class Conveyor extends Block implements ExposeInfo {
-    public static final float DEFAULT_SPEED = 20f;
-
-    public final boolean SMOOTH_CONVEYORS = true;
-    public final float VISUAL_SMOOTHNESS = 20f;
-    public final float VISUAL_CATCHUP_MULTIPLIER = 1.25f;
+    public static final float DEFAULT_SPEED = 10f;
 
     private final float speed;
 
@@ -37,13 +28,8 @@ public class Conveyor extends Block implements ExposeInfo {
     }
 
     @Override
-    public ConveyorMachine createMachine(int tileX, int tileY, Direction direction) {
+    public ConveyorMachine createBlock(int tileX, int tileY, Direction direction) {
         return new ConveyorMachine(tileX, tileY, direction);
-    }
-
-    @FunctionalInterface
-    public interface MachineLookup {
-        Machine get(int tileX, int tileY);
     }
 
     public class ConveyorMachine extends Machine implements Delting, Tickable, Batching {
@@ -53,17 +39,18 @@ public class Conveyor extends Block implements ExposeInfo {
 
         //TODO: add arraylist to each conveyor to allow multiple items on a single conveyor
         // with entrance accept and exit pushing
+
+        //// Better TODO: merge long conveyor to segment so every belt doesn't require individual update
         @Override
         public void update(float delta) {
             if (this.item == null) return;
 
-            if (SMOOTH_CONVEYORS) {
+            if (this.smoothVisual) {
                 float smoothAlpha = 1f - (float) Math.exp(-VISUAL_SMOOTHNESS * delta);
 
-                updateSmoothVisual(item, smoothAlpha);
+                updateItemSmoothVisual(smoothAlpha);
             } else {
-                float visualSpeed = speed * VISUAL_CATCHUP_MULTIPLIER;
-                updateVisual(item, delta, visualSpeed);
+                updateItemVisual(delta);
             }
         }
 
@@ -85,60 +72,72 @@ public class Conveyor extends Block implements ExposeInfo {
 
 
         public void advancedLogical(float tickDelta) {
-            if (this.item == null) {
-                return;
+            if (item == null) return;
+
+            float size = type.getSize();
+
+            item.progress = Math.min(
+                1f,
+                item.progress + speed * tickDelta
+            );
+
+            float centerX = tileX + size * 0.5f;
+            float centerY = tileY + size * 0.5f;
+
+            float inputX = centerX - direction.dx * size * 0.5f;
+            float inputY = centerY - direction.dy * size * 0.5f;
+
+            item.currentX = inputX + direction.dx * item.progress;
+            item.currentY = inputY + direction.dy * item.progress;
+
+            if (item.progress < 1f) return;
+
+            Machine target = getMachineAt(
+                tileX + direction.dx,
+                tileY + direction.dy
+            );
+
+            if (target != null) {
+                pushLoadTo(target);
             }
-            float size = this.type.getSize();
-            item.progress = Math.min(1f, item.progress + speed * tickDelta);
-
-            float centerX = this.tileX + size * 0.5f;
-            float centerY = this.tileY + size * 0.5f;
-
-            float inputX = centerX - this.direction.dx * size / 2;
-            float inputY = centerY - this.direction.dy * size / 2;
-
-            item.currentX = inputX + this.direction.dx * item.progress;
-            item.currentY = inputY + this.direction.dy * item.progress;
-
         }
 
-        public void updateVisual(Item item, float delta, float visualSpeed) {
-            float dx = item.currentX - item.visualX;
-            float dy = item.currentY - item.visualY;
+        //TODO: later make this default method in Machine
+        // to update visual of item/machine animation, etc...
+        @Override
+        public void updateItemVisual(float delta) {
+            float dx = this.item.currentX - this.item.visualX;
+            float dy = this.item.currentY - this.item.visualY;
             float distance = (float) Math.sqrt(dx * dx + dy * dy);
 
             if (distance == 0f) return;
 
-            float maxMove = visualSpeed * delta;
+            float maxMove = speed * delta;
 
             if (distance <= maxMove) {
-                item.visualX = item.currentX;
-                item.visualY = item.currentY;
+                this.item.visualX = this.item.currentX;
+                this.item.visualY = this.item.currentY;
                 return;
             }
 
-            item.visualX += dx / distance * maxMove;
-            item.visualY += dy / distance * maxMove;
+            this.item.visualX += dx / distance * maxMove;
+            this.item.visualY += dy / distance * maxMove;
         }
 
-        public void updateSmoothVisual(Item item, float smoothness) {
-            item.visualX = MathUtils.lerp(item.visualX, item.currentX, smoothness);
-            item.visualY = MathUtils.lerp(item.visualY, item.currentY, smoothness);
+        @Override
+        public void updateItemSmoothVisual(float visualSmoothness) {
+            this.item.visualX = MathUtils.lerp(this.item.visualX, this.item.currentX, visualSmoothness);
+            this.item.visualY = MathUtils.lerp(this.item.visualY, this.item.currentY, visualSmoothness);
         }
 
-        public void collectTransfer(MachineLookup machines, TransferBatch batch) {
-            if (!canPushLoad()) return;
+        @Override
+        public float getInputSpeed() {
+            return speed;
+        }
 
-            int targetX = tileX + direction.dx;
-            int targetY = tileY + direction.dy;
-
-            Machine target = machines.get(targetX, targetY);
-
-            if (target == null || !target.canAcceptLoad(item)) {
-                return;
-            }
-
-            batch.offer(this, target);
+        @Override
+        public float getOutputSpeed() {
+            return speed;
         }
 
         @Override
@@ -189,38 +188,4 @@ public class Conveyor extends Block implements ExposeInfo {
         return "Conveyor Belt";
     }
 
-    public static final class TransferBatch {
-
-        private final LongMap<ConveyorMachine> winners = new LongMap<>();
-
-        public void begin() {
-            winners.clear();
-        }
-
-        public void offer(ConveyorMachine source, Machine target) {
-            long targetKey = tileKey(target.tileX, target.tileY);
-
-            ConveyorMachine currentWinner = winners.get(targetKey);
-
-            if (currentWinner == null ||
-                Long.compare(
-                    tileKey(source.tileX, source.tileY),
-                    tileKey(currentWinner.tileX, currentWinner.tileY)
-                ) < 0) {
-
-                winners.put(targetKey, source);
-            }
-        }
-
-        public void apply(LongFunction<Machine> machineByKey) {
-            for (LongMap.Entry<ConveyorMachine> entry : winners.entries()) {
-                ConveyorMachine source = entry.value;
-                Machine target = machineByKey.apply(entry.key);
-
-                if (target != null) {
-                    source.pushLoadTo(target);
-                }
-            }
-        }
-    }
 }

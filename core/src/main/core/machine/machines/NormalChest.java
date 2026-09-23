@@ -4,6 +4,6 @@ import core.machine.machines.cores.StorageBlock;
 
 public class NormalChest extends StorageBlock {
     public NormalChest() {
-        super(100);
+        super(StorageBlock.UNLIMITED_CAPACITY);
     }
 }

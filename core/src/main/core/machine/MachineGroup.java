@@ -1,7 +1,6 @@
 package core.machine;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.utils.Array;
 import core.machine.category.Batching;
 import core.machine.category.Delting;
@@ -10,8 +9,20 @@ import core.machine.category.Tickable;
 public final class MachineGroup {
 
     private final Array<Machine> activeMachines = new Array<>(false, 256);
+    private final MachineLookup machineLookup;
 
-    public MachineGroup() {
+
+    public MachineGroup(MachineLookup machineLookup) {
+        this.machineLookup = machineLookup;
+    }
+
+    @FunctionalInterface
+    public interface MachineLookup {
+        Machine get(int tileX, int tileY);
+    }
+
+    Machine getMachineAt(int tileX, int tileY) {
+        return machineLookup.get(tileX, tileY);
     }
 
     public void update(float delta) {

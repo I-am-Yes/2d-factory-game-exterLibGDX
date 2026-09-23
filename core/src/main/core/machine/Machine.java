@@ -18,17 +18,21 @@ public class Machine {
     public List<Object> blackList;
     public List<Object> whiteList;
 
-
     public Direction direction;
     public float timeEfficient = 1f;
 
     //storage definitions
-    private final int[] storage;
-    private final int capacity;
-    private int totalItems;
+    public final int[] storage;
+    public final int capacity;
+    public int totalItems;
 
     public Item item;
-    public float productionTimer;
+
+    public float itemInputSpeed = 2f;
+    public float itemOutputSpeed = 2f;
+
+    public boolean smoothVisual = true;
+    public final float VISUAL_SMOOTHNESS = 20f;
 
     boolean active;
     int activeIndex = -1;
@@ -38,17 +42,12 @@ public class Machine {
     }
 
     public Machine(int tileX, int tileY, Direction direction, MachineType type, int storageSize) {
-        if (storageSize < 0) {
-            throw new IllegalArgumentException(
-                "Storage size cannot be negative"
-            );
-        }
         this.tileX = tileX;
         this.tileY = tileY;
         this.direction = direction;
         this.type = type;
         this.capacity = storageSize;
-        this.storage = storageSize > 0 ? new int[ItemType.values().length] : null;
+        this.storage = storageSize == 0 ? null : new int[ItemType.values().length];
     }
 
     final void attachTo(MachineGroup group) {
@@ -71,6 +70,14 @@ public class Machine {
             );
         }
         this.group.activate(this);
+    }
+
+    protected final Machine getMachineAt(int tileX, int tileY) {
+        if (group == null) {
+            return null;
+        }
+
+        return group.getMachineAt(tileX, tileY);
     }
 
 
@@ -104,7 +111,32 @@ public class Machine {
     }
 
     public boolean canPushLoad() {
+        //default to no
         return false;
+    }
+
+    //TODO: add whiteList/blackList of things can speed up using eDelta, and implement that logic
+    // eDelta also affect normal delta when enable.
+    public boolean canSpeedUp() {
+        return false;
+    }
+
+    public void updateItemVisual(float delta) {
+        // Override this method to update visual elements of the machine.
+        item.progress += delta;
+        item.currentX = item.progress;
+        item.currentY = item.progress;
+        item.visualX = item.progress;
+        item.visualY = item.progress;
+    }
+
+    public void updateItemSmoothVisual(float visualSmoothness) {
+        // Override this method to update smooth visual elements of the machine.
+        item.progress += visualSmoothness;
+        item.currentX = item.progress;
+        item.currentY = item.progress;
+        item.visualX = item.progress;
+        item.visualY = item.progress;
     }
 
     public final boolean pushLoadTo(Machine target) {
@@ -112,6 +144,7 @@ public class Machine {
             return false;
         }
         Item output = item;
+        output.visualSpeed = getOutputSpeed();
         if (!target.acceptLoad(output)) {
             return false;
         }
@@ -170,8 +203,7 @@ public class Machine {
     }
 
     public boolean canAcceptLoad(Item load) {
-        return load != null
-            && acceptItem(load.type);
+        return load != null && capacity > 0 && !isFull() && acceptItem(load.type);
     }
 
     public int getStorageItem(ItemType itemType) {
@@ -180,6 +212,18 @@ public class Machine {
         }
 
         return storage[itemType.ordinal()];
+    }
+
+    public float getInputSpeed() {
+        return itemInputSpeed;
+    }
+
+    public float getOutputSpeed() {
+        return itemOutputSpeed;
+    }
+
+    public int[] getStorage() {
+        return storage;
     }
 
     public int getTotalItems() {
@@ -191,10 +235,19 @@ public class Machine {
     }
 
     public boolean isFull() {
-        return storage == null || totalItems >= capacity;
+        if (storage == null) return true;
+        return totalItems >= capacity;
     }
 
     public boolean hasStorage() {
         return storage != null;
+    }
+
+    public void enableSmooth() {
+        this.smoothVisual = true;
+    }
+
+    public void disableSmooth() {
+        this.smoothVisual = false;
     }
 }

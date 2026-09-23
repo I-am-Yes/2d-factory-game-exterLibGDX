@@ -13,6 +13,7 @@ public final class Item {
 
     public float visualX;
     public float visualY;
+    public float visualSpeed;
 
     public Item(ItemType type) {
         this.type = type;
