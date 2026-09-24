@@ -18,7 +18,7 @@ import core.machine.utils.Item;
 import core.utils.Artist;
 
 public class Conveyor extends Block implements ExposeInfo {
-    public static final float DEFAULT_SPEED = 10f;
+    public static final float DEFAULT_SPEED = 20f;
 
     private final float speed;
 
