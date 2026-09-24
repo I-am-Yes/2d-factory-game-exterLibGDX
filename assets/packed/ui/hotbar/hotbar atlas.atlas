@@ -1,0 +1,55 @@
+
+hotbar atlas.png
+size: 1024, 128
+format: RGBA8888
+filter: Nearest, Nearest
+repeat: none
+box background
+  rotate: false
+  xy: 433, 9
+  size: 100, 100
+  orig: 100, 100
+  offset: 0, 0
+  index: -1
+box border center
+  rotate: false
+  xy: 221, 5
+  size: 104, 104
+  orig: 104, 104
+  offset: 0, 0
+  index: -1
+box border center doubled
+  rotate: false
+  xy: 1, 1
+  size: 108, 108
+  orig: 108, 108
+  offset: 0, 0
+  index: -1
+box border inside
+  rotate: false
+  xy: 535, 9
+  size: 100, 100
+  orig: 100, 100
+  offset: 0, 0
+  index: -1
+box border outside
+  rotate: false
+  xy: 111, 1
+  size: 108, 108
+  orig: 108, 108
+  offset: 0, 0
+  index: -1
+box border special
+  rotate: false
+  xy: 327, 5
+  size: 104, 104
+  orig: 104, 104
+  offset: 0, 0
+  index: -1
+box selected
+  rotate: false
+  xy: 637, 9
+  size: 100, 100
+  orig: 100, 100
+  offset: 0, 0
+  index: -1
