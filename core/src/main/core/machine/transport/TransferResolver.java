@@ -10,8 +10,6 @@ public class TransferResolver {
     private final IdentityHashMap<Machine, TransferBatch.Offer> offerBySource = new IdentityHashMap<>();
     private final Array<TransferBatch.Offer> vacancyQueue = new Array<>(false, 128);
     private final Array<TransferBatch.Offer> cyclePath = new Array<>(false, 128);
-    private final IdentityHashMap<Machine, Integer> cyclePosition = new IdentityHashMap<>();
-    private final IdentityHashMap<Machine, Boolean> cycleExamined = new IdentityHashMap<>();
 
     public TransferResolver() {}
 
@@ -64,18 +62,19 @@ public class TransferResolver {
 
     private int traceCycle(TransferBatch.Offer start) {
         cyclePath.clear();
-        cyclePosition.clear();
 
         TransferBatch.Offer cursor = start;
         while (cursor != null
             && !cursor.selected
             && isLive(cursor)
-            && !cycleExamined.containsKey(cursor.source))
-        {
-            Integer cycleStart = cyclePosition.get(cursor.source);
-            if (cycleStart != null) return cycleStart;
+            && cursor.visitState != 2) {
 
-            cyclePosition.put(cursor.source, cyclePath.size);
+            if (cursor.visitState == 1) {
+                return cursor.pathIndex;
+            }
+
+            cursor.visitState = 1;
+            cursor.pathIndex = cyclePath.size;
             cyclePath.add(cursor);
             cursor = offerBySource.get(cursor.target);
         }
@@ -84,12 +83,11 @@ public class TransferResolver {
     }
 
     private void selectClosedCycles(TransferBatch transferBatch) {
-        cycleExamined.clear();
-
         for (int i = 0; i < transferBatch.size(); i++) {
             TransferBatch.Offer start = transferBatch.get(i);
-            if (start.selected || !isLive(start)
-                || cycleExamined.containsKey(start.source)) continue;
+            if (start.selected || !isLive(start) || start.visitState != 0) {
+                continue;
+            }
 
             int cycleStart = traceCycle(start);
             if (canSelectTracedCycle(transferBatch, cycleStart)) {
@@ -99,7 +97,7 @@ public class TransferResolver {
             }
 
             for (int j = 0; j < cyclePath.size; j++) {
-                cycleExamined.put(cyclePath.get(j).source, Boolean.TRUE);
+                cyclePath.get(j).visitState = 2;
             }
         }
     }
@@ -162,11 +160,6 @@ public class TransferResolver {
             && offer.source.canPushLoad();
     }
 
-    static boolean canAcceptNow(TransferBatch.Offer offer) {
-        return isLive(offer)
-            && offer.target.canAcceptLoad(offer.source, offer.item);
-    }
-
     static int comparePriority(TransferBatch.Offer a, TransferBatch.Offer b) {
         int c = Integer.compare(a.target.tileX, b.target.tileX);
         if (c != 0) return c;
@@ -191,9 +184,10 @@ public class TransferResolver {
                 reservedIncoming = 0;
             }
 
-            if (!canAcceptNow(offer)
+            if (!isLive(offer)
                 || !(offer.target instanceof InputAdmission input)
-                || !input.canReserve(offer.source, offer.item, reservedIncoming, false)) {
+                || !input.canReserve(
+                offer.source, offer.item, reservedIncoming, false)) {
                 continue;
             }
 

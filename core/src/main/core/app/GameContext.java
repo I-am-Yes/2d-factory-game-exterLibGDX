@@ -1,16 +1,15 @@
 package core.app;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import core.app.cores.GameSystem;
+import core.app.extras.test.GameTest;
 import core.assets.AssetsHandler;
 import core.InputHandler;
 import core.Window;
 import core.system.ContextProvider;
-import core.controller.camera.CameraController;
-import core.controller.camera.CursorController;
-import core.system.GameSysCycle;
+import core.app.cores.GameSysCycle;
 import core.world.World;
 import data.map.MapConfig;
 
@@ -27,9 +26,6 @@ public final class GameContext {
 
     public AssetsHandler assets;
     public InputHandler input;
-
-    public CursorController cursorController;
-    public CameraController cameraController;
 
     public GameSystem systems;
 
@@ -51,10 +47,6 @@ public final class GameContext {
 
     public <T, S extends GameSysCycle & ContextProvider<T>> T getSystemContext(Class<S> systemClass) {
         return getSystem(systemClass).getContext();
-    }
-
-    public float getDeltaTime() {
-        return Gdx.graphics.getDeltaTime();
     }
 
     public SpriteBatch getBatch() {

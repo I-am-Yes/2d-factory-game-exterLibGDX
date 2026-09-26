@@ -18,7 +18,7 @@ import core.player.Player;
 import core.player.PlayerAction;
 import core.entities.plan.PlanBuilder;
 import core.world.World;
-import core.event.GameEvent;
+import core.event.events.GameEvent;
 import core.helper.TileAlgorithm;
 
 public class BuildGhostLine {

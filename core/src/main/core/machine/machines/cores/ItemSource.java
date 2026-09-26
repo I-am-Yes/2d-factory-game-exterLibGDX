@@ -83,7 +83,7 @@ public class ItemSource extends Block {
         @Override
         public void drawBatch(SpriteBatch batch) {
             if (this.item != null) {
-                Artist.DrawItem(batch, this.item);
+                Artist.DrawItem(this.item);
             }
         }
 

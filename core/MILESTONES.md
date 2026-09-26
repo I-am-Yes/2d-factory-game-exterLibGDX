@@ -724,7 +724,7 @@ Track progress at a glance. Check items only when they work in a runnable build.
 - ✅ **M7** — `ExtendViewport` in world/tile units
 - ✅ **M7** — `world.render(camera)` before player draw
 - ✅ **M7** — `mapRenderer.dispose()` + `map.dispose()` in `dispose()`
-- ✅ **M7** — Manual per-tile draw loop removed from `Main`
+- ✅ **M7** — Manual per-tile draw loop removed from `GameLauncher`
 - ✅ **M7** — Tile queries via `World.hasTile` / `getFloorGrid` / `getFloorAt` / `isWalkable`
 
 ### Map — Seed generation (M7b)
@@ -761,6 +761,6 @@ Track progress at a glance. Check items only when they work in a runnable build.
 - ✅ Packages under `core/src/main/core/`; Gradle source root configured
 - ✅ Run via `gradlew lwjgl3:run` with working directory `assets/`
 - ⬜ Window size set in `Lwjgl3Launcher` only (not duplicated in `Main.create()`)
-- ✅ `Player` uses injected `PlayerController` from `Main` (not `new Controller()`)
+- ✅ `Player` uses injected `PlayerController` from `GameLauncher` (not `new Controller()`)
 
 **Current focus:** **M8** — finish building placement on grid: occupancy, confirmation, and plan construction wiring; then start M9 fixed 60 UPS simulation.

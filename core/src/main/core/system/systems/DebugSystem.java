@@ -10,7 +10,7 @@ import core.system.context.PlayerContext;
 import core.debug.Debug;
 import core.player.Player;
 import core.render.RenderLayer;
-import core.system.GameSysCycle;
+import core.app.cores.GameSysCycle;
 import core.world.World;
 import data.debug.DebugConfig;
 

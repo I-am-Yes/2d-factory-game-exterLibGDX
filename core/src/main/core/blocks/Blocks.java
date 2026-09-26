@@ -2,10 +2,10 @@ package core.blocks;
 
 import com.badlogic.gdx.utils.ObjectMap;
 import core.machine.machines.definition.Block;
-import core.machine.machines.CreativeSource;
-import core.machine.machines.NormalChest;
+import core.blocks.creative.CreativeSource;
+import core.blocks.transport.NormalChest;
 import core.machine.machines.cores.Conveyor;
-import core.machine.machines.FastConveyor;
+import core.blocks.transport.FastConveyor;
 import data.map.asset.BuildingType;
 
 public class Blocks {

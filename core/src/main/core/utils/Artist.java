@@ -1,40 +1,22 @@
 package core.utils;
 
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import core.assets.AssetsHandler;
+import core.app.cores.GameCore;
 import core.machine.utils.Item;
-import core.world.World;
 
+//TODO: migrate this to Vars
 import static core.machine.render.ItemRender.ITEM_SIZE;
+import static core.app.Vars.*;
 
-public final class Artist {
-    public static World world;
-    public static AssetsHandler assets;
-    public static SpriteBatch batch;
-    private static float tileSize;
 
-    private static boolean initialized = false;
+public final class Artist extends GameCore {
+    private static final float tileSize = world.getTileSize();
 
-    public Artist(World world, AssetsHandler assets, SpriteBatch batch) {
-        Artist.world = world;
-        Artist.assets = assets;
-        Artist.batch = batch;
-        tileSize = world.getTileSize();
-
-        initialized = true;
-    }
 
     public static void Draw() {
-
     }
 
-    public static void DrawItem(SpriteBatch batch, Item item) {
-        if (!initialized) {
-            throw new IllegalStateException(
-                "Artist has not been initialized"
-            );
-        }
+    public static void DrawItem(Item item) {
         if (item == null) return;
 
         TextureRegion region = assets.getRegion(item.type);

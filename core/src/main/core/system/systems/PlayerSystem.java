@@ -19,7 +19,7 @@ import core.player.mechanic.Overlay;
 import core.player.mechanic.OverlayHelper;
 import core.player.mechanic.PlayerController;
 import core.render.RenderLayer;
-import core.system.GameSysCycle;
+import core.app.cores.GameSysCycle;
 import core.world.World;
 
 public class PlayerSystem implements GameSysCycle, ContextProvider<PlayerContext> {
@@ -54,8 +54,6 @@ public class PlayerSystem implements GameSysCycle, ContextProvider<PlayerContext
         this.assets = context.assets;
         this.viewport = context.viewport;
         this.input = context.input;
-
-        this.delta = context.getDeltaTime();
 
         this.uiInputGate = context.getSystem(InterfaceSystem.class).getUiInputGate();
 

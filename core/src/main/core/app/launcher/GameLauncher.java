@@ -1,38 +1,37 @@
-package core.app;
+package core.app.launcher;
 
-import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import core.app.GameContext;
+import core.app.GameLoop;
+import core.app.GameStart;
+import core.app.Vars;
+import core.app.cores.AppListener;
+import core.app.cores.GameCore;
 
-/** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
-public class Main extends ApplicationAdapter {
-    private LoadingScreen loadingScreen;
-    private GameContext context;
+import static core.app.Vars.*;
+
+public class GameLauncher extends GameCore {
     private GameLoop gameLoop;
 
     private boolean loaded = false;
 
     @Override
-    public void create() {
-        loadingScreen = new LoadingScreen();
-        context = GameStart.createLoadingContext();
+    public void init() {
+        Vars.init();
+        GameStart.createLoadingContext();
     }
 
     @Override
     public void render() {
         if (!loaded) {
-            float progress = context.assets.getProgress();
-            loadingScreen.render(progress);
-
-            if (context.assets.updateLoading()) {
-                GameStart.finishGameStart(context);
-                gameLoop = new GameLoop(context);
+            if (assets.updateLoading()) {
+                GameStart.finishGameStart();
+                gameLoop = new GameLoop();
                 gameLoop.resize(
                     Gdx.graphics.getWidth(),
                     Gdx.graphics.getHeight()
                 );
 
-                loadingScreen.dispose();
-                loadingScreen = null;
                 loaded = true;
             }
             return;
@@ -44,10 +43,6 @@ public class Main extends ApplicationAdapter {
 
     @Override
     public void resize(int width, int height) {
-        if (loadingScreen != null) {
-            loadingScreen.resize(width, height);
-        }
-
         if (gameLoop != null) {
             gameLoop.resize(
                 width, height
@@ -70,11 +65,12 @@ public class Main extends ApplicationAdapter {
             return;
         }
 
-        if (loadingScreen != null) loadingScreen.dispose();
-
         if (context != null && context.assets != null) context.assets.dispose();
     }
 
+    public void add(AppListener child) {
+        super.add(child);
+    }
 
     public GameContext getContext() {
         return context;

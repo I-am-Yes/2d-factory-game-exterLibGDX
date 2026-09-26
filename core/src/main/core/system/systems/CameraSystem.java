@@ -9,7 +9,7 @@ import core.system.ContextProvider;
 import core.controller.camera.CameraController;
 import core.system.context.PlayerContext;
 import core.controller.camera.CursorController;
-import core.system.GameSysCycle;
+import core.app.cores.GameSysCycle;
 
 import java.util.Map;
 

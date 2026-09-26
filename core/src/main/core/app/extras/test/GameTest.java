@@ -1,16 +1,12 @@
-package core.app;
+package core.app.extras.test;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.GL20;
+import core.app.GameContext;
 import core.entities.plan.PlanBuilder;
 import core.entities.plan.PlanManager;
-import core.event.GameEvent;
-import core.system.GameSysCycle;
+import core.event.events.GameEvent;
+import core.app.cores.GameSysCycle;
 import data.map.asset.AssetType;
 import data.map.asset.BuildingType;
-import data.map.asset.FloorType;
-
-import java.util.Random;
 
 public class GameTest implements GameSysCycle {
 

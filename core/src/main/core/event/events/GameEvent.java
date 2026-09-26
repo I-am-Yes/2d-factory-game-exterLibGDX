@@ -1,5 +1,7 @@
-package core.event;
+package core.event.events;
 
+import core.event.CancellableEvent;
+import core.event.Events;
 import core.machine.state.Direction;
 import data.map.asset.FloorType;
 import data.map.MapConfig;
@@ -34,6 +36,18 @@ public class GameEvent {
                 Events.fire(new MapGenerated(mapConfig, floorGrid));
         }
 
+    }
+
+    //example for frequently fired event
+    public static class MapGenerated2 {
+        public MapConfig mapConfig;
+        public FloorType[][] floorGrid;
+
+        public MapGenerated2 mapCreated(MapConfig mapConfig, FloorType[][] floorGrid) {
+            this.mapConfig = mapConfig;
+            this.floorGrid = floorGrid;
+            return this;
+        }
     }
 
     public static final class BlockRemoveRequest extends CancellableEvent {

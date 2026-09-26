@@ -20,8 +20,6 @@ public class Renderer {
         this.world = context.world;
         this.viewport = context.viewport;
         this.assetsHandler = context.assets;
-
-        this.delta = context.getDeltaTime();
     }
 
     public void update(float delta) {

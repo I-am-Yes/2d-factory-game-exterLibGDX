@@ -1,4 +1,4 @@
-package core.event;
+package core.event.events;
 
 public class WorldEvent {
 

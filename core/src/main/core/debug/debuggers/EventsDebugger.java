@@ -1,8 +1,8 @@
 package core.debug.debuggers;
 
 import core.event.Events;
-import core.event.GameEvent;
-import core.event.PlayerEvent;
+import core.event.events.GameEvent;
+import core.event.events.PlayerEvent;
 
 import java.util.ArrayList;
 import java.util.List;

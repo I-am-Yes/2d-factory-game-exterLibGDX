@@ -1,8 +1,7 @@
-package core.system;
+package core.app.cores;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import core.app.UpdateDomain;
 import core.render.RenderLayer;
 
 public interface GameSysCycle {

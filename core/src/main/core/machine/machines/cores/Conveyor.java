@@ -70,7 +70,7 @@ public class Conveyor extends Block implements ExposeInfo {
             if (item == null) {
                 return;
             }
-            Artist.DrawItem(batch, item);
+            Artist.DrawItem(item);
 
         }
 

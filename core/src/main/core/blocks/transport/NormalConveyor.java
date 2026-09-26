@@ -1,4 +1,4 @@
-package core.machine.machines;
+package core.blocks.transport;
 
 import core.machine.machines.cores.Conveyor;
 

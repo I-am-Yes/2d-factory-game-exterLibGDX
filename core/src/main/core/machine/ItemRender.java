@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import core.assets.AssetsHandler;
 import core.machine.utils.Item;
+import core.utils.Artist;
 import core.world.World;
 
 
@@ -19,21 +20,11 @@ public class ItemRender {
         this.tileSize = world.getTileSize();
     }
 
-    public void drawBatch(SpriteBatch batch, Item item, AssetsHandler assets) {
+    public void drawBatch(Item item) {
         if (item == null) {
             return;
         }
-
-        TextureRegion region = assets.getRegion(item.type);
-        float itemSize = tileSize * ITEM_SIZE;
-        float drawX = item.visualX * tileSize;
-        float drawY = item.visualY * tileSize;
-        batch.draw(region,
-            drawX - itemSize * 0.5f,
-            drawY - itemSize * 0.5f,
-            itemSize, itemSize
-        );
-
+        Artist.DrawItem(item);
     }
 
 }

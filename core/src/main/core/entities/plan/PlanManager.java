@@ -1,10 +1,9 @@
 package core.entities.plan;
 
-import core.app.GameContext;
 import data.map.asset.AssetType;
 import com.badlogic.gdx.utils.Queue;
 import core.event.Events;
-import core.event.GameEvent;
+import core.event.events.GameEvent;
 import core.world.World;
 
 public class PlanManager {

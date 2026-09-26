@@ -1,4 +1,4 @@
-package core.machine.machines;
+package core.blocks.creative;
 
 import core.machine.machines.cores.ItemSource;
 import core.machine.state.ItemType;

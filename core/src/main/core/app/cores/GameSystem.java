@@ -1,4 +1,4 @@
-package core.app;
+package core.app.cores;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -6,7 +6,6 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ObjectMap;
 import core.system.ContextProvider;
 import core.render.RenderLayer;
-import core.system.GameSysCycle;
 
 public final class GameSystem {
 
@@ -26,17 +25,6 @@ public final class GameSystem {
             throw new RuntimeException(
                 "System already registered: " + systemClass.getSimpleName()
             );
-        }
-
-        //registers system's context
-        if (system instanceof ContextProvider<?> provider) {
-            Class<?> contextClass = provider.getContext().getClass();
-            if (contexts.containsKey(contextClass)) {
-                throw new IllegalStateException(
-                    "Context already registered: " + contextClass.getSimpleName()
-                );
-            }
-            contexts.put(contextClass, provider.getContext());
         }
 
         systemType.put(systemClass, system);
@@ -74,29 +62,29 @@ public final class GameSystem {
         return contextClass.cast(systemContext);
     }
 
-    public void update(float realDelta, float gameDelta, boolean paused) {
+    public void update() {
         for (int i = 0; i < systems.size; i++) {
             GameSysCycle system = systems.get(i);
 
             float delta;
             if (system.updateDomain() == UpdateDomain.REAL_TIME) {
-                delta = realDelta;
+                delta = GameTime.delta();
             } else if (system.updateDomain() == UpdateDomain.GAME_DEFAULT) {
-                delta = gameDelta;
+                delta = GameTime.gameDelta();
             } else {
                 throw new IllegalStateException(
                     "Unknown update domain: " + system.updateDomain()
                 );
             }
-            if (!paused || system.updateWhenPaused()) {
+            if (!GameTime.isPaused() || system.updateWhenPaused()) {
                 system.update(delta);
             }
         }
     }
 
-    public void tickUpdate(float tickDelta) {
+    public void tickUpdate() {
         for (int i = 0; i < systems.size; i++) {
-            systems.get(i).tickUpdate(tickDelta);
+            systems.get(i).tickUpdate(GameTime.UPDATE_INTERVAL);
         }
     }
 

@@ -2,7 +2,7 @@ package core.system.systems;
 
 import core.system.ContextProvider;
 import core.system.context.CoreContext;
-import core.system.GameSysCycle;
+import core.app.cores.GameSysCycle;
 
 public class CoreSystem implements GameSysCycle, ContextProvider<CoreContext> {
 

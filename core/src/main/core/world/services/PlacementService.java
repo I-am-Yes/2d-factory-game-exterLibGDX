@@ -1,7 +1,7 @@
 package core.world.services;
 
 import core.event.Events;
-import core.event.GameEvent;
+import core.event.events.GameEvent;
 import core.machine.state.Direction;
 import core.world.World;
 import core.world.chunk.Chunk;

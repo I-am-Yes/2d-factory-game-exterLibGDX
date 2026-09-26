@@ -10,7 +10,7 @@ import core.system.context.RenderContext;
 import core.entities.plan.PlanManager;
 import core.render.PlanRenderer;
 import core.render.RenderLayer;
-import core.system.GameSysCycle;
+import core.app.cores.GameSysCycle;
 import core.world.World;
 import data.map.asset.AssetType;
 

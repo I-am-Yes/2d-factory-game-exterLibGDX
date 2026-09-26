@@ -14,13 +14,13 @@ public class Window {
 
     public Window() {}
 
-    public void createGameWindow(boolean VSync, int foregroundFPS, int windowWidth, int windowHeight) {
+    public void init(boolean VSync, int foregroundFPS, int windowWidth, int windowHeight) {
         Gdx.graphics.setVSync(true);
         setForegroundFPS(foregroundFPS);
         setWindowedMode(windowWidth, windowHeight);
     }
 
-    public void createGameWindow() {
+    public void init() {
         Gdx.graphics.setVSync(true);
         setForegroundFPS(foregroundFPS);
         setWindowedMode(windowWidth, windowHeight);
@@ -84,11 +84,11 @@ public class Window {
         return isBorderlessFullscreen;
     }
 
-    public int getWindowWidth() {
+    public int getWidth() {
         return windowWidth;
     }
 
-    public int getWindowHeight() {
+    public int getHeight() {
         return windowHeight;
     }
 

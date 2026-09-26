@@ -2,7 +2,6 @@ package core.world;
 
 import core.controller.camera.CameraController;
 import core.controller.camera.CameraViewMode;
-import core.machine.state.Direction;
 import core.world.chunk.Chunk;
 import core.world.chunk.ChunkManager;
 import core.world.chunk.ChunkRenderDetail;
@@ -14,12 +13,9 @@ import data.map.MapConfig;
 import data.map.asset.GhostType;
 import data.map.asset.AssetType;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import core.assets.AssetsHandler;
-import core.event.Events;
-import core.event.GameEvent;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.maps.tiled.TiledMap;

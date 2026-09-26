@@ -1,5 +1,6 @@
-package core.event;
+package core.event.events;
 
+import core.event.Events;
 import data.map.asset.AssetType;
 import core.player.Player;
 

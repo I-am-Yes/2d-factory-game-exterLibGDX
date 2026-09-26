@@ -14,12 +14,12 @@ public final class MachineGroup {
 
     private final Array<Machine> activeMachines = new Array<>(false, 256);
     private final MachineLookup machineLookup;
-    private final TransferListener transferListener;
+    private final TransferResolver.TransferObserver transferListener;
 
     private final TransferBatch transferBatch = new TransferBatch();
     private final TransferResolver transferResolver = new TransferResolver();
 
-    public MachineGroup(MachineLookup machineLookup, TransferListener transferListener) {
+    public MachineGroup(MachineLookup machineLookup, TransferResolver.TransferObserver transferListener) {
         this.machineLookup = machineLookup;
         this.transferListener = transferListener;
     }
@@ -31,7 +31,7 @@ public final class MachineGroup {
     private void runTransfers(int updateCount) {
         collectOutputs(updateCount);
         transferResolver.resolve(transferBatch);
-        transferResolver.commit(transferBatch, this::reportTransfer);
+        transferResolver.commit(transferBatch, transferListener);
     }
 
     private void collectOutputs(int updateCount) {
@@ -43,12 +43,6 @@ public final class MachineGroup {
                 emitter.collectOutput(transferBatch);
             }
         }
-    }
-
-    @FunctionalInterface
-    public interface TransferListener {
-        void accepted(Machine current, Machine target, ItemType itemType,
-                      float fromX, float fromY, float speed);
     }
 
     @FunctionalInterface

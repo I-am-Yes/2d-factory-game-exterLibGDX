@@ -1,6 +1,8 @@
 package core.assets;
 
 import com.badlogic.gdx.assets.AssetManager;
+import core.app.Vars;
+import core.event.events.AppEvent;
 import data.map.asset.BuildingType;
 import data.map.asset.AssetType;
 import data.map.asset.FloorType;
@@ -58,7 +60,10 @@ public class AssetsHandler implements Disposable {
     }
 
     public boolean updateLoading() {
-        if (!assetManager.update()) return false;
+        if (!assetManager.update()) {
+            AppEvent.LoadingScreenEvent.fire(getProgress());
+            return false;
+        }
 
         for (AtlasType atlas : AtlasType.values()) {
             String path = atlas.getPath();

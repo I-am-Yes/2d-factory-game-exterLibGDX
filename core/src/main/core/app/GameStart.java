@@ -3,29 +3,29 @@ package core.app;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
+import core.app.cores.GameSystem;
+import core.app.extras.test.GameTest;
 import core.assets.AssetsHandler;
 import core.InputHandler;
-import core.Window;
+import core.event.events.AppEvent;
 import core.system.systems.*;
-import core.utils.Artist;
 import core.world.World;
 import data.map.MapConfig;
 import data.map.PresetMap;
 
-public final class GameStart {
+import static core.app.Vars.*;
 
-    public static GameContext createLoadingContext() {
+public final class GameStart extends AppEvent {
+
+    public static void createLoadingContext() {
         GameContext context = new GameContext();
 
-        context.window = new Window();
-        context.window.createGameWindow();
-        context.window.setVSync(false);
-        context.window.setForegroundFPS(0);
+        window.init();
+        window.setVSync(false);
+        window.setForegroundFPS(0);
 
-        context.assets = new AssetsHandler();
-        context.assets.queueLoad();
-
-        return context;
+        assets = new AssetsHandler();
+        assets.queueLoad();
     }
 
     public static void finishGameStart(GameContext context) {
@@ -40,8 +40,6 @@ public final class GameStart {
             context.mapConfig,
             context.assets
         );
-
-        new Artist(context.world, context.assets, context.renderSpriteBatch);
 
         context.viewport = new ExtendViewport(
             context.world.getWorldWidth(),

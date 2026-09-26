@@ -14,7 +14,7 @@ import core.assets.AssetsHandler;
 import core.InputHandler;
 import core.world.World;
 import core.player.mechanic.BuildGhostLine;
-import core.event.GameEvent;
+import core.event.events.GameEvent;
 import ui.PlayerHotbar;
 
 import static com.badlogic.gdx.Input.Keys.*;

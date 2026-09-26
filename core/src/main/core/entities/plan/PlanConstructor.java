@@ -1,7 +1,7 @@
 package core.entities.plan;
 
 import data.map.asset.AssetType;
-import core.event.GameEvent;
+import core.event.events.GameEvent;
 import core.world.World;
 
 public class PlanConstructor<T extends AssetType> {

@@ -116,8 +116,8 @@ public class PlayerHotbar {
         hotbar.setTouchable(Touchable.childrenOnly);
         hotbar.setOrigin(Align.center, Align.center);
         hotbar.bottom();
-        hotbar.setSize((float) window.getWindowWidth() / 2, (float) window.getWindowHeight() / 10);
-        hotbar.setPosition((float) window.getWindowWidth() / 2 - hotbar.getWidth() / 2, (float) window.getWindowHeight() / 100);
+        hotbar.setSize((float) window.getWidth() / 2, (float) window.getHeight() / 10);
+        hotbar.setPosition((float) window.getWidth() / 2 - hotbar.getWidth() / 2, (float) window.getHeight() / 100);
 
         for (int i = 0; i < hotbarItemButtons.length; i++) {
             TextButton button = new TextButton(

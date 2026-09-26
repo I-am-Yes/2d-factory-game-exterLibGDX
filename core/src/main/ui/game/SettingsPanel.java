@@ -2,6 +2,7 @@ package ui.game;
 
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import core.app.GameLoop;
+import core.app.cores.GameTime;
 import ui.UiHelper;
 import ui.Style;
 
@@ -50,7 +51,7 @@ public final class SettingsPanel extends Window {
     public void open() {
         setVisible(true);
 
-        if (pauseOnOpen && !GameLoop.isGamePaused()) {
+        if (pauseOnOpen && !GameTime.isPaused()) {
             GameLoop.pause();
             pauseBySettingsPanel = true;
         }

@@ -1,6 +1,7 @@
 package core.debug;
 
 import core.debug.debuggers.*;
+import core.event.events.GameEvent;
 import data.debug.DebugConfig;
 import data.debug.DebugType;
 import data.map.asset.FloorType;

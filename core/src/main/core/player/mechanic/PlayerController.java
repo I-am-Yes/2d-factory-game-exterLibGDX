@@ -5,8 +5,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.MathUtils;
 import core.InputHandler;
 import core.Window;
-import core.app.GameContext;
-import core.event.PlayerEvent.*;
+import core.event.events.PlayerEvent.*;
 import core.player.Player;
 
 public class PlayerController {
