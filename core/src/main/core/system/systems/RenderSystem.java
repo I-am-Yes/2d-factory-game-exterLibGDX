@@ -1,73 +1,66 @@
 package core.system.systems;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.utils.viewport.Viewport;
-import core.assets.AssetsHandler;
-import core.app.GameContext;
-import core.system.ContextProvider;
+import core.app.cores.AppListener;
 import core.system.context.RenderContext;
 import core.entities.plan.PlanManager;
 import core.render.PlanRenderer;
 import core.render.RenderLayer;
 import core.app.cores.GameSysCycle;
-import core.world.World;
 import data.map.asset.AssetType;
 
-public class RenderSystem implements GameSysCycle, ContextProvider<RenderContext> {
+import static core.app.Vars.*;
 
-    private final GameContext context;
-    private final RenderContext renderContext;
-
-    private final World world;
-    private final Viewport viewport;
-    private final SpriteBatch renderSpriteBatch;
-    private final ShapeRenderer shapeRenderer;
-    private final AssetsHandler assets;
+public class RenderSystem implements AppListener, GameSysCycle {
 
     private final PlanRenderer<AssetType> planRenderer;
     private final PlanManager planManager;
 
-    private float delta;
-
-    public RenderSystem(GameContext context) {
-        this.context = context;
-        this.world = context.world;
-        this.viewport = context.viewport;
-        this.assets = context.assets;
-
-        this.renderSpriteBatch = context.renderSpriteBatch;
-        this.shapeRenderer = context.shapeRenderer;
-
+    public RenderSystem() {
         this.planManager = new PlanManager(world);
         this.planRenderer = new PlanRenderer<>(
-            context.world,
-            context.viewport,
-            renderSpriteBatch,
-            context.assets,
-            planManager
-        );
-
-
-        this.renderContext = new RenderContext(
             world,
             viewport,
+            batch,
             assets,
-            shapeRenderer,
-            planRenderer
+            planManager
         );
 
     }
 
     @Override
-    public void update(float delta) {
-        this.delta = delta;
+    public void init() {
+        AppListener.super.init();
+    }
+
+    @Override
+    public void update() {
 
         planRenderer.update();
     }
 
     @Override
+    public void create() {
+        AppListener.super.create();
+    }
+
+    @Override
     public void render() {
+    }
+
+    @Override
+    public void resize(int width, int height) {
+        AppListener.super.resize(width, height);
+    }
+
+    @Override
+    public void pause() {
+        AppListener.super.pause();
+    }
+
+    @Override
+    public void resume() {
+        AppListener.super.resume();
     }
 
     @Override
@@ -87,15 +80,6 @@ public class RenderSystem implements GameSysCycle, ContextProvider<RenderContext
     @Override
     public RenderLayer renderLayer() {
         return RenderLayer.OBJECT_LAYER;
-    }
-
-    @Override
-    public RenderContext getContext() {
-        return renderContext;
-    }
-
-    public SpriteBatch getBatch() {
-        return renderSpriteBatch;
     }
 
 }

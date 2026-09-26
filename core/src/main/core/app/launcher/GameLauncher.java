@@ -1,7 +1,6 @@
 package core.app.launcher;
 
 import com.badlogic.gdx.Gdx;
-import core.app.GameContext;
 import core.app.GameLoop;
 import core.app.GameStart;
 import core.app.Vars;
@@ -18,14 +17,14 @@ public class GameLauncher extends GameCore {
     @Override
     public void init() {
         Vars.init();
-        GameStart.createLoadingContext();
+        start.createLoadingContext();
     }
 
     @Override
     public void render() {
         if (!loaded) {
             if (assets.updateLoading()) {
-                GameStart.finishGameStart();
+                start.finishGameStart();
                 gameLoop = new GameLoop();
                 gameLoop.resize(
                     Gdx.graphics.getWidth(),
@@ -36,6 +35,8 @@ public class GameLauncher extends GameCore {
             }
             return;
         }
+
+        update();
 
         gameLoop.update();
         gameLoop.render();
@@ -51,11 +52,11 @@ public class GameLauncher extends GameCore {
     }
     @Override
     public void pause () {
-        if (gameLoop != null) gameLoop.pause();
+        super.pause();
     }
     @Override
     public void resume () {
-        if (gameLoop != null) gameLoop.resume();
+        super.resume();
     }
 
     @Override
@@ -65,18 +66,13 @@ public class GameLauncher extends GameCore {
             return;
         }
 
-        if (context != null && context.assets != null) context.assets.dispose();
+        if (assets != null) assets.dispose();
+
+        super.dispose();
     }
 
     public void add(AppListener child) {
         super.add(child);
-    }
-
-    public GameContext getContext() {
-        return context;
-    }
-    public GameLoop getGameLoop() {
-        return gameLoop;
     }
 
 }

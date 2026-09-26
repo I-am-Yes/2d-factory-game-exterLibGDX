@@ -3,11 +3,12 @@ package core.app;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
-import core.app.cores.GameSystem;
+import core.Window;
+import core.app.cores.AppListener;
+import core.app.cores.GameCore;
 import core.app.extras.test.GameTest;
 import core.assets.AssetsHandler;
 import core.InputHandler;
-import core.event.events.AppEvent;
 import core.system.systems.*;
 import core.world.World;
 import data.map.MapConfig;
@@ -15,11 +16,11 @@ import data.map.PresetMap;
 
 import static core.app.Vars.*;
 
-public final class GameStart extends AppEvent {
+public class GameStart extends GameCore {
 
-    public static void createLoadingContext() {
-        GameContext context = new GameContext();
+    public void createLoadingContext() {
 
+        window = new Window();
         window.init();
         window.setVSync(false);
         window.setForegroundFPS(0);
@@ -28,51 +29,41 @@ public final class GameStart extends AppEvent {
         assets.queueLoad();
     }
 
-    public static void finishGameStart(GameContext context) {
+    public void finishGameStart() {
 
-        context.renderSpriteBatch = new SpriteBatch();
-        context.shapeRenderer = new ShapeRenderer();
+        batch = new SpriteBatch();
+        shape = new ShapeRenderer();
 
-        context.mapConfig = MapConfig.createPresetMap(PresetMap.PLAIN);
+        mapConfig = MapConfig.createPresetMap(PresetMap.PLAIN);
         //TODO: change to better seed system later
-        context.mapConfig.seed = System.currentTimeMillis();
-        context.world = World.generateWorld(
-            context.mapConfig,
-            context.assets
+        mapConfig.seed = System.currentTimeMillis();
+        world = World.generateWorld(mapConfig, assets);
+
+        viewport = new ExtendViewport(
+            world.getWorldWidth(),
+            world.getWorldHeight()
         );
 
-        context.viewport = new ExtendViewport(
-            context.world.getWorldWidth(),
-            context.world.getWorldHeight()
-        );
+        input = new InputHandler();
 
-        context.input = new InputHandler();
 
-        context.systems = new GameSystem();
+        add(new InterfaceSystem());
+        add(new RenderSystem());
+        add(new PlayerSystem());
+        add(new CameraSystem());
+        add(new EntrySystem());
+        add(new FactorySystem());
+        add(new DebugSystem());
 
-        context.addSystem(new InterfaceSystem(context));
-        context.addSystem(new RenderSystem(context));
-        context.addSystem(new PlayerSystem(context));
-        context.addSystem(new CameraSystem(context, context.getSystemContext(PlayerSystem.class)));
-
-        context.addSystem(new EntrySystem(context, context.input));
-
-        context.addSystem(new FactorySystem(context));
-
-        context.addSystem(new DebugSystem(context));
 
         //multiplexer bla bla...
-        InputDesktop.init(context);
+        InputDesktop.init();
 
-        //debug testers
-        context.getSystem(DebugSystem.class).getDebug().enableDebugModes(
-
-        );
-
-
-
-        context.gameTest = new GameTest(context);
+        gameTest = new GameTest();
 
     }
 
+    public void add(AppListener child) {
+        super.add(child);
+    }
 }

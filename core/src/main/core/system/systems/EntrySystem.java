@@ -1,39 +1,16 @@
 package core.system.systems;
 
 import com.badlogic.gdx.Input;
-import core.InputHandler;
-import core.Window;
-import core.app.GameContext;
-import core.system.ContextProvider;
+import core.app.cores.AppListener;
 import core.app.cores.GameSysCycle;
-import core.system.context.EntryContext;
-import core.system.context.InterfaceContext;
 import core.controller.camera.ScreenshotCapture;
 
-public class EntrySystem implements GameSysCycle, ContextProvider<EntryContext> {
+import static core.app.Vars.*;
 
-    private final GameContext context;
-    private final EntryContext entryContext;
-    private final InterfaceContext interfaceContext;
-
-    private final InputHandler input;
-    private final Window window;
-
-    public EntrySystem(GameContext context, InputHandler input) {
-        this.context = context;
-        this.interfaceContext = context.getContext(InterfaceContext.class);
-        this.input = input;
-        this.window = context.window;
-
-        this.entryContext = new EntryContext(
-
-        );
-    }
+public class EntrySystem implements AppListener, GameSysCycle {
 
     @Override
-    public void update(float delta) {
-
-
+    public void update() {
 
         if (input.isKeyJustPressed(Input.Keys.ESCAPE)) {
             toggleSettingPanel();
@@ -53,19 +30,39 @@ public class EntrySystem implements GameSysCycle, ContextProvider<EntryContext> 
 
         if (input.isKeyPressed(Input.Keys.SHIFT_LEFT) && input.isKeyJustPressed(Input.Keys.F12)) {
             ScreenshotCapture.captureMapArea(
-                context.world,
-                (int) -context.world.getWorldWidth(),
-                (int) -context.world.getWorldHeight(),
-                (int) context.world.getWorldWidth(),
-                (int) context.world.getWorldHeight(),
+                world,
+                (int) -world.getWorldWidth(),
+                (int) -world.getWorldHeight(),
+                (int) world.getWorldWidth(),
+                (int) world.getWorldHeight(),
                 4
             );
         }
 
     }
 
+    @Override
+    public void render() {
+        AppListener.super.render();
+    }
+
+    @Override
+    public void resize(int width, int height) {
+        AppListener.super.resize(width, height);
+    }
+
+    @Override
+    public void pause() {
+        AppListener.super.pause();
+    }
+
+    @Override
+    public void resume() {
+        AppListener.super.resume();
+    }
+
     private void toggleSettingPanel() {
-        interfaceContext.settingsPanel.togglePanel();
+        settingsPanel.togglePanel();
     }
 
     private void toggleDebugPanel() {
@@ -78,7 +75,8 @@ public class EntrySystem implements GameSysCycle, ContextProvider<EntryContext> 
     }
 
     @Override
-    public EntryContext getContext() {
-        return entryContext;
+    public void dispose() {
+        AppListener.super.dispose();
     }
+
 }

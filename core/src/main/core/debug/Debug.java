@@ -1,5 +1,6 @@
 package core.debug;
 
+import core.app.cores.GameTime;
 import core.debug.debuggers.*;
 import core.event.events.GameEvent;
 import data.debug.DebugConfig;
@@ -79,8 +80,8 @@ public class Debug {
         }
     }
 
-    public void update(float delta) {
-        this.delta = delta;
+    public void update() {
+        this.delta = GameTime.delta();
 
         if (debugConfig.isEnabled(DebugType.PERFORMANCE)) {
             if (!debugConfig.isEnabled(DebugType.PERFORMANCE)) return;

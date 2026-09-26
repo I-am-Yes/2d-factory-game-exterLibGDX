@@ -1,6 +1,6 @@
 package core.app.extras.test;
 
-import core.app.GameContext;
+import core.app.cores.AppListener;
 import core.entities.plan.PlanBuilder;
 import core.entities.plan.PlanManager;
 import core.event.events.GameEvent;
@@ -8,14 +8,13 @@ import core.app.cores.GameSysCycle;
 import data.map.asset.AssetType;
 import data.map.asset.BuildingType;
 
-public class GameTest implements GameSysCycle {
+import static core.app.Vars.*;
 
-    private final GameContext context;
+public class GameTest implements AppListener, GameSysCycle {
 
-    public GameTest(GameContext context) {
-        this.context = context;
+    public GameTest() {
 
-        PlanManager planManager = new PlanManager(context.world);
+        PlanManager planManager = new PlanManager(world);
         PlanBuilder<AssetType> planBuilder = new PlanBuilder<>();
 
         float divideTest = 1f;
@@ -64,8 +63,42 @@ public class GameTest implements GameSysCycle {
     }
 
     @Override
-    public void update(float delta) {
-
+    public void init() {
+        AppListener.super.init();
     }
 
+    @Override
+    public void update() {
+        AppListener.super.update();
+    }
+
+    @Override
+    public void create() {
+        AppListener.super.create();
+    }
+
+    @Override
+    public void render() {
+        AppListener.super.render();
+    }
+
+    @Override
+    public void resize(int width, int height) {
+        AppListener.super.resize(width, height);
+    }
+
+    @Override
+    public void pause() {
+        AppListener.super.pause();
+    }
+
+    @Override
+    public void resume() {
+        AppListener.super.resume();
+    }
+
+    @Override
+    public void dispose() {
+        AppListener.super.dispose();
+    }
 }

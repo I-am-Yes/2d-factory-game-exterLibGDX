@@ -1,5 +1,6 @@
 package core.system.systems;
 
+import core.app.cores.AppListener;
 import core.config.ScriptConfigLoader;
 import core.config.api.CameraScriptApi;
 import core.config.camera.CameraSettings;
@@ -13,22 +14,16 @@ import core.app.cores.GameSysCycle;
 
 import java.util.Map;
 
-public class CameraSystem implements GameSysCycle, ContextProvider<CameraContext> {
+import static core.app.Vars.*;
 
-    private GameContext context;
-    private PlayerContext playerContext;
-    private CameraContext cameraContext;
+public class CameraSystem implements AppListener, GameSysCycle {
 
     private CameraSettings cameraSettings;
 
-    private CameraController cameraController;
     private CursorController cursor;
 
-    private float delta;
+    public CameraSystem() {
 
-    public CameraSystem(GameContext context, PlayerContext playerContext) {
-        this.context = context;
-        this.playerContext = playerContext;
 
         this.cursor = new CursorController();
         cursor.loadCursor();
@@ -40,28 +35,38 @@ public class CameraSystem implements GameSysCycle, ContextProvider<CameraContext
             Map.of("camera", new CameraScriptApi(cameraSettings))
         );
 
-        this.cameraController = new CameraController(context, playerContext, cameraSettings);
+        cameraController = new CameraController(cameraSettings);
 
-        this.cameraContext = new CameraContext(
-            cameraController,
-            cameraSettings,
-            cursor
-        );
     }
 
     @Override
-    public void update(float delta) {
-        this.delta = delta;
+    public void update() {
 
-        cameraController.update(delta);
-    }
-
-    public CameraContext getCameraContext() {
-        return cameraContext;
+        cameraController.update();
     }
 
     @Override
-    public CameraContext getContext() {
-        return cameraContext;
+    public void render() {
+        AppListener.super.render();
+    }
+
+    @Override
+    public void resize(int width, int height) {
+        AppListener.super.resize(width, height);
+    }
+
+    @Override
+    public void pause() {
+        AppListener.super.pause();
+    }
+
+    @Override
+    public void resume() {
+        AppListener.super.resume();
+    }
+
+    @Override
+    public void dispose() {
+        AppListener.super.dispose();
     }
 }

@@ -1,5 +1,6 @@
 package core.utils;
 
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import core.app.cores.GameCore;
 import core.machine.utils.Item;
@@ -28,6 +29,10 @@ public final class Artist extends GameCore {
             drawY - itemSize * 0.5f,
             itemSize, itemSize
         );
+    }
+
+    public static void drawBatch(SpriteBatch batch) {
+        // Implementation for drawing with SpriteBatch
     }
 
 

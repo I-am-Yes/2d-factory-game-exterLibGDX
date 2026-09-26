@@ -2,8 +2,8 @@ package core.system.systems;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.LongMap;
-import core.app.GameContext;
-import core.assets.AssetsHandler;
+import core.app.cores.AppListener;
+import core.app.cores.GameTime;
 import core.blocks.Blocks;
 import core.event.Events;
 import core.event.events.GameEvent;
@@ -14,20 +14,14 @@ import core.machine.render.RenderManager;
 import core.machine.state.Direction;
 import core.machine.state.ItemType;
 import core.render.RenderLayer;
-import core.system.ContextProvider;
 import core.app.cores.GameSysCycle;
-import core.system.context.FactoryContext;
 import core.utils.TimeUtils;
-import core.world.World;
 import data.map.asset.BuildingType;
 
-public class FactorySystem implements GameSysCycle, ContextProvider<FactoryContext> {
+import static core.app.Vars.*;
 
-    private final GameContext context;
-    private FactoryContext factoryContext;
+public class FactorySystem implements AppListener, GameSysCycle {
 
-    private final World world;
-    private final AssetsHandler assets;
     private final ItemRender itemRender;
     private final MachineGroup machineGroup;
     private final RenderManager renderManager = new RenderManager();
@@ -40,10 +34,7 @@ public class FactorySystem implements GameSysCycle, ContextProvider<FactoryConte
     //TODO: check mindustry/Senseable interface class
     // which allow an object implement this interface to expose it's information to game
 
-    public FactorySystem(GameContext context) {
-        this.context = context;
-        this.world = context.world;
-        this.assets = context.assets;
+    public FactorySystem() {
 
         this.machineGroup = new MachineGroup(this::getBuildingAt, this::reportTransfer);
 
@@ -91,14 +82,11 @@ public class FactorySystem implements GameSysCycle, ContextProvider<FactoryConte
         itemRender = new ItemRender(world);
         ItemManager itemManager = new ItemManager(itemRender);
 
-        factoryContext = new FactoryContext(
-            itemManager,
-            itemRender
-        );
     }
 
     @Override
-    public void update(float delta) {
+    public void update() {
+        float delta = GameTime.delta();
 
         TimeUtils.measureAndPrint(
             delta,
@@ -107,6 +95,12 @@ public class FactorySystem implements GameSysCycle, ContextProvider<FactoryConte
 
         renderManager.update(delta);
     }
+
+    @Override
+    public void render() {
+        AppListener.super.render();
+    }
+
 
     @Override
     public void tickUpdate(float tickDelta) {
@@ -154,8 +148,4 @@ public class FactorySystem implements GameSysCycle, ContextProvider<FactoryConte
         return RenderLayer.OBJECT_LAYER_2;
     }
 
-    @Override
-    public FactoryContext getContext() {
-        return factoryContext;
-    }
 }

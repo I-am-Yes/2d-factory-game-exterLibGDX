@@ -1,31 +1,19 @@
 package core.controller.camera;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.utils.viewport.Viewport;
 import com.badlogic.gdx.Input;
 import core.InputHandler;
-import core.player.Player;
-import core.app.GameContext;
-import core.system.context.PlayerContext;
-import core.player.mechanic.PlayerController;
-import core.world.World;
 
+import core.app.cores.GameTime;
 import core.config.camera.CameraSettings;
 import core.world.chunk.ChunkRenderDetail;
 
+import static core.app.Vars.*;
+
 public class CameraController {
     private final CameraSettings settings;
-    private final GameContext context;
-    private final PlayerContext playerContext;
-    private final Viewport viewport;
-    private final World world;
-    private final Player player;
-    private final PlayerController controller;
-    private final InputHandler input;
-    private final OrthographicCamera camera;
 
     private static final float MIN_ZOOM = 0.02f;
     private static final float MAX_ZOOM = 0.15f;
@@ -63,30 +51,22 @@ public class CameraController {
 
     private float delta;
 
-    public CameraController(GameContext context, PlayerContext playerContext, CameraSettings settings) {
-        this.context = context;
-        this.playerContext = playerContext;
+    public CameraController(CameraSettings settings) {
         this.settings = settings;
-        this.viewport = context.viewport;
-        this.camera = (OrthographicCamera) viewport.getCamera();
-        this.world = context.world;
-        this.input = context.input;
-        this.player = playerContext.player.getPlayer();
-        this.controller = playerContext.controller;
 
         camera.zoom = settings.defaultZoom;
         targetZoom = settings.defaultZoom;
         ZOOM_STEP = settings.defaultZoomStep;
     }
 
-    public void update(float delta) {
-        this.delta = delta;
+    public void update() {
+        this.delta = GameTime.delta();
 
         followX = player.getSprite().getX() + player.getSprite().getWidth() / 2f;
         followY = player.getSprite().getY() + player.getSprite().getHeight() / 2f;
 
         //TODO: later migrate to EntrySystem
-        if (!input.isMousePressed(Input.Buttons.MIDDLE) && controller.isPlayerMoving()) {
+        if (!input.isMousePressed(Input.Buttons.MIDDLE) && player.isPlayerMoving()) {
             cameraFollowPlayer = true;
         }
 

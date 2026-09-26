@@ -34,8 +34,8 @@ public class Player {
         sprite.setPosition(2f, 2f);  // spawn in middle of the map
     }
 
-    public void update(float delta) {
-        controller.moveCharacter(getPlayer(), sprite, delta, PLAYER_SPEED, worldWidth, worldHeight);
+    public void update() {
+        controller.moveCharacter(getPlayer(), sprite, PLAYER_SPEED, worldWidth, worldHeight);
     }
 
     public void draw(SpriteBatch batch) {

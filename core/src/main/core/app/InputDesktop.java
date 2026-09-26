@@ -9,19 +9,15 @@ import core.system.systems.InterfaceSystem;
 public final class InputDesktop {
     private InputDesktop() {}
 
-    public static void init(GameContext context) {
-
-        UiInputGate uiInputGate = context.getContext(InterfaceContext.class).uiInputGate;
-        InterfaceSystem interfaceSystem = context.getSystem(InterfaceSystem.class);
-
+    public static void init() {
         InputMultiplexer multiplexer = new InputMultiplexer();
 
         //UI pointer blocker
-        multiplexer.addProcessor(uiInputGate);
+        multiplexer.addProcessor(Vars.uiInputGate);
 
-        multiplexer.addProcessor(context.input);
+        multiplexer.addProcessor(Vars.input);
 
-        multiplexer.addProcessor(interfaceSystem.getStage());
+        multiplexer.addProcessor(Vars.uiStage);
 
 
         Gdx.input.setInputProcessor(multiplexer);

@@ -6,35 +6,26 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
-import com.badlogic.gdx.utils.viewport.Viewport;
-import core.InputHandler;
 import core.UiInputGate;
-import core.Window;
 import core.app.GameContext;
+import core.app.cores.AppListener;
+import core.app.cores.GameSysCycle;
 import core.app.cores.UpdateDomain;
 import core.render.RenderLayer;
-import core.system.ContextProvider;
-import core.app.cores.GameSysCycle;
-import core.system.context.CameraContext;
 import core.system.context.InterfaceContext;
-import core.world.World;
 import data.map.asset.AssetType;
 import ui.*;
 import ui.game.GameUI;
 import ui.game.SettingsPanel;
 
-public class InterfaceSystem implements GameSysCycle, ContextProvider<InterfaceContext> {
+import static core.app.Vars.*;
+
+public class InterfaceSystem implements AppListener, GameSysCycle {
 
     private GameContext context;
     private InterfaceContext interfaceContext;
 
-    private final World world;
-    private final Window window;
-    private final Viewport viewport;
-    private final Stage stage;
     private final Skin skin;
-    private final InputHandler input;
-    private final UiInputGate uiInputGate;
     private final InterfaceAction UIaction;
     private final UiHelper uiHelper;
 
@@ -53,20 +44,14 @@ public class InterfaceSystem implements GameSysCycle, ContextProvider<InterfaceC
     private static float UiScale = 100 / 100f;
 
 
-    public InterfaceSystem(GameContext context) {
-        this.context = context;
-        this.world = context.world;
-        this.window = context.window;
-        this.viewport = context.viewport;
-        this.input = context.input;
-
+    public InterfaceSystem() {
         this.skin = new Skin(Gdx.files.internal("ui/uiskin.json"));
 
         ScreenViewport UiViewPort = new ScreenViewport();
         UiViewPort.setUnitsPerPixel(UiViewPort.getUnitsPerPixel() / getUiScale());
-        this.stage = new Stage(UiViewPort);
+        uiStage = new Stage(UiViewPort);
 
-        this.uiInputGate = new UiInputGate(stage);
+        uiInputGate = new UiInputGate(uiStage);
         this.uiHelper = new UiHelper();
         this.UIaction = new InterfaceAction();
 
@@ -75,21 +60,19 @@ public class InterfaceSystem implements GameSysCycle, ContextProvider<InterfaceC
         textStyle1 = Style.getTextStyle(Style.textStyle.TEXT_STYLE_1);
 
         playerHotbar = new PlayerHotbar(
-            window, stage, skin, UIaction, aldrichFont,
-            context.input, context.assets
+            window, uiStage, skin, UIaction, aldrichFont,
+            input, assets
         );
 
-        gameUI = new GameUI(world, window, viewport, stage, skin, uiHelper, input,
-            () -> context
-            .getContext(CameraContext.class)
-            .cameraController);
+        gameUI = new GameUI(world, window, viewport,
+            uiStage, skin, uiHelper, input);
 
         settingsPanel = new SettingsPanel(skin, uiHelper);
 
-        stage.addActor(settingsPanel);
+        uiStage.addActor(settingsPanel);
 
         interfaceContext = new InterfaceContext(
-            stage,
+            uiStage,
             skin,
             uiInputGate,
             gameUI,
@@ -99,21 +82,15 @@ public class InterfaceSystem implements GameSysCycle, ContextProvider<InterfaceC
     }
 
     @Override
-    public void update(float delta) {
-        this.delta = delta;
-
+    public void update() {
         act();
-        gameUI.update(delta);
+        gameUI.update();
         playerHotbar.update();
     }
 
-    /**
-     * Refreshes UI values that do not need to update every rendered frame.
-     *
-     * @param delta duration of the fixed update tick, in seconds
-     */
-    @Override
-    public void tickUpdate(float delta) {
+
+    //TODO: make tick system actually have whitelist
+    public void tickUpdate() {
 
         gameUI.tickUpdate();
     }
@@ -124,26 +101,22 @@ public class InterfaceSystem implements GameSysCycle, ContextProvider<InterfaceC
     }
 
     public void act() {
-        stage.act(delta);
+        uiStage.act(delta);
     }
 
     public void draw() {
-        stage.draw();
+        uiStage.draw();
     }
 
     @Override
     public void resize(int width, int height) {
-        stage.getViewport().update(width, height, true);
+        uiStage.getViewport().update(width, height, true);
     }
 
     @Override
     public void dispose() {
-        stage.dispose();
+        uiStage.dispose();
         skin.dispose();
-    }
-
-    public Stage getStage() {
-        return stage;
     }
 
     @Override
@@ -160,15 +133,6 @@ public class InterfaceSystem implements GameSysCycle, ContextProvider<InterfaceC
     @Override
     public boolean updateWhenPaused() {
         return true;
-    }
-
-    @Override
-    public InterfaceContext getContext() {
-        return interfaceContext;
-    }
-
-    public UiInputGate getUiInputGate() {
-        return this.uiInputGate;
     }
 
     public AssetType getSelectedType() {

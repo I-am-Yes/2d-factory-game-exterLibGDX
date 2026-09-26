@@ -1,6 +1,7 @@
 package core.player.mechanic;
 
 import com.badlogic.gdx.math.MathUtils;
+import core.app.cores.GameTime;
 import core.helper.RenderUtils;
 import core.machine.state.Direction;
 import core.player.Player;
@@ -56,11 +57,11 @@ public class GhostOverlay {
         this.animate.set(player.getPos());
     }
 
-    public void update(float delta) {
+    public void update() {
         updateSelectedType();
 
         if (type != null) {
-            updateGhostRotation(delta);
+            updateGhostRotation();
         } else {
             rotationInitialized = false;
         }
@@ -167,7 +168,7 @@ public class GhostOverlay {
         return PlayerAction.getPlacementDirection();
     }
 
-    private void updateGhostRotation(float delta) {
+    private void updateGhostRotation() {
         float targetRotation = RenderUtils.getRotationDegree(
             getDirection()
         );
@@ -179,7 +180,7 @@ public class GhostOverlay {
         }
 
         float interpolation =
-            1f - (float)Math.exp(-ROTATION_SPEED * delta);
+            1f - (float)Math.exp(-ROTATION_SPEED * GameTime.delta());
 
         animateRotation =
             MathUtils.lerpAngleDeg(animateRotation, targetRotation, interpolation);

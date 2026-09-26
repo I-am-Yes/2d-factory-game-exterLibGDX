@@ -3,8 +3,8 @@ package core.app.cores;
 import com.badlogic.gdx.ApplicationListener;
 
 public interface AppListener extends ApplicationListener {
-    void init();
-    void update();
+    default void init() {}
+    default void update() {}
 
     @Override
     default void create() {

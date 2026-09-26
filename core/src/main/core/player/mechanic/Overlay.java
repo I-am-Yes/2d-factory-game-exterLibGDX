@@ -70,9 +70,7 @@ public class Overlay {
 
     }
 
-    public void update(float delta) {
-        this.delta = delta;
-
+    public void update() {
         hoverTile.set(
             PlayerSystem.getHoverTileThresholdX(),
             PlayerSystem.getHoverTileThresholdY()

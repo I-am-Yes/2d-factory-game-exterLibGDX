@@ -33,7 +33,6 @@ public class GameUI {
     private final Skin skin;
     private final UiHelper uiHelper;
     private final InputHandler input;
-    private final Supplier<CameraController> cameraControllerProvider;
 
     private final Label.LabelStyle textStyle1;
 
@@ -89,7 +88,7 @@ public class GameUI {
     }
     private DebugInfoModes currentMode = DebugInfoModes.SIMPLE;
 
-    public GameUI(World world, Window window, Viewport viewport, Stage stage, Skin skin, UiHelper uiHelper, InputHandler input, Supplier<CameraController> cameraControllerProvider) {
+    public GameUI(World world, Window window, Viewport viewport, Stage stage, Skin skin, UiHelper uiHelper, InputHandler input) {
         this.world = world;
         this.window = window;
         this.viewport = viewport;
@@ -97,7 +96,6 @@ public class GameUI {
         this.skin = skin;
         this.uiHelper = uiHelper;
         this.input = input;
-        this.cameraControllerProvider = cameraControllerProvider;
 
         textStyle1 = Style.getTextStyle(Style.textStyle.TEXT_STYLE_1);
 
@@ -142,7 +140,7 @@ public class GameUI {
         setDebugInfoMode(currentMode);
     }
 
-    public void update(float deltaTime) {
+    public void update() {
 
         updateWorldInfoLabel();
 
@@ -322,17 +320,15 @@ public class GameUI {
     }
 
     private void updateCameraLabel() {
-        CameraController cameraController = cameraControllerProvider.get();
-
-        if (shouldUpdate(viewModeLabel)) {
-            viewModeLabel.setText("View Mode: " + cameraController.getCurrentViewMode());
-        }
-        if (shouldUpdate(worldSizeLabel)) {
-            cameraZoomLabel.setText("Camera Zoom: " + cameraController.getZoomValue());
-        }
-        if (shouldUpdate(cameraQualityLabel)) {
-            cameraQualityLabel.setText("Camera Quality: " + world.getCurrentRenderDetail());
-        }
+//        if (shouldUpdate(viewModeLabel)) {
+//            viewModeLabel.setText("View Mode: " + cameraController.getCurrentViewMode());
+//        }
+//        if (shouldUpdate(worldSizeLabel)) {
+//            cameraZoomLabel.setText("Camera Zoom: " + cameraController.getZoomValue());
+//        }
+//        if (shouldUpdate(cameraQualityLabel)) {
+//            cameraQualityLabel.setText("Camera Quality: " + world.getCurrentRenderDetail());
+//        }
     }
 
     private String formatMemoryMB(long megabytes) {

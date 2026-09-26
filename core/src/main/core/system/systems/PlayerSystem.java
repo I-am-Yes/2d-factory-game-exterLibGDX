@@ -5,73 +5,46 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.utils.viewport.Viewport;
-import core.assets.AssetsHandler;
-import core.InputHandler;
-import core.UiInputGate;
-import core.Window;
-import core.system.ContextProvider;
+import core.app.cores.AppListener;
 import core.system.context.PlayerContext;
 import core.player.*;
-import core.app.GameContext;
 import core.player.mechanic.GhostOverlay;
 import core.player.mechanic.Overlay;
 import core.player.mechanic.OverlayHelper;
 import core.player.mechanic.PlayerController;
 import core.render.RenderLayer;
 import core.app.cores.GameSysCycle;
-import core.world.World;
 
-public class PlayerSystem implements GameSysCycle, ContextProvider<PlayerContext> {
+import static core.app.Vars.*;
 
-    private GameContext context;
-    private World world;
-    private Window window;
-    private Viewport viewport;
-    private InputHandler input;
-    private AssetsHandler assets;
-    private Player player;
+public class PlayerSystem implements AppListener, GameSysCycle {
+
     private PlayerAction action;
     private PlayerController controller;
     private Overlay overlay;
     private GhostOverlay ghostOverlay;
-    private ShapeRenderer shapeRenderer;
-    private UiInputGate uiInputGate;
-
-    private PlayerContext playerContext;
 
     public static final float HOVER_THRESHOLD = 0.15f;
     private final Vector3 mouseWorld = new Vector3();
     private static final Vector2 hoverTileThreshold = new Vector2();
     private boolean hoverTargetInitialized;
 
-    private float delta;
-
-    public PlayerSystem(GameContext context) {
-        this.context = context;
-        this.window = context.window;
-        this.world = context.world;
-        this.assets = context.assets;
-        this.viewport = context.viewport;
-        this.input = context.input;
-
-        this.uiInputGate = context.getSystem(InterfaceSystem.class).getUiInputGate();
-
-        this.shapeRenderer = context.shapeRenderer;
+    public PlayerSystem() {
 
         this.controller = new PlayerController(
             input,
             window
         );
 
-        this.player = new Player(world, controller);
+        player = new Player(world, controller);
+
         this.action = new PlayerAction(
             world,
             viewport,
             player,
             input,
             uiInputGate,
-            shapeRenderer,
+            shape,
             assets
         );
 
@@ -92,30 +65,46 @@ public class PlayerSystem implements GameSysCycle, ContextProvider<PlayerContext
             action.getBuildGhostLine()
         );
 
-
-        this.playerContext = new PlayerContext(
-            player,
-            action,
-            controller,
-            overlay,
-            ghostOverlay,
-            shapeRenderer
-        );
     }
 
     @Override
-    public void update(float delta) {
+    public void update() {
         updateHoverThreshold();
 
-        player.update(delta);
-        action.update(delta);
-        overlay.update(delta);
-        ghostOverlay.update(delta);
+        player.update();
+        action.update();
+        overlay.update();
+        ghostOverlay.update();
+    }
+
+    @Override
+    public void init() {
+        AppListener.super.init();
+    }
+
+    @Override
+    public void create() {
+        AppListener.super.create();
     }
 
     @Override
     public void render() {
         overlay.render();
+    }
+
+    @Override
+    public void resize(int width, int height) {
+        AppListener.super.resize(width, height);
+    }
+
+    @Override
+    public void pause() {
+        AppListener.super.pause();
+    }
+
+    @Override
+    public void resume() {
+        AppListener.super.resume();
     }
 
     @Override
@@ -142,8 +131,8 @@ public class PlayerSystem implements GameSysCycle, ContextProvider<PlayerContext
     }
 
     public void updateHoverThreshold() {
-        float tileSize = context.world.getTileSize();
-        OverlayHelper.updateMouseWorld(context.viewport, mouseWorld);
+        float tileSize = world.getTileSize();
+        OverlayHelper.updateMouseWorld(viewport, mouseWorld);
         if (!hoverTargetInitialized) {
             hoverTileThreshold.set(
                 MathUtils.floor(mouseWorld.x / tileSize),
@@ -156,14 +145,6 @@ public class PlayerSystem implements GameSysCycle, ContextProvider<PlayerContext
             tileSize,
             hoverTileThreshold
         );
-    }
-
-    public Player getPlayer() {
-        return this.player;
-    }
-
-    public PlayerContext getPlayerContext() {
-        return playerContext;
     }
 
     public static int getHoverTileThresholdX() {
@@ -183,9 +164,5 @@ public class PlayerSystem implements GameSysCycle, ContextProvider<PlayerContext
         return RenderLayer.PLAYER_LAYER;
     }
 
-    @Override
-    public PlayerContext getContext() {
-        return playerContext;
-    }
 
 }

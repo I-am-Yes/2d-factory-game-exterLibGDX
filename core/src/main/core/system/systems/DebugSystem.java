@@ -1,40 +1,20 @@
 package core.system.systems;
 
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.utils.viewport.Viewport;
-import core.InputHandler;
-import core.app.GameContext;
-import core.system.ContextProvider;
-import core.system.context.DebugContext;
-import core.system.context.PlayerContext;
+import core.app.cores.AppListener;
 import core.debug.Debug;
-import core.player.Player;
 import core.render.RenderLayer;
 import core.app.cores.GameSysCycle;
-import core.world.World;
 import data.debug.DebugConfig;
 
-public class DebugSystem implements GameSysCycle, ContextProvider<DebugContext> {
+import static core.app.Vars.*;
 
-    private GameContext context;
-    private DebugContext debugContext;
-
-    private World world;
-    private Viewport viewport;
-    private Player player;
-    private InputHandler input;
+public class DebugSystem implements AppListener, GameSysCycle {
 
     private Debug debug;
     private ShapeRenderer debugShapeRenderer;
 
-    private float delta;
-
-    public DebugSystem(GameContext context) {
-        this.context = context;
-        this.world = context.world;
-        this.viewport = context.viewport;
-        this.player = context.getContext(PlayerContext.class).player;
-        this.input = context.input;
+    public DebugSystem() {
 
         this.debugShapeRenderer = new ShapeRenderer();
 
@@ -46,22 +26,26 @@ public class DebugSystem implements GameSysCycle, ContextProvider<DebugContext> 
             player,
             debugShapeRenderer
         );
-
-        this.debugContext = new DebugContext(
-            debug,
-            debug.getCameraDebugger(),
-            debug.getEventsDebugger(),
-            debug.getMapGenDebugger(),
-            debug.getPerformanceDebugger(),
-            debug.getRenderDebugger()
-        );
+//
+//        this.debugContext = new DebugContext(
+//            debug,
+//            debug.getCameraDebugger(),
+//            debug.getEventsDebugger(),
+//            debug.getMapGenDebugger(),
+//            debug.getPerformanceDebugger(),
+//            debug.getRenderDebugger()
+//        );
     }
 
     @Override
-    public void update(float delta) {
-        this.delta = delta;
+    public void init() {
+        AppListener.super.init();
+    }
 
-        debug.update(delta);
+    @Override
+    public void update() {
+
+        debug.update();
     }
 
     @Override
@@ -72,12 +56,13 @@ public class DebugSystem implements GameSysCycle, ContextProvider<DebugContext> 
     }
 
     @Override
-    public void dispose() {
-        debugShapeRenderer.dispose();
+    public void resize(int width, int height) {
+        AppListener.super.resize(width, height);
     }
 
-    public Debug getDebug() {
-        return debug;
+    @Override
+    public void dispose() {
+        debugShapeRenderer.dispose();
     }
 
     @Override
@@ -85,8 +70,4 @@ public class DebugSystem implements GameSysCycle, ContextProvider<DebugContext> 
         return RenderLayer.DEBUG_LAYER;
     }
 
-    @Override
-    public DebugContext getContext() {
-        return debugContext;
-    }
 }

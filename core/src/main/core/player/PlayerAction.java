@@ -61,8 +61,7 @@ public class PlayerAction {
         this.playerInteraction = new PlayerInteraction(world, player, viewport, this, input);
     }
 
-    public void update(float delta) {
-        this.delta = delta;
+    public void update() {
 
         if (uiInputGate.isPointerOverGUI()) {
             placeMode = PlaceMode.none;

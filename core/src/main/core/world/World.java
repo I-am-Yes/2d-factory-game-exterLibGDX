@@ -143,10 +143,7 @@ public class World {
         }
     }
 
-    public static World generateWorld(
-        MapConfig mapConfig,
-        AssetsHandler assets
-    ) {
+    public static World generateWorld(MapConfig mapConfig, AssetsHandler assets) {
         return new World(mapConfig, assets);
     }
 
@@ -250,9 +247,9 @@ public class World {
 //        mapRenderer.render();
     }
 
-    public void drawCached(OrthographicCamera camera, Supplier<CameraController> cameraControllerSupplier) {
-        CameraViewMode viewMode = cameraControllerSupplier.get().getCurrentViewMode();
-        ChunkRenderDetail renderDetail = cameraControllerSupplier.get().getMapRenderDetail();
+    public void drawCached(OrthographicCamera camera, CameraController cameraController) {
+        CameraViewMode viewMode = cameraController.getCurrentViewMode();
+        ChunkRenderDetail renderDetail = cameraController.getMapRenderDetail();
         chunkRenderer.drawCached(
             camera, chunkManager, viewMode, renderDetail, getTileSize()
         );
