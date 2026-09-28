@@ -6,6 +6,7 @@ import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import core.Window;
 import core.app.cores.AppListener;
 import core.app.cores.GameCore;
+import core.app.cores.Update;
 import core.app.extras.test.GameTest;
 import core.assets.AssetsHandler;
 import core.InputHandler;
@@ -55,6 +56,7 @@ public class GameStart extends GameCore {
         add(new FactorySystem());
         add(new DebugSystem());
 
+        add(new Update());
 
         //multiplexer bla bla...
         InputDesktop.init();

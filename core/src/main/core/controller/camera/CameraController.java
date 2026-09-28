@@ -6,7 +6,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.Input;
 import core.InputHandler;
 
-import core.app.cores.GameTime;
+import core.app.cores.Time;
 import core.config.camera.CameraSettings;
 import core.world.chunk.ChunkRenderDetail;
 
@@ -60,7 +60,7 @@ public class CameraController {
     }
 
     public void update() {
-        this.delta = GameTime.delta();
+        this.delta = Time.delta();
 
         followX = player.getSprite().getX() + player.getSprite().getWidth() / 2f;
         followY = player.getSprite().getY() + player.getSprite().getHeight() / 2f;

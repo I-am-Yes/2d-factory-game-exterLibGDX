@@ -10,9 +10,8 @@ import core.InputHandler;
 import core.Window;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
-import core.app.cores.GameTime;
-import core.app.extras.GameTimeEx;
-import core.controller.camera.CameraController;
+import core.app.cores.Time;
+import core.app.extras.TimeEx;
 import core.player.PlayerAction;
 import core.system.systems.InterfaceSystem;
 import core.system.systems.PlayerSystem;
@@ -22,7 +21,6 @@ import ui.Style;
 import ui.UiHelper;
 import java.util.List;
 import java.util.Locale;
-import java.util.function.Supplier;
 
 
 public class GameUI {
@@ -286,7 +284,7 @@ public class GameUI {
 
     private void updateUPSLabel() {
         if (shouldUpdate(UPSLabel)) {
-            UPSLabel.setText("UPS: " + GameTimeEx.ups() + "/" + GameTime.getTargetUPS());
+            UPSLabel.setText("UPS: " + TimeEx.ups() + "/" + Time.getTargetUPS());
         }
     }
 
@@ -301,11 +299,11 @@ public class GameUI {
 
     private void updateTimerLabel() {
         if (shouldUpdate(gameSpeedlabel))
-            gameSpeedlabel.setText("Game Speed: " + GameTime.getGameSpeed() + "x");
+            gameSpeedlabel.setText("Game Speed: " + Time.getGameSpeed() + "x");
         if (shouldUpdate(gameTimelabel))
-            gameTimelabel.setText("Game Time: " + formatTime(GameTimeEx.totalGameTime()));
+            gameTimelabel.setText("Game Time: " + formatTime(TimeEx.totalGameTime()));
         if (shouldUpdate(realTimelabel))
-            realTimelabel.setText("Real Time: " + formatTime(GameTimeEx.totalRealTime()));
+            realTimelabel.setText("Real Time: " + formatTime(TimeEx.totalRealTime()));
 
     }
 

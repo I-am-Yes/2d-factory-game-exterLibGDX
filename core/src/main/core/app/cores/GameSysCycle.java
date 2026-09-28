@@ -6,7 +6,7 @@ import core.render.RenderLayer;
 
 public interface GameSysCycle {
 
-    default void update(float delta) {}
+    default void update() {}
 
     default void tickUpdate(float tickDelta) {}
 

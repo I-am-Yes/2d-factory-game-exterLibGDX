@@ -2,9 +2,9 @@ package core.app.cores;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.MathUtils;
-import core.app.extras.GameTimeEx;
+import core.app.extras.TimeEx;
 
-public class GameTime {
+public class Time {
     private static float gameSpeed = 1.0f; //default x1 speed
     private static boolean paused;
 
@@ -30,7 +30,7 @@ public class GameTime {
             ticks = accelerateTick();
         }
 
-        GameTimeEx.accumulate();
+        TimeEx.accumulate();
         return ticks;
     }
 
@@ -43,7 +43,7 @@ public class GameTime {
             tick++;
         }
 
-        GameTimeEx.accumulateTick(tick, delta());
+        TimeEx.accumulateTick(tick, delta());
         return tick;
     }
 
@@ -52,23 +52,23 @@ public class GameTime {
     }
 
     public static void setGameSpeed(float gameSpeed) {
-        GameTime.gameSpeed = MathUtils.clamp(gameSpeed, 0f, GameTime.maxGameSpeed);
+        Time.gameSpeed = MathUtils.clamp(gameSpeed, 0f, Time.maxGameSpeed);
     }
 
     public static float getGameSpeed() {
-        return GameTime.gameSpeed;
+        return Time.gameSpeed;
     }
 
     public static void pause() {
-        GameTime.paused = true;
+        Time.paused = true;
     }
 
     public static void resume() {
-        GameTime.paused = false;
+        Time.paused = false;
     }
 
     public static boolean isPaused() {
-        return GameTime.paused;
+        return Time.paused;
     }
 
     private static float GdxDelta() {
@@ -76,11 +76,11 @@ public class GameTime {
     }
 
     private static void updateDelta() {
-        GameTime.realDelta = Math.min(GdxDelta(), GameTime.maxDeltaUpdate);
+        Time.realDelta = Math.min(GdxDelta(), Time.maxDeltaUpdate);
     }
 
     private static void updateGameDelta(float delta, float gameSpeed) {
-        GameTime.gameDelta = delta * gameSpeed;
+        Time.gameDelta = delta * gameSpeed;
     }
 
     public static float delta() {

@@ -31,8 +31,16 @@ public final class Artist extends GameCore {
         );
     }
 
+    public static void drawBatch(float drawX, float drawY, SpriteBatch batch) {
+        drawBatch(batch);
+    }
+
     public static void drawBatch(SpriteBatch batch) {
-        // Implementation for drawing with SpriteBatch
+        batch.begin();
+
+        batch.draw();
+
+        batch.end();
     }
 
 

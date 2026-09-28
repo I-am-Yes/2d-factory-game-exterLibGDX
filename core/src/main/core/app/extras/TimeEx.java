@@ -1,9 +1,9 @@
 package core.app.extras;
 
 import com.badlogic.gdx.math.MathUtils;
-import core.app.cores.GameTime;
+import core.app.cores.Time;
 
-public class GameTimeEx extends GameTime {
+public class TimeEx extends Time {
 
     private static float totalRealTime;
     private static float totalGameTime;

@@ -3,19 +3,19 @@ package core.app;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.ScreenUtils;
-import core.app.cores.GameTime;
+import core.app.cores.Time;
 import core.controller.camera.ScreenshotCapture;
 
 import static core.app.Vars.*;
 
 public class GameLoop {
     public void update() {
-        int ticks = GameTime.accelerate();
+        int ticks = Time.accelerate();
 
-        systems.update();
+//        systems.update();
 
         for (int i = 0; i < ticks; i++) {
-            systems.tickUpdate();
+//            systems.tickUpdate();
         }
     }
 
@@ -47,7 +47,7 @@ public class GameLoop {
         batch.begin();
 
         //general spriteBatch for all world contents
-        systems.drawBatch(batch);
+//        systems.drawBatch(batch);
 
         batch.end();
         //END batch
@@ -58,7 +58,7 @@ public class GameLoop {
         shape.begin(ShapeRenderer.ShapeType.Filled);
         //Note: add another ShapeType if needed.
 
-        systems.drawShapeRenderer(shape);
+        //        systems.drawShapeRenderer(shape);
 
         shape.end();
         //END shapeRender
@@ -66,7 +66,7 @@ public class GameLoop {
 
 
         //some systems such as scene2D, so this should be at very end.
-        systems.render();
+//        systems.render();
 
         ScreenshotCapture.captureIfRequested();
     }
@@ -74,21 +74,21 @@ public class GameLoop {
     public void resize(int width, int height) {
         viewport.update(width, height, false);
 
-        systems.resize(width, height);
+//        systems.resize(width, height);
 
     }
 
     public static void pause() {
-        GameTime.pause();
+        Time.pause();
     }
 
     public static void resume() {
-        GameTime.resume();
+        Time.resume();
     }
 
     public void dispose() {
 
-        systems.dispose();
+//        systems.dispose();
         world.dispose();
 
         assets.dispose();

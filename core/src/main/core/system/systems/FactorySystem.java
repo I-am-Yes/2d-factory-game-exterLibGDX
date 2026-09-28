@@ -3,7 +3,7 @@ package core.system.systems;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.LongMap;
 import core.app.cores.AppListener;
-import core.app.cores.GameTime;
+import core.app.cores.Time;
 import core.blocks.Blocks;
 import core.event.Events;
 import core.event.events.GameEvent;
@@ -20,7 +20,7 @@ import data.map.asset.BuildingType;
 
 import static core.app.Vars.*;
 
-public class FactorySystem implements AppListener, GameSysCycle {
+public class FactorySystem implements AppListener {
 
     private final ItemRender itemRender;
     private final MachineGroup machineGroup;
@@ -79,14 +79,14 @@ public class FactorySystem implements AppListener, GameSysCycle {
         //TODO: later migrate this to a loader system
         Blocks.load();
 
-        itemRender = new ItemRender(world);
+        itemRender = new ItemRender();
         ItemManager itemManager = new ItemManager(itemRender);
 
     }
 
     @Override
     public void update() {
-        float delta = GameTime.delta();
+        float delta = Time.delta();
 
         TimeUtils.measureAndPrint(
             delta,
@@ -102,19 +102,17 @@ public class FactorySystem implements AppListener, GameSysCycle {
     }
 
 
-    @Override
     public void tickUpdate(float tickDelta) {
         machineGroup.tickUpdate(tickDelta);
 
         machineGroup.removeInactive();
     }
 
-    @Override
     public void drawBatch(SpriteBatch batch) {
 
-        machineGroup.drawBatch(batch);
+        machineGroup.drawBatch();
 
-        renderManager.drawBatch(batch, itemRender, assets);
+        renderManager.drawBatch(itemRender);
     }
 
     public static long tileKey(int x, int y) {
@@ -143,9 +141,9 @@ public class FactorySystem implements AppListener, GameSysCycle {
         return buildings.size;
     }
 
-    @Override
-    public RenderLayer renderLayer() {
-        return RenderLayer.OBJECT_LAYER_2;
-    }
+//    @Override
+//    public RenderLayer renderLayer() {
+//        return RenderLayer.OBJECT_LAYER_2;
+//    }
 
 }

@@ -1,39 +1,21 @@
 package core.app.cores;
 
+import core.event.Events;
+
 public class Update implements AppListener {
 
     @Override
     public void update() {
-        AppListener.super.update();
+        Events.fire(Events.Trigger.update);
+
+        int ticks = Time.accelerate();
+        for (int i = 0; i < ticks; i++) {
+            Events.fire(Events.Trigger.beforeUpdate);
+
+            ticks++;
+
+            Events.fire(Events.Trigger.afterUpdate);
+        }
     }
 
-    @Override
-    public void create() {
-        AppListener.super.create();
-    }
-
-    @Override
-    public void render() {
-        AppListener.super.render();
-    }
-
-    @Override
-    public void resize(int width, int height) {
-        AppListener.super.resize(width, height);
-    }
-
-    @Override
-    public void pause() {
-        AppListener.super.pause();
-    }
-
-    @Override
-    public void resume() {
-        AppListener.super.resume();
-    }
-
-    @Override
-    public void dispose() {
-        AppListener.super.dispose();
-    }
 }

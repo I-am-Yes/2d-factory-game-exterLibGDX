@@ -8,7 +8,14 @@ import java.util.function.Consumer;
 
 public class Events {
 
+    public enum Trigger {
+        update,
+        beforeUpdate,
+        afterUpdate
+    }
+
     private static final Map<Object, List<Consumer<?>>> listeners = new HashMap<>();
+
     private static final List<Consumer<Object>> globalListeners = new ArrayList<>();
 
     private Events() {}
@@ -77,5 +84,4 @@ public class Events {
     private static void invoke(Consumer<?> consumer) {
         ((Consumer<Object>) consumer).accept(null);
     }
-
 }

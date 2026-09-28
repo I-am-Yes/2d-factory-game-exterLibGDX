@@ -1,6 +1,5 @@
 package core.machine;
 
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Array;
 import core.machine.category.Batching;
 import core.machine.category.Delting;
@@ -9,6 +8,8 @@ import core.machine.state.ItemType;
 import core.machine.transport.OutputEmitter;
 import core.machine.transport.TransferBatch;
 import core.machine.transport.TransferResolver;
+
+import static core.app.Vars.*;
 
 public final class MachineGroup {
 
@@ -45,6 +46,7 @@ public final class MachineGroup {
         }
     }
 
+    //TODO: change this to global static variables
     @FunctionalInterface
     public interface MachineLookup {
         Machine get(int tileX, int tileY);
@@ -80,7 +82,7 @@ public final class MachineGroup {
         runTransfers(updateCount);
     }
 
-    public void drawBatch(SpriteBatch batch) {
+    public void drawBatch() {
         for (Machine machine : activeMachines) {
 
             if (machine instanceof Batching batching) {

@@ -1,37 +1,31 @@
 package core.machine.render;
 
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import core.assets.AssetsHandler;
 import core.machine.state.ItemType;
 import core.machine.utils.Item;
-import core.world.World;
 
+import static core.app.Vars.*;
 
 public class ItemRender {
-    private final World world;
     private final float tileSize;
+    private final float itemSize;
 
     public static final float ITEM_SIZE = 0.8f;
 
-    public ItemRender(World world) {
-        this.world = world;
-
+    public ItemRender() {
         this.tileSize = world.getTileSize();
+        this.itemSize = tileSize * ITEM_SIZE;
     }
 
-    public void drawBatch(SpriteBatch batch, Item item, AssetsHandler assets) {
+    public void drawBatch(Item item) {
         if (item == null) return;
-        drawBatch(batch, item.type, item.visualX, item.visualY, assets);
+        drawBatch(item.type, item.visualX, item.visualY);
     }
 
-    public void drawBatch(SpriteBatch batch, ItemType type,
-                          float visualX, float visualY, AssetsHandler assets
-    ) {
+    public void drawBatch(ItemType type, float visualX, float visualY) {
         if (type == null) return;
 
         TextureRegion region = assets.getRegion(type);
-        float itemSize = tileSize * ITEM_SIZE;
         float drawX = visualX * tileSize;
         float drawY = visualY * tileSize;
         batch.draw(region,

@@ -21,25 +21,17 @@ public class GameLauncher extends GameCore {
     }
 
     @Override
-    public void render() {
+    public void update() {
         if (!loaded) {
             if (assets.updateLoading()) {
                 start.finishGameStart();
-                gameLoop = new GameLoop();
-                gameLoop.resize(
-                    Gdx.graphics.getWidth(),
-                    Gdx.graphics.getHeight()
-                );
 
                 loaded = true;
             }
             return;
         }
 
-        update();
-
-        gameLoop.update();
-        gameLoop.render();
+        super.update();
     }
 
     @Override

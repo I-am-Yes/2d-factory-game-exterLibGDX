@@ -39,9 +39,10 @@ public class RenderManager {
         }
     }
 
-    public void drawBatch(SpriteBatch batch, ItemRender itemRender, AssetsHandler assets) {
+    public void drawBatch(ItemRender itemRender) {
         for (IntakeVisual visual : intakes) {
-            itemRender.drawBatch(batch, visual.type, visual.visualX, visual.visualY, assets);
+            itemRender.drawBatch(visual.type, visual.visualX, visual.visualY);
+
         }
     }
 

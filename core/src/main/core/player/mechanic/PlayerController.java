@@ -5,7 +5,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.MathUtils;
 import core.InputHandler;
 import core.Window;
-import core.app.cores.GameTime;
+import core.app.cores.Time;
 import core.event.events.PlayerEvent.*;
 import core.player.Player;
 
@@ -31,7 +31,7 @@ public class PlayerController {
     public void moveCharacter(Player player, Sprite sprite, float speed, float worldW, float worldH) {
         float inputX = 0f;
         float inputY = 0f;
-        float delta = GameTime.delta();
+        float delta = Time.delta();
 
         boolean wasMoving = isPlayerMoving();
 

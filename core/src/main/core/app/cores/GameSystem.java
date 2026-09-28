@@ -4,7 +4,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ObjectMap;
-import core.system.ContextProvider;
 import core.render.RenderLayer;
 
 public final class GameSystem {
@@ -68,15 +67,15 @@ public final class GameSystem {
 
             float delta;
             if (system.updateDomain() == UpdateDomain.REAL_TIME) {
-                delta = GameTime.delta();
+                delta = Time.delta();
             } else if (system.updateDomain() == UpdateDomain.GAME_DEFAULT) {
-                delta = GameTime.gameDelta();
+                delta = Time.gameDelta();
             } else {
                 throw new IllegalStateException(
                     "Unknown update domain: " + system.updateDomain()
                 );
             }
-            if (!GameTime.isPaused() || system.updateWhenPaused()) {
+            if (!Time.isPaused() || system.updateWhenPaused()) {
                 system.update(delta);
             }
         }
@@ -84,7 +83,7 @@ public final class GameSystem {
 
     public void tickUpdate() {
         for (int i = 0; i < systems.size; i++) {
-            systems.get(i).tickUpdate(GameTime.UPDATE_INTERVAL);
+            systems.get(i).tickUpdate(Time.UPDATE_INTERVAL);
         }
     }
 

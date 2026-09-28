@@ -1,7 +1,7 @@
 package core.player.mechanic;
 
 import com.badlogic.gdx.math.MathUtils;
-import core.app.cores.GameTime;
+import core.app.cores.Time;
 import core.helper.RenderUtils;
 import core.machine.state.Direction;
 import core.player.Player;
@@ -180,7 +180,7 @@ public class GhostOverlay {
         }
 
         float interpolation =
-            1f - (float)Math.exp(-ROTATION_SPEED * GameTime.delta());
+            1f - (float)Math.exp(-ROTATION_SPEED * Time.delta());
 
         animateRotation =
             MathUtils.lerpAngleDeg(animateRotation, targetRotation, interpolation);
