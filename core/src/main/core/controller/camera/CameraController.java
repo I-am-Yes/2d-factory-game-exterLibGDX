@@ -7,10 +7,11 @@ import com.badlogic.gdx.Input;
 import core.InputHandler;
 
 import core.app.cores.Time;
+import core.app.vars.Cores;
 import core.config.camera.CameraSettings;
 import core.world.chunk.ChunkRenderDetail;
 
-import static core.app.Vars.*;
+import static core.app.vars.Vars.*;
 
 public class CameraController {
     private final CameraSettings settings;
@@ -54,7 +55,7 @@ public class CameraController {
     public CameraController(CameraSettings settings) {
         this.settings = settings;
 
-        camera.zoom = settings.defaultZoom;
+        Cores.camera.zoom = settings.defaultZoom;
         targetZoom = settings.defaultZoom;
         ZOOM_STEP = settings.defaultZoomStep;
     }
@@ -66,11 +67,11 @@ public class CameraController {
         followY = player.getSprite().getY() + player.getSprite().getHeight() / 2f;
 
         //TODO: later migrate to EntrySystem
-        if (!input.isMousePressed(Input.Buttons.MIDDLE) && player.isPlayerMoving()) {
+        if (!Cores.input.isMousePressed(Input.Buttons.MIDDLE) && player.isPlayerMoving()) {
             cameraFollowPlayer = true;
         }
 
-        if (input.isKeyJustPressed(Input.Keys.M)
+        if (Cores.input.isKeyJustPressed(Input.Keys.M)
             && viewMode != CameraViewMode.FABULOUS
             && !panning
         ) {
@@ -95,27 +96,27 @@ public class CameraController {
 
     public void updateCamera() {
 
-        float scroll = input.consumeScrollY();
-        if (scroll != 0f && !input.isMousePressed(Input.Buttons.MIDDLE)) {
+        float scroll = Cores.input.consumeScrollY();
+        if (scroll != 0f && !Cores.input.isMousePressed(Input.Buttons.MIDDLE)) {
             requestZoom(scroll, followX, followY);
         }
 
 
-        handleMiddleMousePan(input);
+        handleMiddleMousePan(Cores.input);
         animateZoom(delta, followX, followY);
-        moveCamera(input, delta);
-        zoomCamera(input, delta, followX, followY);
+        moveCamera(Cores.input, delta);
+        zoomCamera(Cores.input, delta, followX, followY);
 
         if (cameraFollowPlayer) {
             float smoothness = settings.followSmoothness;
             float t = 1f - (float) Math.pow(1f - smoothness, delta * 60f);
 
-            camera.position.x = MathUtils.lerp(camera.position.x, followX, t);
-            camera.position.y = MathUtils.lerp(camera.position.y, followY, t);
+            Cores.camera.position.x = MathUtils.lerp(Cores.camera.position.x, followX, t);
+            Cores.camera.position.y = MathUtils.lerp(Cores.camera.position.y, followY, t);
         }
 
 //        clampToWorld(world.getWorldWidth(), world.getWorldHeight());
-        camera.update();
+        Cores.camera.update();
     }
 
     //TODO: change this to global input handling in EntrySystem.java
@@ -154,16 +155,16 @@ public class CameraController {
             if (zoomMode == ZoomMode.CURSOR_ZOOM) {
                 captureZoomFocus(followX, followY);
             } else {
-                zoomFocusWorldX = camera.position.x;
-                zoomFocusWorldY = camera.position.y;
+                zoomFocusWorldX = Cores.camera.position.x;
+                zoomFocusWorldY = Cores.camera.position.y;
             }
             zooming = true;
         }
     }
 
     public void centerOn(float worldX, float worldY) {
-        camera.position.set(worldX, worldY, 0f);
-        camera.update();
+        Cores.camera.position.set(worldX, worldY, 0f);
+        Cores.camera.update();
     }
 
     private void updateViewMode() {
@@ -172,12 +173,12 @@ public class CameraController {
         float enterThreshold = settings.mapViewEnterThreshold;
         float exitThreshold = enterThreshold * 0.5f;
 
-        if (viewMode == CameraViewMode.GAMEPLAY && camera.zoom >= enterThreshold) {
+        if (viewMode == CameraViewMode.GAMEPLAY && Cores.camera.zoom >= enterThreshold) {
             viewMode = CameraViewMode.MAP;
 
         } else if (viewMode == CameraViewMode.MAP
             && targetZoom <= exitThreshold
-            && camera.zoom <= exitThreshold) {
+            && Cores.camera.zoom <= exitThreshold) {
 
             viewMode = CameraViewMode.GAMEPLAY;
         }
@@ -213,7 +214,7 @@ public class CameraController {
     private void captureZoomFocus(float followX, float followY) {
         if (zoomMode == ZoomMode.CURSOR_ZOOM) {
             tmp.set(Gdx.input.getX(), Gdx.input.getY(), 0f);
-            viewport.unproject(tmp);
+            Cores.viewport.unproject(tmp);
             zoomFocusWorldX = tmp.x;
             zoomFocusWorldY = tmp.y;
             return;
@@ -223,26 +224,26 @@ public class CameraController {
             zoomFocusWorldX = followX;
             zoomFocusWorldY = followY;
         } else {
-            zoomFocusWorldX = camera.position.x;
-            zoomFocusWorldY = camera.position.y;
+            zoomFocusWorldX = Cores.camera.position.x;
+            zoomFocusWorldY = Cores.camera.position.y;
         }
     }
 
     private void animateZoom(float delta, float followX, float followY) {
         //                     higher value for further away the exact zoom pos before snap to the point
-        if (MathUtils.isEqual(camera.zoom, targetZoom, 0.000001f)) {
-            camera.zoom = targetZoom;
+        if (MathUtils.isEqual(Cores.camera.zoom, targetZoom, 0.000001f)) {
+            Cores.camera.zoom = targetZoom;
             zooming = false;
             return;
         }
 
         float smoothness = settings.zoomSmoothness;
         float zoomT = 1f - (float) Math.pow(1f - smoothness, delta * 60f);
-        float newZoom = MathUtils.lerp(camera.zoom, targetZoom, zoomT);
+        float newZoom = MathUtils.lerp(Cores.camera.zoom, targetZoom, zoomT);
 
         if (panning || !zooming) {
-            camera.zoom = newZoom;
-            camera.update();
+            Cores.camera.zoom = newZoom;
+            Cores.camera.update();
             return;
         }
 
@@ -254,7 +255,7 @@ public class CameraController {
         boolean hasInput = inputX != 0f || inputY != 0f;
         float rate = hasInput ? PAN_ACCEL : PAN_FRICTION;
 
-        float speed = settings.panSpeed * camera.zoom;  // screen-consistent
+        float speed = settings.panSpeed * Cores.camera.zoom;  // screen-consistent
 
         panVx = MathUtils.lerp(panVx, inputX * speed, Math.min(1f, rate * delta));
         panVy = MathUtils.lerp(panVy, inputY * speed, Math.min(1f, rate * delta));
@@ -268,48 +269,48 @@ public class CameraController {
         cameraFollowPlayer = false;
         zooming = false;
 
-        camera.position.x += panVx * delta;
-        camera.position.y += panVy * delta;
+        Cores.camera.position.x += panVx * delta;
+        Cores.camera.position.y += panVy * delta;
     }
 
     private void projectZoomFocusToScreen(float followX, float followY) {
         float wx, wy;
 
         if (zoomMode == ZoomMode.CENTER_ZOOM) {
-            wx = cameraFollowPlayer ? followX : camera.position.x;
-            wy = cameraFollowPlayer ? followY : camera.position.y;
+            wx = cameraFollowPlayer ? followX : Cores.camera.position.x;
+            wy = cameraFollowPlayer ? followY : Cores.camera.position.y;
         } else {
             wx = zoomFocusWorldX;
             wy = zoomFocusWorldY;
         }
 
         tmp.set(wx, wy, 0f);
-        viewport.project(tmp);
+        Cores.viewport.project(tmp);
     }
 
     private void zoomAtScreenPoint(float screenX, float screenY, float newZoom) {
         tmp.set(screenX, screenY, 0f);
-        viewport.unproject(tmp);
+        Cores.viewport.unproject(tmp);
 
         float worldX = tmp.x;
         float worldY = tmp.y;
 
-        camera.zoom = MathUtils.clamp(newZoom, MIN_ZOOM, getMapMaxZoom());
-        camera.update();
+        Cores.camera.zoom = MathUtils.clamp(newZoom, MIN_ZOOM, getMapMaxZoom());
+        Cores.camera.update();
 
         tmp.set(screenX, screenY, 0f);
-        viewport.unproject(tmp);
+        Cores.viewport.unproject(tmp);
 
-        camera.position.x += worldX - tmp.x;
-        camera.position.y += worldY - tmp.y;
+        Cores.camera.position.x += worldX - tmp.x;
+        Cores.camera.position.y += worldY - tmp.y;
     }
 
     private void clampToWorld(float worldWidth, float worldHeight) {
-        float halfWidth = camera.viewportWidth * camera.zoom * 0.5f;
-        float halfHeight = camera.viewportHeight * camera.zoom * 0.5f;
+        float halfWidth = Cores.camera.viewportWidth * Cores.camera.zoom * 0.5f;
+        float halfHeight = Cores.camera.viewportHeight * Cores.camera.zoom * 0.5f;
 
-        camera.position.x = MathUtils.clamp(camera.position.x, halfWidth, worldWidth - halfWidth);
-        camera.position.y = MathUtils.clamp(camera.position.y, halfHeight, worldHeight - halfHeight);
+        Cores.camera.position.x = MathUtils.clamp(Cores.camera.position.x, halfWidth, worldWidth - halfWidth);
+        Cores.camera.position.y = MathUtils.clamp(Cores.camera.position.y, halfHeight, worldHeight - halfHeight);
     }
 
     //TODO: change this to global input handling in EntrySystem.java
@@ -331,21 +332,21 @@ public class CameraController {
 
             cameraFollowPlayer = false;
             zooming = false;
-            targetZoom = camera.zoom;
+            targetZoom = Cores.camera.zoom;
             return;
         }
 
         tmp.set(lastPanScreenX, lastPanScreenY, 0f);
-        viewport.unproject(tmp);
+        Cores.viewport.unproject(tmp);
 
         float previousWorldX = tmp.x;
         float previousWorldY = tmp.y;
 
         tmp.set(x, y, 0f);
-        viewport.unproject(tmp);
+        Cores.viewport.unproject(tmp);
 
-        camera.position.x += previousWorldX - tmp.x;
-        camera.position.y += previousWorldY - tmp.y;
+        Cores.camera.position.x += previousWorldX - tmp.x;
+        Cores.camera.position.y += previousWorldY - tmp.y;
 
         lastPanScreenX = x;
         lastPanScreenY = y;
@@ -362,7 +363,7 @@ public class CameraController {
     }
 
     public float getZoomValue() {
-        return camera.zoom;
+        return Cores.camera.zoom;
     }
 
     public ZoomMode getZoomMode() {

@@ -2,14 +2,14 @@ package core.system.systems;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import core.app.cores.AppListener;
-import core.system.context.RenderContext;
+import core.app.vars.Cores;
 import core.entities.plan.PlanManager;
 import core.render.PlanRenderer;
 import core.render.RenderLayer;
 import core.app.cores.GameSysCycle;
 import data.map.asset.AssetType;
 
-import static core.app.Vars.*;
+import static core.app.vars.Vars.*;
 
 public class RenderSystem implements AppListener, GameSysCycle {
 
@@ -20,9 +20,9 @@ public class RenderSystem implements AppListener, GameSysCycle {
         this.planManager = new PlanManager(world);
         this.planRenderer = new PlanRenderer<>(
             world,
-            viewport,
-            batch,
-            assets,
+            Cores.viewport,
+            Cores.batch,
+            Cores.assets,
             planManager
         );
 

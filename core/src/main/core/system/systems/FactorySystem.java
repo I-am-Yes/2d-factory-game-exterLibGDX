@@ -1,6 +1,5 @@
 package core.system.systems;
 
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.LongMap;
 import core.app.cores.AppListener;
 import core.app.cores.Time;
@@ -9,20 +8,14 @@ import core.event.Events;
 import core.event.events.GameEvent;
 import core.machine.*;
 import core.machine.machines.definition.Block;
-import core.machine.render.ItemRender;
 import core.machine.render.RenderManager;
 import core.machine.state.Direction;
 import core.machine.state.ItemType;
-import core.render.RenderLayer;
-import core.app.cores.GameSysCycle;
 import core.utils.TimeUtils;
 import data.map.asset.BuildingType;
 
-import static core.app.Vars.*;
-
 public class FactorySystem implements AppListener {
 
-    private final ItemRender itemRender;
     private final MachineGroup machineGroup;
     private final RenderManager renderManager = new RenderManager();
 
@@ -79,8 +72,14 @@ public class FactorySystem implements AppListener {
         //TODO: later migrate this to a loader system
         Blocks.load();
 
-        itemRender = new ItemRender();
-        ItemManager itemManager = new ItemManager(itemRender);
+
+        Events.run(Events.Trigger.tickUpdate, () ->
+            TimeUtils.measureAndPrint(
+                "TickUpdate: ",
+                Time.UPDATE_INTERVAL, 1f,
+                this::tickUpdate
+            )
+        );
 
     }
 
@@ -88,12 +87,18 @@ public class FactorySystem implements AppListener {
     public void update() {
         float delta = Time.delta();
 
+        TimeUtils.measureAndPrint("BatchUpdate: ",
+            delta, 1f,
+                this::drawBatch
+
+        );
+
         TimeUtils.measureAndPrint(
             delta,
             () -> machineGroup.update(delta)
         );
 
-        renderManager.update(delta);
+        renderManager.update();
     }
 
     @Override
@@ -102,17 +107,16 @@ public class FactorySystem implements AppListener {
     }
 
 
-    public void tickUpdate(float tickDelta) {
-        machineGroup.tickUpdate(tickDelta);
+    public void tickUpdate() {
+            machineGroup.tickUpdate();
 
-        machineGroup.removeInactive();
+            machineGroup.removeInactive();
     }
 
-    public void drawBatch(SpriteBatch batch) {
+    public void drawBatch() {
 
         machineGroup.drawBatch();
 
-        renderManager.drawBatch(itemRender);
     }
 
     public static long tileKey(int x, int y) {
@@ -140,10 +144,5 @@ public class FactorySystem implements AppListener {
     public int getBuildingCount() {
         return buildings.size;
     }
-
-//    @Override
-//    public RenderLayer renderLayer() {
-//        return RenderLayer.OBJECT_LAYER_2;
-//    }
 
 }

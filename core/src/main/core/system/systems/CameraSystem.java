@@ -4,17 +4,13 @@ import core.app.cores.AppListener;
 import core.config.ScriptConfigLoader;
 import core.config.api.CameraScriptApi;
 import core.config.camera.CameraSettings;
-import core.system.context.CameraContext;
-import core.app.GameContext;
-import core.system.ContextProvider;
 import core.controller.camera.CameraController;
-import core.system.context.PlayerContext;
 import core.controller.camera.CursorController;
 import core.app.cores.GameSysCycle;
 
 import java.util.Map;
 
-import static core.app.Vars.*;
+import static core.app.vars.Vars.*;
 
 public class CameraSystem implements AppListener, GameSysCycle {
 

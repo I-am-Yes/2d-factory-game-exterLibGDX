@@ -2,12 +2,13 @@ package core.system.systems;
 
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import core.app.cores.AppListener;
+import core.app.vars.Cores;
 import core.debug.Debug;
 import core.render.RenderLayer;
 import core.app.cores.GameSysCycle;
 import data.debug.DebugConfig;
 
-import static core.app.Vars.*;
+import static core.app.vars.Vars.*;
 
 public class DebugSystem implements AppListener, GameSysCycle {
 
@@ -21,8 +22,8 @@ public class DebugSystem implements AppListener, GameSysCycle {
         this.debug = new Debug(
             DebugConfig.createDefaultConfig(),
             world,
-            viewport,
-            input,
+            Cores.viewport,
+            Cores.input,
             player,
             debugShapeRenderer
         );

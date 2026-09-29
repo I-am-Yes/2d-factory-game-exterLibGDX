@@ -1,5 +1,6 @@
 package core.world;
 
+import core.app.vars.Cores;
 import core.controller.camera.CameraController;
 import core.controller.camera.CameraViewMode;
 import core.world.chunk.Chunk;
@@ -17,11 +18,8 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import core.assets.AssetsHandler;
 
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
-
-import java.util.function.Supplier;
 
 public class World {
 
@@ -198,12 +196,12 @@ public class World {
 //            ghostGrid);
 //    }
 
-    public void update(OrthographicCamera camera) {
-        int cameraTileX = MathUtils.floor(camera.position.x / getTileSize());
-        int cameraTileY = MathUtils.floor(camera.position.y / getTileSize());
+    public void update() {
+        int cameraTileX = MathUtils.floor(Cores.camera.position.x / getTileSize());
+        int cameraTileY = MathUtils.floor(Cores.camera.position.y / getTileSize());
 
-        float visibleWidth = camera.viewportWidth * camera.zoom;
-        float visibleHeight = camera.viewportHeight * camera.zoom;
+        float visibleWidth = Cores.camera.viewportWidth * Cores.camera.zoom;
+        float visibleHeight = Cores.camera.viewportHeight * Cores.camera.zoom;
         int requestedRadius = Math.max(1,
             MathUtils.ceil(
                 Math.max(visibleWidth, visibleHeight) / getTileSize() / Chunk.SIZE / 2f)
@@ -247,11 +245,11 @@ public class World {
 //        mapRenderer.render();
     }
 
-    public void drawCached(OrthographicCamera camera, CameraController cameraController) {
+    public void drawCached(CameraController cameraController) {
         CameraViewMode viewMode = cameraController.getCurrentViewMode();
         ChunkRenderDetail renderDetail = cameraController.getMapRenderDetail();
         chunkRenderer.drawCached(
-            camera, chunkManager, viewMode, renderDetail, getTileSize()
+            Cores.camera, chunkManager, viewMode, renderDetail, getTileSize()
         );
     }
 

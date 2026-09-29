@@ -29,7 +29,7 @@ public class AppEvent {
         }
 
         public static void fire(float progress) {
-            Events.fire(new LoadingScreenEvent(null, "", "Loading... " + (int)(progress * 100) + "%", progress));
+            Events.fire(new LoadingScreenEvent(null, "", null, progress));
         }
     }
 

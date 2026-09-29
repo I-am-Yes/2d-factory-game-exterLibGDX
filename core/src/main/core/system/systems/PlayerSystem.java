@@ -6,7 +6,7 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import core.app.cores.AppListener;
-import core.system.context.PlayerContext;
+import core.app.vars.Cores;
 import core.player.*;
 import core.player.mechanic.GhostOverlay;
 import core.player.mechanic.Overlay;
@@ -15,7 +15,7 @@ import core.player.mechanic.PlayerController;
 import core.render.RenderLayer;
 import core.app.cores.GameSysCycle;
 
-import static core.app.Vars.*;
+import static core.app.vars.Vars.*;
 
 public class PlayerSystem implements AppListener, GameSysCycle {
 
@@ -32,36 +32,36 @@ public class PlayerSystem implements AppListener, GameSysCycle {
     public PlayerSystem() {
 
         this.controller = new PlayerController(
-            input,
-            window
+            Cores.input,
+            Cores.window
         );
 
         player = new Player(world, controller);
 
         this.action = new PlayerAction(
             world,
-            viewport,
+            Cores.viewport,
             player,
-            input,
+            Cores.input,
             uiInputGate,
-            shape,
-            assets
+            Cores.shape,
+            Cores.assets
         );
 
         this.overlay = new Overlay(
             world,
-            window,
-            viewport,
-            input,
+            Cores.window,
+            Cores.viewport,
+            Cores.input,
             action,
-            assets
+            Cores.assets
         );
         this.ghostOverlay = new GhostOverlay(
             world,
-            viewport,
+            Cores.viewport,
             player,
             action,
-            assets,
+            Cores.assets,
             action.getBuildGhostLine()
         );
 
@@ -132,7 +132,7 @@ public class PlayerSystem implements AppListener, GameSysCycle {
 
     public void updateHoverThreshold() {
         float tileSize = world.getTileSize();
-        OverlayHelper.updateMouseWorld(viewport, mouseWorld);
+        OverlayHelper.updateMouseWorld(Cores.viewport, mouseWorld);
         if (!hoverTargetInitialized) {
             hoverTileThreshold.set(
                 MathUtils.floor(mouseWorld.x / tileSize),

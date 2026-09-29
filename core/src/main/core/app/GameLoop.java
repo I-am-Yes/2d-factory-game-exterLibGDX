@@ -4,19 +4,13 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.ScreenUtils;
 import core.app.cores.Time;
+import core.app.vars.Cores;
 import core.controller.camera.ScreenshotCapture;
 
-import static core.app.Vars.*;
+import static core.app.vars.Vars.*;
 
 public class GameLoop {
     public void update() {
-        int ticks = Time.accelerate();
-
-//        systems.update();
-
-        for (int i = 0; i < ticks; i++) {
-//            systems.tickUpdate();
-        }
     }
 
     public void render() {
@@ -28,39 +22,37 @@ public class GameLoop {
 
     private void input() {
 
-        input.endFrame();
 
     }
     private void logic() {
-        world.update(getCamera());
 
     }
 
     private void draw() {
         ScreenUtils.clear(0.15f, 0.15f, 0.2f, 1f);
-        viewport.apply();
+        Cores.viewport.apply();
 
-        world.drawCached(getCamera(), cameraController);
+        world.drawCached(cameraController);
 
         //BEGIN batch
-        batch.setProjectionMatrix(getCamera().combined);
-        batch.begin();
+        Cores.batch.setProjectionMatrix(getCamera().combined);
+        Cores.batch.begin();
 
         //general spriteBatch for all world contents
 //        systems.drawBatch(batch);
 
-        batch.end();
+        Cores.batch.end();
         //END batch
 
 
         //BEGIN shapeRender
-        shape.setProjectionMatrix(getCamera().combined);
-        shape.begin(ShapeRenderer.ShapeType.Filled);
+        Cores.shape.setProjectionMatrix(getCamera().combined);
+        Cores.shape.begin(ShapeRenderer.ShapeType.Filled);
         //Note: add another ShapeType if needed.
 
         //        systems.drawShapeRenderer(shape);
 
-        shape.end();
+        Cores.shape.end();
         //END shapeRender
 
 
@@ -72,7 +64,7 @@ public class GameLoop {
     }
 
     public void resize(int width, int height) {
-        viewport.update(width, height, false);
+        Cores.viewport.update(width, height, false);
 
 //        systems.resize(width, height);
 
@@ -91,15 +83,15 @@ public class GameLoop {
 //        systems.dispose();
         world.dispose();
 
-        assets.dispose();
+        Cores.assets.dispose();
 
-        batch.dispose();
-        shape.dispose();
+        Cores.batch.dispose();
+        Cores.shape.dispose();
 
     }
 
     private OrthographicCamera getCamera() {
-        return (OrthographicCamera) viewport.getCamera();
+        return (OrthographicCamera) Cores.viewport.getCamera();
     }
 
 }

@@ -6,7 +6,7 @@ import core.app.cores.Time;
 import ui.UiHelper;
 import ui.Style;
 
-public final class SettingsPanel extends Window {
+public class SettingsPanel extends Window {
 
     private boolean pauseOnOpen;
     private boolean pauseBySettingsPanel;
@@ -65,7 +65,7 @@ public final class SettingsPanel extends Window {
         }
     }
 
-    public void togglePanel() {
+    public void toggle() {
         if (isPanelOpen()) {
             close();
         } else {

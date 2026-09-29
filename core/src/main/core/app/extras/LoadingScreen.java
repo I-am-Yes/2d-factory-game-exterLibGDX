@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.ScreenUtils;
-import core.app.Vars;
 import core.event.Events;
 import core.event.events.AppEvent;
 import ui.Style;
@@ -18,6 +17,9 @@ public class LoadingScreen implements Disposable {
 
     private static LoadingScreen instance;
     private static boolean initialized;
+
+    public final String loadingText = "Loading assets... ";
+    public final String loadedText = "Loading complete! ";
 
     public LoadingScreen() {
 
@@ -32,11 +34,18 @@ public class LoadingScreen implements Disposable {
         Events.on(AppEvent.LoadingScreenEvent.class, e -> {
             if (instance == null) instance = new LoadingScreen();
 
+            String text = e.text != null
+                ? e.text
+                : (e.progress >= 1f ? instance.loadedText : instance.loadingText);
+
             instance.resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-            instance.render(e.progress);
+            instance.render(e.progress, text);
         });
 
-        Events.on(AppEvent.GameLoaded.class, e -> closeScreen());
+        Events.on(AppEvent.GameLoaded.class, e -> {
+            instance.render(1.0f, instance.loadedText);
+            closeScreen();
+        });
 
         return instance;
     }
@@ -48,13 +57,13 @@ public class LoadingScreen implements Disposable {
     }
 
     //TODO: add image/video to this
-    public void render(float progress) {
+    public void render(float progress, String text) {
         ScreenUtils.clear(Color.BLACK);
 
         //TODO: later add tip & trick text
         batch.begin();
         font.getData().setScale(0.1f);
-        font.draw(batch, "Loading... " + (int)(progress * 100) + "%", 40, 80);
+        font.draw(batch, text + (int)(progress * 100) + "%", 40, 80);
         font.getData().setScale(1.0f);
         batch.end();
     }

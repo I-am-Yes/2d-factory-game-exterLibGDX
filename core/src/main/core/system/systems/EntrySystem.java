@@ -3,32 +3,33 @@ package core.system.systems;
 import com.badlogic.gdx.Input;
 import core.app.cores.AppListener;
 import core.app.cores.GameSysCycle;
+import core.app.vars.Cores;
 import core.controller.camera.ScreenshotCapture;
 
-import static core.app.Vars.*;
+import static core.app.vars.Vars.*;
 
 public class EntrySystem implements AppListener, GameSysCycle {
 
     @Override
     public void update() {
 
-        if (input.isKeyJustPressed(Input.Keys.ESCAPE)) {
-            toggleSettingPanel();
+        if (Cores.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+            ui.toggleSettings();
         }
 
-        if (input.isKeyJustPressed(Input.Keys.F3)) {
-            toggleDebugPanel();
+        if (Cores.input.isKeyJustPressed(Input.Keys.F3)) {
+            ui.toggleDebug();
         }
-        if (input.isKeyJustPressed(Input.Keys.F11)) {
+        if (Cores.input.isKeyJustPressed(Input.Keys.F11)) {
             //window.setWindowFullscreen();
-            window.setBorderlessFullscreen();
+            Cores.window.setBorderlessFullscreen();
         }
 
-        if (!input.isKeyPressed(Input.Keys.SHIFT_LEFT) && input.isKeyJustPressed(Input.Keys.F12)) {
+        if (!Cores.input.isKeyPressed(Input.Keys.SHIFT_LEFT) && Cores.input.isKeyJustPressed(Input.Keys.F12)) {
             ScreenshotCapture.requestCapture();
         }
 
-        if (input.isKeyPressed(Input.Keys.SHIFT_LEFT) && input.isKeyJustPressed(Input.Keys.F12)) {
+        if (Cores.input.isKeyPressed(Input.Keys.SHIFT_LEFT) && Cores.input.isKeyJustPressed(Input.Keys.F12)) {
             ScreenshotCapture.captureMapArea(
                 world,
                 (int) -world.getWorldWidth(),
@@ -59,14 +60,6 @@ public class EntrySystem implements AppListener, GameSysCycle {
     @Override
     public void resume() {
         AppListener.super.resume();
-    }
-
-    private void toggleSettingPanel() {
-        settingsPanel.togglePanel();
-    }
-
-    private void toggleDebugPanel() {
-        interfaceContext.gameUI.setDebugInfoVisible(!interfaceContext.gameUI.isDebugInfoVisible());
     }
 
     @Override

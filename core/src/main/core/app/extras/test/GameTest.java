@@ -8,7 +8,7 @@ import core.app.cores.GameSysCycle;
 import data.map.asset.AssetType;
 import data.map.asset.BuildingType;
 
-import static core.app.Vars.*;
+import static core.app.vars.Vars.*;
 
 public class GameTest implements AppListener, GameSysCycle {
 

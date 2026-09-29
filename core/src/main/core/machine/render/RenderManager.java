@@ -1,9 +1,10 @@
 package core.machine.render;
 
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Array;
-import core.assets.AssetsHandler;
+import core.app.cores.Time;
 import core.machine.state.ItemType;
+import core.machine.utils.Item;
+import core.utils.Artist;
 
 public class RenderManager {
     public static final float VISUAL_SMOOTHNESS = 20f;
@@ -17,15 +18,13 @@ public class RenderManager {
         intakes.add(new IntakeVisual(type, startX, startY, targetX, targetY, speed));
     }
 
-    public void update(float gameDelta) {
-        if (gameDelta <= 0f) return;
-
+    public void update() {
         for (int i = intakes.size - 1; i >= 0; i--) {
             IntakeVisual visual = intakes.get(i);
             float dx = visual.targetX - visual.visualX;
             float dy = visual.targetY - visual.visualY;
             float distance = (float) Math.sqrt(dx * dx + dy * dy);
-            float move = visual.speed * gameDelta;
+            float move = visual.speed * Time.gameDelta();
 
             if (distance <= move || move <= 0f) {
                 visual.visualX = visual.targetX;
@@ -39,9 +38,10 @@ public class RenderManager {
         }
     }
 
-    public void drawBatch(ItemRender itemRender) {
+
+    public void drawBatch(Item item) {
         for (IntakeVisual visual : intakes) {
-            itemRender.drawBatch(visual.type, visual.visualX, visual.visualY);
+            Artist.DrawItem(item, visual.visualX, visual.visualY);
 
         }
     }

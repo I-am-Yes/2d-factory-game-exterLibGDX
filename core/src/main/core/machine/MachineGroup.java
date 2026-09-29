@@ -1,15 +1,14 @@
 package core.machine;
 
 import com.badlogic.gdx.utils.Array;
-import core.machine.category.Batching;
+import core.app.cores.Time;
 import core.machine.category.Delting;
 import core.machine.category.Tickable;
 import core.machine.state.ItemType;
 import core.machine.transport.OutputEmitter;
 import core.machine.transport.TransferBatch;
 import core.machine.transport.TransferResolver;
-
-import static core.app.Vars.*;
+import core.utils.Artist;
 
 public final class MachineGroup {
 
@@ -68,7 +67,7 @@ public final class MachineGroup {
         }
     }
 
-    public void tickUpdate(float tickDelta) {
+    public void tickUpdate() {
         // Machines awakened during this tick start next tick.
         int updateCount = activeMachines.size;
 
@@ -76,7 +75,7 @@ public final class MachineGroup {
             Machine machine = activeMachines.get(i);
 
             if (machine instanceof Tickable tickable) {
-                tickable.tickUpdate(tickDelta);
+                tickable.tickUpdate(Time.UPDATE_INTERVAL);
             }
         }
         runTransfers(updateCount);
@@ -85,9 +84,8 @@ public final class MachineGroup {
     public void drawBatch() {
         for (Machine machine : activeMachines) {
 
-            if (machine instanceof Batching batching) {
-                batching.drawBatch(batch);
-            }
+            Artist.DrawItem(machine.item);
+
         }
     }
 

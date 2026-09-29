@@ -1,5 +1,6 @@
 package core.app;
 
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
@@ -8,47 +9,52 @@ import core.app.cores.AppListener;
 import core.app.cores.GameCore;
 import core.app.cores.Update;
 import core.app.extras.test.GameTest;
+import core.app.vars.Cores;
 import core.assets.AssetsHandler;
 import core.InputHandler;
 import core.system.systems.*;
 import core.world.World;
 import data.map.MapConfig;
 import data.map.PresetMap;
+import ui.InterfaceSystem;
 
-import static core.app.Vars.*;
+import static core.app.vars.Vars.*;
 
 public class GameStart extends GameCore {
 
-    public void createLoadingContext() {
+    public void startGame() {
 
-        window = new Window();
-        window.init();
-        window.setVSync(false);
-        window.setForegroundFPS(0);
+        Cores.window = new Window();
+        Cores.window.init();
+        Cores.window.setVSync(false);
+        Cores.window.setForegroundFPS(0);
 
-        assets = new AssetsHandler();
-        assets.queueLoad();
+        Cores.assets = new AssetsHandler();
+        Cores.assets.queueLoad();
     }
 
     public void finishGameStart() {
 
-        batch = new SpriteBatch();
-        shape = new ShapeRenderer();
+        Cores.batch = new SpriteBatch();
+        Cores.shape = new ShapeRenderer();
 
         mapConfig = MapConfig.createPresetMap(PresetMap.PLAIN);
         //TODO: change to better seed system later
         mapConfig.seed = System.currentTimeMillis();
-        world = World.generateWorld(mapConfig, assets);
+        world = World.generateWorld(mapConfig, Cores.assets);
 
-        viewport = new ExtendViewport(
+        Cores.viewport = new ExtendViewport(
             world.getWorldWidth(),
             world.getWorldHeight()
         );
 
-        input = new InputHandler();
+        Cores.camera = (OrthographicCamera) Cores.viewport.getCamera();
 
+        Cores.input = new InputHandler();
 
-        add(new InterfaceSystem());
+        add(new Update());
+
+        add(ui = new InterfaceSystem());
         add(new RenderSystem());
         add(new PlayerSystem());
         add(new CameraSystem());
@@ -56,12 +62,11 @@ public class GameStart extends GameCore {
         add(new FactorySystem());
         add(new DebugSystem());
 
-        add(new Update());
 
         //multiplexer bla bla...
         InputDesktop.init();
 
-        gameTest = new GameTest();
+        Cores.gameTest = new GameTest();
 
     }
 

@@ -10,8 +10,11 @@ public class Events {
 
     public enum Trigger {
         update,
+        tickUpdate,
         beforeUpdate,
-        afterUpdate
+        afterUpdate,
+
+        assetLoaded,
     }
 
     private static final Map<Object, List<Consumer<?>>> listeners = new HashMap<>();

@@ -12,7 +12,7 @@ public class Update implements AppListener {
         for (int i = 0; i < ticks; i++) {
             Events.fire(Events.Trigger.beforeUpdate);
 
-            ticks++;
+            Events.fire(Events.Trigger.tickUpdate);
 
             Events.fire(Events.Trigger.afterUpdate);
         }

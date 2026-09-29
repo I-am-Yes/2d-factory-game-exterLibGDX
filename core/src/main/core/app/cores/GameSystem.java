@@ -76,7 +76,7 @@ public final class GameSystem {
                 );
             }
             if (!Time.isPaused() || system.updateWhenPaused()) {
-                system.update(delta);
+                system.update();
             }
         }
     }

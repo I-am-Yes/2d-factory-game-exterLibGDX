@@ -36,7 +36,7 @@ public class Conveyor extends Block implements ExposeInfo {
         return new ConveyorMachine(tileX, tileY, direction);
     }
 
-    public class ConveyorMachine extends Machine implements InputAdmission, OutputEmitter, Delting, Tickable, Batching {
+    public class ConveyorMachine extends Machine implements InputAdmission, OutputEmitter, Delting, Tickable {
         public ConveyorMachine(int tileX, int tileY, Direction direction) {
             super(tileX, tileY, direction, MachineType.CONVEYOR);
         }
@@ -61,17 +61,6 @@ public class Conveyor extends Block implements ExposeInfo {
         @Override
         public void tickUpdate(float tickDelta) {
             advancedLogical(tickDelta);
-        }
-
-        @Override
-        public void drawBatch(SpriteBatch batch) {
-
-            //TODO: only draw items in visible chunk
-            if (item == null) {
-                return;
-            }
-            Artist.DrawItem(item);
-
         }
 
 

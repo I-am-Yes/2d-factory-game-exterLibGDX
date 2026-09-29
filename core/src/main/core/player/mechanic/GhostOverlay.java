@@ -103,7 +103,7 @@ public class GhostOverlay {
 
         animInitialized =
             OverlayHelper.animateMove(
-                delta, targetX, targetY, SLIDE_SPEED, animate, animInitialized
+                Time.delta(), targetX, targetY, SLIDE_SPEED, animate, animInitialized
             );
 
     }

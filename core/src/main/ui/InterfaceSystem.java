@@ -1,4 +1,4 @@
-package core.system.systems;
+package ui;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -7,37 +7,32 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import core.UiInputGate;
-import core.app.GameContext;
 import core.app.cores.AppListener;
 import core.app.cores.GameSysCycle;
+import core.app.cores.Time;
 import core.app.cores.UpdateDomain;
+import core.app.vars.Cores;
 import core.render.RenderLayer;
-import core.system.context.InterfaceContext;
 import data.map.asset.AssetType;
-import ui.*;
 import ui.game.GameUI;
 import ui.game.SettingsPanel;
 
-import static core.app.Vars.*;
+import static core.app.vars.Vars.*;
 
 public class InterfaceSystem implements AppListener, GameSysCycle {
-
-    private GameContext context;
-    private InterfaceContext interfaceContext;
 
     private final Skin skin;
     private final InterfaceAction UIaction;
     private final UiHelper uiHelper;
 
-    private final PlayerHotbar playerHotbar;
-    private final GameUI gameUI;
-    private final SettingsPanel settingsPanel;
-
-    private float delta;
 
     private final Label.LabelStyle textStyle1;
 
     private final BitmapFont aldrichFont;
+
+    public static GameUI gameUI;
+    public static PlayerHotbar playerHotbar;
+    public static SettingsPanel settingsPanel;
 
 
     //TODO: migrate this to a setting class later
@@ -49,9 +44,9 @@ public class InterfaceSystem implements AppListener, GameSysCycle {
 
         ScreenViewport UiViewPort = new ScreenViewport();
         UiViewPort.setUnitsPerPixel(UiViewPort.getUnitsPerPixel() / getUiScale());
-        uiStage = new Stage(UiViewPort);
+        Cores.uiStage = new Stage(UiViewPort);
 
-        uiInputGate = new UiInputGate(uiStage);
+        uiInputGate = new UiInputGate(Cores.uiStage);
         this.uiHelper = new UiHelper();
         this.UIaction = new InterfaceAction();
 
@@ -60,25 +55,17 @@ public class InterfaceSystem implements AppListener, GameSysCycle {
         textStyle1 = Style.getTextStyle(Style.textStyle.TEXT_STYLE_1);
 
         playerHotbar = new PlayerHotbar(
-            window, uiStage, skin, UIaction, aldrichFont,
-            input, assets
+            Cores.window, Cores.uiStage, skin, UIaction, aldrichFont,
+            Cores.input, Cores.assets
         );
 
-        gameUI = new GameUI(world, window, viewport,
-            uiStage, skin, uiHelper, input);
+        gameUI = new GameUI(world, Cores.window, Cores.viewport,
+            Cores.uiStage, skin, uiHelper, Cores.input);
 
         settingsPanel = new SettingsPanel(skin, uiHelper);
 
-        uiStage.addActor(settingsPanel);
+        Cores.uiStage.addActor(settingsPanel);
 
-        interfaceContext = new InterfaceContext(
-            uiStage,
-            skin,
-            uiInputGate,
-            gameUI,
-            playerHotbar,
-            settingsPanel
-        );
     }
 
     @Override
@@ -101,22 +88,36 @@ public class InterfaceSystem implements AppListener, GameSysCycle {
     }
 
     public void act() {
-        uiStage.act(delta);
+        Cores.uiStage.act(Time.delta());
     }
 
     public void draw() {
-        uiStage.draw();
+        Cores.uiStage.draw();
     }
 
     @Override
     public void resize(int width, int height) {
-        uiStage.getViewport().update(width, height, true);
+        Cores.uiStage.getViewport().update(width, height, true);
     }
 
     @Override
     public void dispose() {
-        uiStage.dispose();
+        Cores.uiStage.dispose();
         skin.dispose();
+    }
+
+    public void openSettings() {
+        settingsPanel.open();
+    }
+    public void closeSettings() {
+        settingsPanel.close();
+    }
+    public void toggleSettings() {
+        settingsPanel.toggle();
+    }
+
+    public void toggleDebug() {
+        gameUI.setDebugInfoVisible(!gameUI.isDebugInfoVisible());
     }
 
     @Override

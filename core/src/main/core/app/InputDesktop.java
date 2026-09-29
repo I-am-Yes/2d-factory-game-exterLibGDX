@@ -2,9 +2,8 @@ package core.app;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
-import core.UiInputGate;
-import core.system.context.InterfaceContext;
-import core.system.systems.InterfaceSystem;
+import core.app.vars.Cores;
+import core.app.vars.Vars;
 
 public final class InputDesktop {
     private InputDesktop() {}
@@ -15,9 +14,9 @@ public final class InputDesktop {
         //UI pointer blocker
         multiplexer.addProcessor(Vars.uiInputGate);
 
-        multiplexer.addProcessor(Vars.input);
+        multiplexer.addProcessor(Cores.input);
 
-        multiplexer.addProcessor(Vars.uiStage);
+        multiplexer.addProcessor(Cores.uiStage);
 
 
         Gdx.input.setInputProcessor(multiplexer);

@@ -13,7 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import core.app.cores.Time;
 import core.app.extras.TimeEx;
 import core.player.PlayerAction;
-import core.system.systems.InterfaceSystem;
+import ui.InterfaceSystem;
 import core.system.systems.PlayerSystem;
 import core.world.World;
 import core.world.chunk.Chunk;
