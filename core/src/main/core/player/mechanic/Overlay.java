@@ -3,25 +3,19 @@ package core.player.mechanic;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.utils.viewport.Viewport;
-import core.assets.AssetsHandler;
-import core.InputHandler;
-import core.Window;
+import core.app.cores.Time;
 import core.player.PlayerAction;
 import core.system.systems.PlayerSystem;
-import core.world.World;
+import core.utils.Artist;
+
+import static core.app.vars.Cores.*;
+import static core.app.vars.Vars.*;
 
 public class Overlay {
-    private final World world;
-    private final Window window;
-    private final Viewport viewport;
-    private final InputHandler input;
     private final PlayerAction playerAction;
-    private final AssetsHandler assetsHandler;
 
     private final Vector3 tmp = new Vector3();
     private final Vector2 bracketAnimate = new Vector2();
@@ -57,13 +51,8 @@ public class Overlay {
     private boolean animInitialized;
     private boolean isOverlayRenderAnimationEnabled = true; //true by default
 
-    public Overlay(World world, Window window, Viewport viewport, InputHandler input, PlayerAction action, AssetsHandler assets) {
-        this.world = world;
-        this.window = window;
-        this.viewport = viewport;
-        this.input = input;
+    public Overlay(PlayerAction action) {
         this.playerAction = action;
-        this.assetsHandler = assets;
 
         //TODO: change bracket color to light blue when hovering overlay on ghost tile
         setBracketPaddingMode(defaultPaddingMode);
@@ -71,6 +60,8 @@ public class Overlay {
     }
 
     public void update() {
+        delta = Time.delta();
+
         hoverTile.set(
             PlayerSystem.getHoverTileThresholdX(),
             PlayerSystem.getHoverTileThresholdY()
@@ -100,7 +91,7 @@ public class Overlay {
 //            );
             //TODO: fix to use the actual object size on camera.
             setExpandBracket(true,
-                (float) assetsHandler.getTextureHeight(playerAction.getSelectedType())
+                (float) assets.getTextureHeight(playerAction.getSelectedType())
                     / world.getMapConfig().getTilePixel() / 6f );
         }
 
@@ -109,10 +100,9 @@ public class Overlay {
     public void render() {
     }
 
-    public void drawShapeRenderer(ShapeRenderer shapeRenderer) {
+    public void drawShapeRenderer() {
 
-
-        drawCornerBrackets(world, viewport, shapeRenderer, cornerBracketGapRatio, cornerBracketThickness);
+        drawCornerBrackets(cornerBracketGapRatio, cornerBracketThickness);
 
     }
 
@@ -123,7 +113,7 @@ public class Overlay {
         setBracketPadding(bool ? +expandSize : defaultPadding);
     }
 
-    private void drawCornerBrackets(World world, Viewport viewport, ShapeRenderer sr, float gapRatio, float thicknessPx) {
+    private void drawCornerBrackets(float gapRatio, float thicknessPx) {
 
         tmp.set(Gdx.input.getX(), Gdx.input.getY(), 0f);
         viewport.unproject(tmp);
@@ -148,26 +138,31 @@ public class Overlay {
         hoverWalkable = world.isWalkable(tx, ty);
         hoverVisible = true;
 
-        if (sr == null) return;
+        if (shape == null) return;
 
         OrthographicCamera cam = (OrthographicCamera) viewport.getCamera();
         float wpp = (cam.viewportWidth * cam.zoom) / Gdx.graphics.getWidth();
 
         float drawX = bracketAnimate.x - bracketSize * 0.5f;
         float drawY = bracketAnimate.y - bracketSize * 0.5f;
-        drawBracketShape(sr, drawX, drawY,
+        drawBracketShape(drawX, drawY,
             bracketSize, tile * gapRatio, thicknessPx * wpp, hoverWalkable);
     }
 
-    private void drawBracketShape(ShapeRenderer sr, float x, float y, float size,
+    //TODO: shape draw rect helper
+    private void drawBracketShape(float x, float y, float size,
                                   float gap, float thick, boolean walkAble) {
         float x2 = x + size, y2 = y + size;
-        sr.setColor(walkAble ? Color.WHITE : Color.RED);
+        Color color = walkAble ? Color.WHITE : Color.RED;
 
-        sr.rect(x, y2 - thick, gap, thick);       sr.rect(x, y2 - gap, thick, gap);
-        sr.rect(x2 - gap, y2 - thick, gap, thick); sr.rect(x2 - thick, y2 - gap, thick, gap);
-        sr.rect(x, y, gap, thick);               sr.rect(x, y, thick, gap);
-        sr.rect(x2 - gap, y, gap, thick);        sr.rect(x2 - thick, y, thick, gap);
+        Artist.DrawRect(x, y2 - thick, gap, thick, color);
+        Artist.DrawRect(x, y2 - gap, thick, gap, color);
+        Artist.DrawRect(x2 - gap, y2 - thick, gap, thick, color);
+        Artist.DrawRect(x2 - thick, y2 - gap, thick, gap, color);
+        Artist.DrawRect(x, y, gap, thick, color);
+        Artist.DrawRect(x, y, thick, gap, color);
+        Artist.DrawRect(x2 - gap, y, gap, thick, color);
+        Artist.DrawRect(x2 - thick, y, thick, gap, color);
     }
 
     private void animateBracketSize() {

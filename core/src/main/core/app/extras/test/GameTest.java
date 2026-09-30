@@ -12,6 +12,8 @@ import static core.app.vars.Vars.*;
 
 public class GameTest implements AppListener, GameSysCycle {
 
+    public static final GameTest instance = new GameTest();
+
     public GameTest() {
 
         PlanManager planManager = new PlanManager(world);

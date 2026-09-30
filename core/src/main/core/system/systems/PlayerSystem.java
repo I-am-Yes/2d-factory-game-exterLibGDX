@@ -1,7 +1,5 @@
 package core.system.systems;
 
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
@@ -13,11 +11,10 @@ import core.player.mechanic.Overlay;
 import core.player.mechanic.OverlayHelper;
 import core.player.mechanic.PlayerController;
 import core.render.RenderLayer;
-import core.app.cores.GameSysCycle;
 
 import static core.app.vars.Vars.*;
 
-public class PlayerSystem implements AppListener, GameSysCycle {
+public class PlayerSystem implements AppListener {
 
     private PlayerAction action;
     private PlayerController controller;
@@ -31,39 +28,15 @@ public class PlayerSystem implements AppListener, GameSysCycle {
 
     public PlayerSystem() {
 
-        this.controller = new PlayerController(
-            Cores.input,
-            Cores.window
-        );
+        this.controller = new PlayerController();
 
-        player = new Player(world, controller);
+        this.action = new PlayerAction();
 
-        this.action = new PlayerAction(
-            world,
-            Cores.viewport,
-            player,
-            Cores.input,
-            uiInputGate,
-            Cores.shape,
-            Cores.assets
-        );
+        player = new Player(controller, action);
 
-        this.overlay = new Overlay(
-            world,
-            Cores.window,
-            Cores.viewport,
-            Cores.input,
-            action,
-            Cores.assets
-        );
-        this.ghostOverlay = new GhostOverlay(
-            world,
-            Cores.viewport,
-            player,
-            action,
-            Cores.assets,
-            action.getBuildGhostLine()
-        );
+
+        this.overlay = new Overlay(action);
+        this.ghostOverlay = new GhostOverlay();
 
     }
 
@@ -75,21 +48,16 @@ public class PlayerSystem implements AppListener, GameSysCycle {
         action.update();
         overlay.update();
         ghostOverlay.update();
+
+        overlay.render();
+
+        drawBatch();
+        drawShapeRenderer();
     }
 
     @Override
     public void init() {
         AppListener.super.init();
-    }
-
-    @Override
-    public void create() {
-        AppListener.super.create();
-    }
-
-    @Override
-    public void render() {
-        overlay.render();
     }
 
     @Override
@@ -107,22 +75,20 @@ public class PlayerSystem implements AppListener, GameSysCycle {
         AppListener.super.resume();
     }
 
-    @Override
-    public void drawBatch(SpriteBatch batch) {
+    public void drawBatch() {
         //BEGIN batch
         //deprecated!
         //only needed when there is separate sprite batch for player
         //END batch
 
-        ghostOverlay.drawBatch(batch);
-        player.draw(batch);
+        ghostOverlay.drawBatch();
+        player.draw();
 
     }
 
-    @Override
-    public void drawShapeRenderer(ShapeRenderer shapeRenderer) {
-        action.drawShapeRenderer(shapeRenderer);
-        overlay.drawShapeRenderer(shapeRenderer);
+    public void drawShapeRenderer() {
+        action.drawShapeRenderer();
+        overlay.drawShapeRenderer();
     }
 
     @Override
@@ -159,7 +125,6 @@ public class PlayerSystem implements AppListener, GameSysCycle {
         return hoverTileThreshold;
     }
 
-    @Override
     public RenderLayer renderLayer() {
         return RenderLayer.PLAYER_LAYER;
     }

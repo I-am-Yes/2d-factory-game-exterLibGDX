@@ -1,7 +1,6 @@
 package core.app.vars;
 
 import core.UiInputGate;
-import core.app.extras.LoadingScreen;
 import core.controller.camera.CameraController;
 import core.player.Player;
 import core.world.World;
@@ -20,8 +19,7 @@ public class Vars {
     public static UiInputGate uiInputGate;
 
     public static Player player;
-    //TODO: temporary using this, later change it
-    public static CameraController cameraController;
+    public static CameraController cameraControl;
 
     public static InterfaceSystem ui;
 

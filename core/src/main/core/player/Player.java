@@ -1,31 +1,34 @@
 package core.player;
 
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import core.player.mechanic.PlayerController;
+import core.utils.Artist;
 import data.PlayerData;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
-import core.world.World;
+
+import static core.app.vars.Vars.*;
 
 public class Player {
     private final float PLAYER_WIDTH = PlayerData.getPlayerWidth();
     private final float PLAYER_HEIGHT = PlayerData.getPlayerHeight();
     private final float PLAYER_SPEED = PlayerData.getPlayerSpeed();
 
-    private final World world;
-    private final Sprite sprite;
     private final PlayerController controller;
 
     private final float worldWidth;
     private final float worldHeight;
 
+    public static Sprite sprite;
+
     //TODO: change this player texture to a regis system.
     private final Texture playerTexture = new Texture("unpacked/player/player.png");
 
-    public Player(World world, PlayerController controller) {
+    private final PlayerAction action;
+
+    public Player(PlayerController controller, PlayerAction action) {
         this.controller = controller;
-        this.world = world;
+        this.action = action;
         this.worldWidth = world.getWorldWidth();
         this.worldHeight = world.getWorldHeight();
 
@@ -38,8 +41,8 @@ public class Player {
         controller.moveCharacter(getPlayer(), sprite, PLAYER_SPEED, worldWidth, worldHeight);
     }
 
-    public void draw(SpriteBatch batch) {
-        sprite.draw(batch);
+    public void draw() {
+        Artist.DrawSprite(sprite, sprite.getX(), sprite.getY(), PLAYER_WIDTH, PLAYER_HEIGHT);
     }
 
     public PlayerController getController() {
@@ -75,6 +78,10 @@ public class Player {
 
     public Texture getPlayerTexture() {
         return playerTexture;
+    }
+
+    public PlayerAction getAction() {
+        return action;
     }
 
 }

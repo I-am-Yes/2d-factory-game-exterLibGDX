@@ -1,5 +1,6 @@
 package core.app.launcher;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.ScreenUtils;
 import core.app.GameStart;
@@ -30,20 +31,26 @@ public class GameLauncher extends GameCore {
         if (!loaded) {
             if (assets.updateLoading()) {
                 start.finishGameStart();
-
+                viewport.update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false);
                 AppEvent.GameLoaded.fire();
                 loaded = true;
             }
             return;
         }
 
-        super.update();
+        drawScreen();
 
         world.update();
 
-        drawScreen();
+        super.update();
 
         Cores.input.endFrame();
+    }
+
+    @Override
+    public void resize(int width, int height) {
+        if (viewport != null)
+            viewport.update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false);
     }
 
     @Override
@@ -56,13 +63,13 @@ public class GameLauncher extends GameCore {
         ScreenUtils.clear(0.15f, 0.15f, 0.2f, 1f);
         viewport.apply();
 
-        world.drawCached(cameraController);
+        world.drawCached(cameraControl);
 
         //BEGIN batch
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
 
-        //TODO: this
+
 
         batch.end();
         //END batch

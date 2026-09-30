@@ -5,32 +5,24 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.utils.Align;
-import com.badlogic.gdx.utils.viewport.Viewport;
-import core.InputHandler;
-import core.Window;
-import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import core.app.cores.Time;
 import core.app.extras.TimeEx;
 import core.player.PlayerAction;
 import ui.InterfaceSystem;
 import core.system.systems.PlayerSystem;
-import core.world.World;
 import core.world.chunk.Chunk;
 import ui.Style;
 import ui.UiHelper;
 import java.util.List;
 import java.util.Locale;
 
+import static core.app.vars.Cores.*;
+import static core.app.vars.Vars.*;
 
 public class GameUI {
-    private final World world;
-    private final Window window;
-    private final Viewport viewport;
-    private final Stage stage;
     private final Skin skin;
     private final UiHelper uiHelper;
-    private final InputHandler input;
 
     private final Label.LabelStyle textStyle1;
 
@@ -86,18 +78,12 @@ public class GameUI {
     }
     private DebugInfoModes currentMode = DebugInfoModes.SIMPLE;
 
-    public GameUI(World world, Window window, Viewport viewport, Stage stage, Skin skin, UiHelper uiHelper, InputHandler input) {
-        this.world = world;
-        this.window = window;
-        this.viewport = viewport;
-        this.stage = stage;
+    public GameUI(Skin skin, UiHelper uiHelper) {
         this.skin = skin;
         this.uiHelper = uiHelper;
-        this.input = input;
-
         textStyle1 = Style.getTextStyle(Style.textStyle.TEXT_STYLE_1);
 
-        uiHelper.addTableRows(stage, WorldInfoList.top().right(), Align.right,
+        uiHelper.addTableRows(uiStage, WorldInfoList.top().right(), Align.right,
             worldSeedLabel = uiHelper.createTextLabel("Seed: ", textStyle1),
             worldSizeLabel = uiHelper.createTextLabel("World Size: ", textStyle1),
             worldChunkBoundsLabel = uiHelper.createTextLabel("Chunk Bounds: ", textStyle1),
@@ -112,7 +98,7 @@ public class GameUI {
             worldTileRotationLabel = uiHelper.createTextLabel("Tile Rotation: ", textStyle1)
         );
 
-        uiHelper.addTableRows(stage, PerformanceList.top().left(), Align.left,
+        uiHelper.addTableRows(uiStage, PerformanceList.top().left(), Align.left,
             gameSpeedlabel = uiHelper.createTextLabel("Game Speed: ", textStyle1),
             gameTimelabel = uiHelper.createTextLabel("Game Time: ", textStyle1),
             realTimelabel = uiHelper.createTextLabel("Real Time: ", textStyle1),
@@ -271,7 +257,7 @@ public class GameUI {
 
         if (shouldUpdate(worldTileRotationLabel)) {
             worldTileRotationLabel.setText(
-                "Tile Rotation: " + PlayerAction.getPlacementDirection()
+                "Tile Rotation: " + player.getAction().getPlacementDirection()
             );
         }
     }
@@ -366,7 +352,7 @@ public class GameUI {
 
     private void addLabels(Table panel, int alignment, Actor... labels) {
         uiHelper.addTableRows(
-            stage, panel,
+            uiStage, panel,
             alignment, labels
         );
     }

@@ -11,7 +11,7 @@ import data.map.asset.AssetType;
 
 import static core.app.vars.Vars.*;
 
-public class RenderSystem implements AppListener, GameSysCycle {
+public class RenderSystem implements AppListener {
 
     private final PlanRenderer<AssetType> planRenderer;
     private final PlanManager planManager;
@@ -29,55 +29,21 @@ public class RenderSystem implements AppListener, GameSysCycle {
     }
 
     @Override
-    public void init() {
-        AppListener.super.init();
-    }
-
-    @Override
     public void update() {
 
         planRenderer.update();
     }
 
-    @Override
-    public void create() {
-        AppListener.super.create();
-    }
-
-    @Override
-    public void render() {
-    }
-
-    @Override
-    public void resize(int width, int height) {
-        AppListener.super.resize(width, height);
-    }
-
-    @Override
-    public void pause() {
-        AppListener.super.pause();
-    }
-
-    @Override
-    public void resume() {
-        AppListener.super.resume();
-    }
-
-    @Override
     public void drawBatch(SpriteBatch batch) {
         //BEGIN batch
-
         planRenderer.drawBatch();
-
         //END batch
     }
 
     public void dispose() {
-
         planRenderer.dispose();
     }
 
-    @Override
     public RenderLayer renderLayer() {
         return RenderLayer.OBJECT_LAYER;
     }

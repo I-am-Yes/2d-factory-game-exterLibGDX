@@ -38,11 +38,9 @@ public class RenderManager {
         }
     }
 
-
     public void drawBatch(Item item) {
         for (IntakeVisual visual : intakes) {
             Artist.DrawItem(item, visual.visualX, visual.visualY);
-
         }
     }
 

@@ -1,5 +1,6 @@
 package core.player.mechanic;
 
+import core.utils.Artist;
 import data.map.asset.AssetType;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
@@ -21,6 +22,8 @@ import core.world.World;
 import core.event.events.GameEvent;
 import core.helper.TileAlgorithm;
 
+import static core.app.vars.Cores.*;
+
 public class BuildGhostLine {
 
     private final Player player;
@@ -29,8 +32,6 @@ public class BuildGhostLine {
     private final Viewport viewport;
     private final AssetsHandler assetsHandler;
     private final PlayerAction playerAction;
-
-    private ShapeRenderer shapeRenderer;
 
     private final TileAlgorithm tileAlgorithm = new TileAlgorithm();
 
@@ -198,10 +199,8 @@ public class BuildGhostLine {
 
     }
 
-    public void drawShapeRenderer(ShapeRenderer shapeRenderer) {
+    public void drawShapeRenderer() {
         if (drawLineMode == DrawLineMode.NONE) return;
-
-        this.shapeRenderer = shapeRenderer;
 
         if (drawLineMode == DrawLineMode.FREE_LINE)
             drawFreeLine();
@@ -222,21 +221,17 @@ public class BuildGhostLine {
         TiledMapTile tiledTile = assetsHandler.getTile(selectedType);
         if (tiledTile == null) return;
 
-        Color oldColor = new Color(spriteBatch.getColor());
         TextureRegion region = tiledTile.getTextureRegion();
-
-        spriteBatch.setColor(0.8f, 0.8f, 0.8f, 0.5f);
+        Color color = new Color(0.8f, 0.8f, 0.8f, 0.5f);
 
         for (Vector2 tile : tiledLine) {
-            spriteBatch.draw(
-                region, tile.x * tileSize, tile.y * tileSize,
+            Artist.DrawBatch(spriteBatch, region, tile.x * tileSize, tile.y * tileSize,
                 //keep rotation in the center of the tile
                 tileSize / 2, tileSize / 2,
                 tileSize, tileSize,
-                1f, 1f, rotation
+                1f, 1f, rotation, color
             );
         }
-        spriteBatch.setColor(oldColor);
 
     }
 
@@ -265,7 +260,7 @@ public class BuildGhostLine {
         PlanBuilder<AssetType> plan = new PlanBuilder<>();
         for (int i = 0; i < tiledLine.size; i++) {
             Vector2 tile = tiledLine.get(i);
-            plan.addPlan((int) tile.x, (int) tile.y, PlayerAction.getPlacementDirection(), type);
+            plan.addPlan((int) tile.x, (int) tile.y, playerAction.getPlacementDirection(), type);
         }
         return plan;
     }
@@ -328,7 +323,6 @@ public class BuildGhostLine {
         );
     }
 
-
     private void rectDebugLine(float endX, float endY) {
         rectDebugLine(worldStart.x, worldStart.y, endX, endY);
     }
@@ -338,8 +332,7 @@ public class BuildGhostLine {
     }
 
     private void rectDebugLine(float startX, float startY, float endX, float endY, float thickness, Color color) {
-        shapeRenderer.setColor(color);
-        shapeRenderer.rectLine(startX, startY, endX, endY, thickness);
+        Artist.DrawLine(shape, startX, startY, endX, endY, thickness, color);
 
     }
 

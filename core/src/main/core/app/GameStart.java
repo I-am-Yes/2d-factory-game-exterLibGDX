@@ -8,7 +8,6 @@ import core.Window;
 import core.app.cores.AppListener;
 import core.app.cores.GameCore;
 import core.app.cores.Update;
-import core.app.extras.test.GameTest;
 import core.app.vars.Cores;
 import core.assets.AssetsHandler;
 import core.InputHandler;
@@ -53,20 +52,18 @@ public class GameStart extends GameCore {
         Cores.input = new InputHandler();
 
         add(new Update());
-
-        add(ui = new InterfaceSystem());
         add(new RenderSystem());
         add(new PlayerSystem());
         add(new CameraSystem());
         add(new EntrySystem());
         add(new FactorySystem());
-        add(new DebugSystem());
 
+        add(ui = new InterfaceSystem());
+
+        add(new DebugSystem());
 
         //multiplexer bla bla...
         InputDesktop.init();
-
-        Cores.gameTest = new GameTest();
 
     }
 

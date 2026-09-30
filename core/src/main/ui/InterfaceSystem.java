@@ -12,6 +12,7 @@ import core.app.cores.GameSysCycle;
 import core.app.cores.Time;
 import core.app.cores.UpdateDomain;
 import core.app.vars.Cores;
+import core.event.Events;
 import core.render.RenderLayer;
 import data.map.asset.AssetType;
 import ui.game.GameUI;
@@ -19,15 +20,13 @@ import ui.game.SettingsPanel;
 
 import static core.app.vars.Vars.*;
 
-public class InterfaceSystem implements AppListener, GameSysCycle {
+public class InterfaceSystem implements AppListener {
 
     private final Skin skin;
     private final InterfaceAction UIaction;
     private final UiHelper uiHelper;
 
-
     private final Label.LabelStyle textStyle1;
-
     private final BitmapFont aldrichFont;
 
     public static GameUI gameUI;
@@ -59,12 +58,17 @@ public class InterfaceSystem implements AppListener, GameSysCycle {
             Cores.input, Cores.assets
         );
 
-        gameUI = new GameUI(world, Cores.window, Cores.viewport,
-            Cores.uiStage, skin, uiHelper, Cores.input);
+
+        gameUI = new GameUI(skin, uiHelper);
 
         settingsPanel = new SettingsPanel(skin, uiHelper);
 
         Cores.uiStage.addActor(settingsPanel);
+
+        Events.run(Events.Trigger.tickUpdate,
+            this::tickUpdate
+
+        );
 
     }
 
@@ -73,6 +77,8 @@ public class InterfaceSystem implements AppListener, GameSysCycle {
         act();
         gameUI.update();
         playerHotbar.update();
+
+        render();
     }
 
 
@@ -82,7 +88,6 @@ public class InterfaceSystem implements AppListener, GameSysCycle {
         gameUI.tickUpdate();
     }
 
-    @Override
     public void render() {
         draw();
     }
@@ -120,18 +125,15 @@ public class InterfaceSystem implements AppListener, GameSysCycle {
         gameUI.setDebugInfoVisible(!gameUI.isDebugInfoVisible());
     }
 
-    @Override
     public RenderLayer renderLayer() {
         return RenderLayer.UI_LAYER_3;
     }
 
     //game UI should be real time update
-    @Override
     public UpdateDomain updateDomain() {
         return UpdateDomain.REAL_TIME;
     }
 
-    @Override
     public boolean updateWhenPaused() {
         return true;
     }

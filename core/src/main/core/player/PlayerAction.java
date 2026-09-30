@@ -1,37 +1,26 @@
 package core.player;
 
-import core.UiInputGate;
 import core.machine.state.Direction;
-import core.player.mechanic.PlayerInteraction;
 import core.system.systems.PlayerSystem;
 import data.map.asset.AssetType;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import core.assets.AssetsHandler;
-import core.InputHandler;
 import core.world.World;
 import core.player.mechanic.BuildGhostLine;
 import core.event.events.GameEvent;
 import ui.PlayerHotbar;
 
 import static com.badlogic.gdx.Input.Keys.*;
+import static core.app.vars.Cores.*;
+import static core.app.vars.Vars.*;
 
 public class PlayerAction {
-    private final World world;
-    private final Player player;
-    private final InputHandler input;
-    private final ShapeRenderer shapeRenderer;
     private final BuildGhostLine buildGhostLine;
-    private final Viewport viewport;
-    private final AssetsHandler assets;
-    private final UiInputGate uiInputGate;
-    private final PlayerInteraction playerInteraction;
 
     private final Vector3 tmp = new Vector3();
-    private static Direction placementDirection = Direction.EAST; //default startup direction
+    private Direction placementDirection = Direction.EAST; //default startup direction
 
     private AssetType selectedType;
 
@@ -41,24 +30,9 @@ public class PlayerAction {
     private PlaceMode placeMode = PlaceMode.none;
     private int selectX = -1, selectY = -1;
 
-    private float delta;
 
-    public PlayerAction(
-        World world, Viewport viewport, Player player,
-        InputHandler input, UiInputGate uiInputGate,
-        ShapeRenderer shapeRenderer, AssetsHandler assets
-    ) {
-        this.world = world;
-        this.player = player;
-        this.input = input;
-        this.viewport = viewport;
-        this.shapeRenderer = shapeRenderer;
-        this.assets = assets;
-
-        this.uiInputGate = uiInputGate;
-
+    public PlayerAction() {
         this.buildGhostLine = new BuildGhostLine(world, player, viewport, this, input, assets);
-        this.playerInteraction = new PlayerInteraction(world, player, viewport, this, input);
     }
 
     public void update() {
@@ -74,16 +48,11 @@ public class PlayerAction {
         updatePlacingBlock();
     }
 
-    public void render() {
-        playerInteraction.render();
-    }
-
-    public void drawShapeRenderer(ShapeRenderer shapeRenderer) {
-        buildGhostLine.drawShapeRenderer(shapeRenderer);
+    public void drawShapeRenderer() {
+        buildGhostLine.drawShapeRenderer();
     }
 
     public void dispose() {
-        playerInteraction.dispose();
         buildGhostLine.dispose();
     }
 
@@ -199,7 +168,7 @@ public class PlayerAction {
         return buildGhostLine;
     }
 
-    public static Direction getPlacementDirection() {
+    public Direction getPlacementDirection() {
         return placementDirection;
     }
 

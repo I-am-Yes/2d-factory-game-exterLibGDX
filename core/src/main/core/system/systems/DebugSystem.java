@@ -2,15 +2,13 @@ package core.system.systems;
 
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import core.app.cores.AppListener;
-import core.app.vars.Cores;
 import core.debug.Debug;
 import core.render.RenderLayer;
-import core.app.cores.GameSysCycle;
 import data.debug.DebugConfig;
 
 import static core.app.vars.Vars.*;
 
-public class DebugSystem implements AppListener, GameSysCycle {
+public class DebugSystem implements AppListener {
 
     private Debug debug;
     private ShapeRenderer debugShapeRenderer;
@@ -20,12 +18,7 @@ public class DebugSystem implements AppListener, GameSysCycle {
         this.debugShapeRenderer = new ShapeRenderer();
 
         this.debug = new Debug(
-            DebugConfig.createDefaultConfig(),
-            world,
-            Cores.viewport,
-            Cores.input,
-            player,
-            debugShapeRenderer
+            DebugConfig.createDefaultConfig(), debugShapeRenderer
         );
 //
 //        this.debugContext = new DebugContext(
@@ -57,16 +50,10 @@ public class DebugSystem implements AppListener, GameSysCycle {
     }
 
     @Override
-    public void resize(int width, int height) {
-        AppListener.super.resize(width, height);
-    }
-
-    @Override
     public void dispose() {
         debugShapeRenderer.dispose();
     }
 
-    @Override
     public RenderLayer renderLayer() {
         return RenderLayer.DEBUG_LAYER;
     }

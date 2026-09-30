@@ -10,19 +10,14 @@ import data.map.MapConfig;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.utils.viewport.Viewport;
-import core.InputHandler;
-import core.world.World;
-import core.player.Player;
 import core.event.*;
+
+import static core.app.vars.Cores.*;
+import static core.app.vars.Vars.*;
 
 public class Debug {
 
     private final DebugConfig debugConfig;
-    private final InputHandler input;
-    private final World world;
-    private final Viewport viewport;
-    private final Player player;
     private final ShapeRenderer debugShapeRenderer;
 
     private boolean mapGenReportPending;
@@ -40,13 +35,9 @@ public class Debug {
     private final PerformanceDebugger performanceDebugger = new PerformanceDebugger();
     private final RenderDebugger renderDebugger      = new RenderDebugger();
 
-    public Debug(DebugConfig debugConfig, World world, Viewport viewport, InputHandler input, Player player, ShapeRenderer debugShapeRenderer) {
+    public Debug(DebugConfig debugConfig, ShapeRenderer debugShapeRenderer) {
         this.debugConfig = debugConfig;
-        this.world = world;
-        this.input = input;
-        this.viewport = viewport;
         this.camera = (OrthographicCamera) viewport.getCamera();
-        this.player = player;
         this.debugShapeRenderer = debugShapeRenderer;
 
 

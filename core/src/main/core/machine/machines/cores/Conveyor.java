@@ -1,10 +1,8 @@
 package core.machine.machines.cores;
 
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import core.machine.machines.definition.Block;
 import core.machine.Machine;
-import core.machine.category.Batching;
 import core.machine.category.Delting;
 import core.machine.category.Tickable;
 import core.machine.render.RenderManager;
@@ -15,7 +13,6 @@ import core.machine.transport.InputAdmission;
 import core.machine.transport.OutputEmitter;
 import core.machine.transport.TransferBatch;
 import core.machine.utils.Item;
-import core.utils.Artist;
 
 public class Conveyor extends Block implements ExposeInfo {
     public static final float DEFAULT_SPEED = 20f;

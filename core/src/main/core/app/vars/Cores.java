@@ -28,6 +28,4 @@ public class Cores {
 
     public static LoadingScreen loadingScreen;
 
-    public static GameTest gameTest;
-
 }

@@ -99,13 +99,8 @@ public class FactorySystem implements AppListener {
         );
 
         renderManager.update();
-    }
 
-    @Override
-    public void render() {
-        AppListener.super.render();
     }
-
 
     public void tickUpdate() {
             machineGroup.tickUpdate();

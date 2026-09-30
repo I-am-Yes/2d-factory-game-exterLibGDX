@@ -1,10 +1,8 @@
 package core.machine.machines.cores;
 
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import core.machine.machines.definition.Block;
 import core.machine.Machine;
-import core.machine.category.Batching;
 import core.machine.category.Delting;
 import core.machine.category.Tickable;
 import core.machine.state.Direction;
@@ -13,7 +11,6 @@ import core.machine.state.MachineType;
 import core.machine.transport.OutputEmitter;
 import core.machine.transport.TransferBatch;
 import core.machine.utils.Item;
-import core.utils.Artist;
 
 public class ItemSource extends Block {
     public boolean infiniteSource = false;
@@ -43,7 +40,7 @@ public class ItemSource extends Block {
             ItemSourceMachine(tileX, tileY, direction, outputItem, sourceCount, sourceRate, infiniteSource);
     }
 
-    public class ItemSourceMachine extends Machine implements OutputEmitter, Delting, Tickable, Batching {
+    public class ItemSourceMachine extends Machine implements OutputEmitter, Delting, Tickable {
         public ItemType outputItem;
         private int remainingSource;
         public float productionTimer;
@@ -78,13 +75,6 @@ public class ItemSource extends Block {
         @Override
         public void tickUpdate(float tickDelta) {
             produceSource(tickDelta);
-        }
-
-        @Override
-        public void drawBatch(SpriteBatch batch) {
-            if (this.item != null) {
-                Artist.DrawItem(this.item);
-            }
         }
 
         @Override

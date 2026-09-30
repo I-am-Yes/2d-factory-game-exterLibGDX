@@ -3,11 +3,11 @@ package core.player.mechanic;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.MathUtils;
-import core.InputHandler;
-import core.Window;
 import core.app.cores.Time;
 import core.event.events.PlayerEvent.*;
 import core.player.Player;
+
+import static core.app.vars.Cores.*;
 
 public class PlayerController {
 
@@ -18,15 +18,6 @@ public class PlayerController {
     private boolean playerMovingEventFired = false;
     private float playerMovingEventTimer = 0f;
     private static final float MOVE_NOTICE_DELAY = 0.2f;
-
-    private final InputHandler input;
-    private final Window window;
-
-    public PlayerController(InputHandler input, Window window) {
-        this.input = input;
-        this.window = window;
-
-    }
 
     public void moveCharacter(Player player, Sprite sprite, float speed, float worldW, float worldH) {
         float inputX = 0f;

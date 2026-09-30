@@ -2,13 +2,12 @@ package core.system.systems;
 
 import com.badlogic.gdx.Input;
 import core.app.cores.AppListener;
-import core.app.cores.GameSysCycle;
 import core.app.vars.Cores;
 import core.controller.camera.ScreenshotCapture;
 
 import static core.app.vars.Vars.*;
 
-public class EntrySystem implements AppListener, GameSysCycle {
+public class EntrySystem implements AppListener {
 
     @Override
     public void update() {
@@ -40,36 +39,6 @@ public class EntrySystem implements AppListener, GameSysCycle {
             );
         }
 
-    }
-
-    @Override
-    public void render() {
-        AppListener.super.render();
-    }
-
-    @Override
-    public void resize(int width, int height) {
-        AppListener.super.resize(width, height);
-    }
-
-    @Override
-    public void pause() {
-        AppListener.super.pause();
-    }
-
-    @Override
-    public void resume() {
-        AppListener.super.resume();
-    }
-
-    @Override
-    public boolean updateWhenPaused() {
-        return true;
-    }
-
-    @Override
-    public void dispose() {
-        AppListener.super.dispose();
     }
 
 }

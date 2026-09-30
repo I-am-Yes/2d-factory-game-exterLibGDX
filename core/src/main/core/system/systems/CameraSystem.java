@@ -12,15 +12,12 @@ import java.util.Map;
 
 import static core.app.vars.Vars.*;
 
-public class CameraSystem implements AppListener, GameSysCycle {
+public class CameraSystem implements AppListener {
 
     private CameraSettings cameraSettings;
-
     private CursorController cursor;
 
     public CameraSystem() {
-
-
         this.cursor = new CursorController();
         cursor.loadCursor();
 
@@ -31,38 +28,17 @@ public class CameraSystem implements AppListener, GameSysCycle {
             Map.of("camera", new CameraScriptApi(cameraSettings))
         );
 
-        cameraController = new CameraController(cameraSettings);
-
+        cameraControl = new CameraController(cameraSettings);
     }
 
     @Override
     public void update() {
-
-        cameraController.update();
-    }
-
-    @Override
-    public void render() {
-        AppListener.super.render();
-    }
-
-    @Override
-    public void resize(int width, int height) {
-        AppListener.super.resize(width, height);
-    }
-
-    @Override
-    public void pause() {
-        AppListener.super.pause();
-    }
-
-    @Override
-    public void resume() {
-        AppListener.super.resume();
+        cameraControl.update();
     }
 
     @Override
     public void dispose() {
-        AppListener.super.dispose();
+        cursor.disposeCursor();
     }
+
 }

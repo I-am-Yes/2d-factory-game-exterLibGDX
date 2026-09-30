@@ -1,32 +1,26 @@
 package core.player.mechanic;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.MathUtils;
 import core.app.cores.Time;
 import core.helper.RenderUtils;
 import core.machine.state.Direction;
-import core.player.Player;
 import core.player.PlayerAction;
 import core.system.systems.PlayerSystem;
+import core.utils.Artist;
 import data.map.asset.AssetType;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.utils.viewport.Viewport;
-import core.assets.AssetsHandler;
-import core.world.World;
 import ui.PlayerHotbar;
 
-public class GhostOverlay {
+import static core.app.vars.Cores.*;
+import static core.app.vars.Vars.*;
 
-    private final Viewport viewport;
-    private final World world;
-    private final PlayerAction playerAction;
-    private final Player player;
+public class GhostOverlay {
     private final BuildGhostLine buildGhostLine;
-    private final AssetsHandler assetsHandler;
+    private final PlayerAction action;
 
     private static final float SLIDE_SPEED = 24f;
     private static final float ROTATION_SPEED = 24f;
@@ -46,13 +40,9 @@ public class GhostOverlay {
 
     private AssetType type;
 
-    public GhostOverlay(World world, Viewport viewport, Player player, PlayerAction action, AssetsHandler assets, BuildGhostLine buildGhostLine) {
-        this.world = world;
-        this.player = player;
-        this.playerAction = action;
-        this.viewport = viewport;
-        this.assetsHandler = assets;
-        this.buildGhostLine = buildGhostLine;
+    public GhostOverlay() {
+        this.buildGhostLine = player.getAction().getBuildGhostLine();
+        this.action = player.getAction();
 
         this.animate.set(player.getPos());
     }
@@ -72,7 +62,7 @@ public class GhostOverlay {
         );
 
         if (type == null) {
-            this.type = playerAction.getSelectedType();
+            this.type = action.getSelectedType();
             animInitialized = false;
             hoverVisible = false;
             return;
@@ -112,16 +102,16 @@ public class GhostOverlay {
 
     }
 
-    public void drawBatch(SpriteBatch spriteBatch) {
+    public void drawBatch() {
 
         if (type == null || !hoverVisible) return;
-        renderGhostOverlay(world, viewport, type, assetsHandler, spriteBatch);
+        renderGhostOverlay();
         //TODO: render rotation too
-        buildGhostLine.drawTilePreview(spriteBatch, buildGhostLine.getCurrentTiledLine(), playerAction.getSelectedType(), animateRotation);
+        buildGhostLine.drawTilePreview(batch, buildGhostLine.getCurrentTiledLine(), action.getSelectedType(), animateRotation);
 
     }
 
-    private void renderGhostOverlay(World world, Viewport viewport , AssetType type, AssetsHandler assetsHandler, SpriteBatch spriteBatch) {
+    private void renderGhostOverlay() {
         tmp.set(Gdx.input.getX(), Gdx.input.getY(), 0);
         viewport.unproject(tmp);
 
@@ -133,26 +123,24 @@ public class GhostOverlay {
 
         if (!world.isInBounds(tx, ty)) return;
 
-        TiledMapTile tiled = assetsHandler.getTile(type);
-        if (tiled == null) return;
+        TextureRegion region = assets.getTile(type).getTextureRegion();
 
-        TextureRegion region = tiled.getTextureRegion();
-
-        float oldColor = spriteBatch.getPackedColor();
+        Color color;
         boolean walkAble = world.isWalkable(tx, ty);
 
-        if (walkAble) spriteBatch.setColor(1f, 1f, 1f, 0.45f); //ghost normal
-        else spriteBatch.setColor(1f, 0.3f, 0.3f, 0.45f); // ghost red
+        if (walkAble) color = new Color(1f, 1f, 1f, 0.45f); //ghost normal
+        else color = new Color(1f, 0.3f, 0.3f, 0.45f); // ghost red
 
-        spriteBatch.draw(region, animate.x, animate.y,
+        Artist.DrawBatch(batch, region, animate.x, animate.y,
             // tile / 2 to keep the animation within 1 tile
             tile / 2, tile / 2,
-            tile, tile, 1f, 1f, animateRotation);
-        spriteBatch.setPackedColor(oldColor);
+            tile, tile, 1f, 1f, animateRotation, color
+        );
+
     }
 
     private AssetType getSelectedType() {
-        if (playerAction.getSelectedType() == null) return null;
+        if (action.getSelectedType() == null) return null;
         if (type == null) return PlayerHotbar.getSelectedType();
         if (type == PlayerHotbar.getSelectedType()) return type;
         else return null;
@@ -163,9 +151,9 @@ public class GhostOverlay {
     }
 
     private Direction getDirection() {
-        if (playerAction.getSelectedType() == null) return Direction.EAST;
-        if (PlayerAction.getPlacementDirection() == null) return Direction.EAST;
-        return PlayerAction.getPlacementDirection();
+        if (action.getSelectedType() == null) return Direction.EAST;
+        if (action.getPlacementDirection() == null) return Direction.EAST;
+        return action.getPlacementDirection();
     }
 
     private void updateGhostRotation() {
