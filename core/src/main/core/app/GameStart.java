@@ -5,8 +5,9 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import core.Window;
-import core.app.cores.AppListener;
-import core.app.cores.GameCore;
+
+import arcane.AppListener;
+import arcane.GameCore;
 import core.app.cores.Update;
 import core.app.vars.Cores;
 import core.assets.AssetsHandler;

@@ -1,13 +1,14 @@
 package core.app.launcher;
 
+
+import arcane.AppListener;
+import arcane.GameCore;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.ScreenUtils;
 import core.app.GameStart;
-import core.app.cores.AppListener;
 import core.app.extras.LoadingScreen;
 import core.app.vars.Cores;
-import core.app.cores.GameCore;
 import core.controller.camera.ScreenshotCapture;
 import core.event.events.AppEvent;
 

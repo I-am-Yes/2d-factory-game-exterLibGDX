@@ -1,5 +1,6 @@
 package ui;
 
+import arcane.AppListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -7,8 +8,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import core.UiInputGate;
-import core.app.cores.AppListener;
-import core.app.cores.GameSysCycle;
 import core.app.cores.Time;
 import core.app.cores.UpdateDomain;
 import core.app.vars.Cores;

@@ -1,7 +1,7 @@
 package core.system.systems;
 
+import arcane.AppListener;
 import com.badlogic.gdx.Input;
-import core.app.cores.AppListener;
 import core.app.vars.Cores;
 import core.controller.camera.ScreenshotCapture;
 

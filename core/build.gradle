@@ -4,6 +4,7 @@ eclipse.project.name = appName + '-core'
 dependencies {
   //api "com.badlogicgames.gdx-controllers:gdx-controllers-core:$gdxControllersVersion"
   //api "com.badlogicgames.gdx:gdx-bullet:$gdxVersion"
+  api "com.github.I-am-Yes:Arcane:1.0-SNAPSHOT"
 
   api "com.badlogicgames.box2dlights:box2dlights:$box2dlightsVersion"
   api "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"

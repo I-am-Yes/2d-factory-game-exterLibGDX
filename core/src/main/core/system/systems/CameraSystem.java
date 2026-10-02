@@ -1,12 +1,11 @@
 package core.system.systems;
 
-import core.app.cores.AppListener;
+import arcane.AppListener;
 import core.config.ScriptConfigLoader;
 import core.config.api.CameraScriptApi;
 import core.config.camera.CameraSettings;
 import core.controller.camera.CameraController;
 import core.controller.camera.CursorController;
-import core.app.cores.GameSysCycle;
 
 import java.util.Map;
 

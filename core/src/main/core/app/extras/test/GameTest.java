@@ -1,6 +1,6 @@
 package core.app.extras.test;
 
-import core.app.cores.AppListener;
+import arcane.AppListener;
 import core.entities.plan.PlanBuilder;
 import core.entities.plan.PlanManager;
 import core.event.events.GameEvent;

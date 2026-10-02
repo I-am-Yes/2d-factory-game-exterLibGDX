@@ -1,7 +1,7 @@
 package core.system.systems;
 
+import arcane.AppListener;
 import com.badlogic.gdx.utils.LongMap;
-import core.app.cores.AppListener;
 import core.app.cores.Time;
 import core.blocks.Blocks;
 import core.event.Events;

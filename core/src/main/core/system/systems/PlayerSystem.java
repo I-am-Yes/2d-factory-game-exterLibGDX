@@ -1,9 +1,9 @@
 package core.system.systems;
 
+import arcane.AppListener;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import core.app.cores.AppListener;
 import core.app.vars.Cores;
 import core.player.*;
 import core.player.mechanic.GhostOverlay;

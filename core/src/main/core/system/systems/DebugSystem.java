@@ -1,12 +1,10 @@
 package core.system.systems;
 
+import arcane.AppListener;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import core.app.cores.AppListener;
 import core.debug.Debug;
 import core.render.RenderLayer;
 import data.debug.DebugConfig;
-
-import static core.app.vars.Vars.*;
 
 public class DebugSystem implements AppListener {
 

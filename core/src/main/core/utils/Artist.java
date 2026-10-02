@@ -5,7 +5,8 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import core.app.cores.GameCore;
+import com.badlogic.gdx.utils.ScreenUtils;
+import com.badlogic.gdx.utils.viewport.Viewport;
 import core.app.vars.Cores;
 import core.machine.utils.Item;
 
@@ -14,10 +15,15 @@ import static core.app.vars.Cores.batch;
 import static core.app.vars.Cores.shape;
 import static core.app.vars.Vars.*;
 
-public final class Artist extends GameCore {
+public final class Artist {
     private static final float tileSize = world.getTileSize();
     private static final float itemSize = tileSize * ITEM_SIZE;
 
+
+    public static void screenClear(Viewport viewport) {
+        ScreenUtils.clear(0.15f, 0.15f, 0.2f, 1f);
+        viewport.apply();
+    }
 
     public static void Draw() {
     }

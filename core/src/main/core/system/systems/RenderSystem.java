@@ -1,12 +1,11 @@
 package core.system.systems;
 
+import arcane.AppListener;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import core.app.cores.AppListener;
 import core.app.vars.Cores;
 import core.entities.plan.PlanManager;
 import core.render.PlanRenderer;
 import core.render.RenderLayer;
-import core.app.cores.GameSysCycle;
 import data.map.asset.AssetType;
 
 import static core.app.vars.Vars.*;
@@ -30,7 +29,6 @@ public class RenderSystem implements AppListener {
 
     @Override
     public void update() {
-
         planRenderer.update();
     }
 
