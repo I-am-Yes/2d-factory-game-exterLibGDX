@@ -1,5 +1,6 @@
 package core.debug;
 
+import arcane.Events;
 import core.app.cores.Time;
 import core.debug.debuggers.*;
 import core.event.events.GameEvent;
@@ -10,7 +11,6 @@ import data.map.MapConfig;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import core.event.*;
 
 import static core.app.vars.Cores.*;
 import static core.app.vars.Vars.*;

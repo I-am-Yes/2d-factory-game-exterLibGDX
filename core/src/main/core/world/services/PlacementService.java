@@ -1,6 +1,6 @@
 package core.world.services;
 
-import core.event.Events;
+import arcane.Events;
 import core.event.events.GameEvent;
 import core.machine.state.Direction;
 import core.world.World;

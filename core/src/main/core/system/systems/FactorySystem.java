@@ -4,7 +4,7 @@ import arcane.AppListener;
 import com.badlogic.gdx.utils.LongMap;
 import core.app.cores.Time;
 import core.blocks.Blocks;
-import core.event.Events;
+import arcane.Events;
 import core.event.events.GameEvent;
 import core.machine.*;
 import core.machine.machines.definition.Block;

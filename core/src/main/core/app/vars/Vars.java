@@ -1,6 +1,7 @@
 package core.app.vars;
 
 import core.UiInputGate;
+import core.app.GameStart;
 import core.controller.camera.CameraController;
 import core.player.Player;
 import core.world.World;
@@ -12,6 +13,8 @@ public class Vars {
     ////hmm
     public static final int MAX_FACTORY_COUNT = Integer.MAX_VALUE;
     public static final float ITEM_SIZE = 0.8f;
+
+    public static GameStart start;
 
     public static MapConfig mapConfig;
     public static World world;

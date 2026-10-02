@@ -1,6 +1,6 @@
 package core.event.events;
 
-import core.event.Events;
+import arcane.Events;
 
 public class AppEvent {
 

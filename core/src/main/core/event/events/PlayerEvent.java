@@ -1,6 +1,6 @@
 package core.event.events;
 
-import core.event.Events;
+import arcane.Events;
 import data.map.asset.AssetType;
 import core.player.Player;
 

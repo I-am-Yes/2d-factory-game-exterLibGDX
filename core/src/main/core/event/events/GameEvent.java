@@ -1,7 +1,7 @@
 package core.event.events;
 
-import core.event.CancellableEvent;
-import core.event.Events;
+import arcane.CancellableEvent;
+import arcane.Events;
 import core.machine.state.Direction;
 import data.map.asset.FloorType;
 import data.map.MapConfig;

@@ -11,7 +11,7 @@ import core.UiInputGate;
 import core.app.cores.Time;
 import core.app.cores.UpdateDomain;
 import core.app.vars.Cores;
-import core.event.Events;
+import arcane.Events;
 import core.render.RenderLayer;
 import data.map.asset.AssetType;
 import ui.game.GameUI;

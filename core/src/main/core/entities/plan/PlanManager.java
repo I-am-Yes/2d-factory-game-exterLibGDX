@@ -2,7 +2,7 @@ package core.entities.plan;
 
 import data.map.asset.AssetType;
 import com.badlogic.gdx.utils.Queue;
-import core.event.Events;
+import arcane.Events;
 import core.event.events.GameEvent;
 import core.world.World;
 

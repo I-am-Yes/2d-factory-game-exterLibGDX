@@ -14,8 +14,6 @@ import core.assets.AssetsHandler;
 
 public class Cores {
 
-    public static GameStart start;
-
     public static Window window;
     public static Viewport viewport;
     public static InputHandler input;

@@ -1,7 +1,7 @@
 package core.app.cores;
 
 import arcane.AppListener;
-import core.event.Events;
+import arcane.Events;
 
 public class Update implements AppListener {
 

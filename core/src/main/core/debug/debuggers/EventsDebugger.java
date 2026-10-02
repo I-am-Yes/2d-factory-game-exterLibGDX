@@ -1,6 +1,6 @@
 package core.debug.debuggers;
 
-import core.event.Events;
+import arcane.Events;
 import core.event.events.GameEvent;
 import core.event.events.PlayerEvent;
 
