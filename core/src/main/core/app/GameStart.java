@@ -57,7 +57,6 @@ public class GameStart extends GameCore {
 
         add(new Update());
         add(new PlayerSystem());
-        add(new PlayerSystem());
         add(new EntrySystem());
         add(new FactorySystem());
 
