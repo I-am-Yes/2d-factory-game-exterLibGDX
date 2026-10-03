@@ -67,7 +67,7 @@ public class ItemSource extends Block {
                 float smoothAlpha = 1f - (float) Math.exp(-VISUAL_SMOOTHNESS * delta);
 
                 updateItemSmoothVisual(smoothAlpha);
-            } else {;
+            } else {
                 updateItemVisual(delta);
             }
         }

@@ -1,10 +1,10 @@
 package core.machine.render;
 
-import com.badlogic.gdx.utils.Array;
-import core.app.cores.Time;
+import arcane.Time;
+import arcane.utils.Array;
 import core.machine.state.ItemType;
 import core.machine.utils.Item;
-import core.utils.Artist;
+import core.utils.ArtistEx;
 
 public class RenderManager {
     public static final float VISUAL_SMOOTHNESS = 20f;
@@ -40,7 +40,7 @@ public class RenderManager {
 
     public void drawBatch(Item item) {
         for (IntakeVisual visual : intakes) {
-            Artist.DrawItem(item, visual.visualX, visual.visualY);
+            ArtistEx.DrawItem(item, visual.visualX, visual.visualY);
         }
     }
 

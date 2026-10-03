@@ -1,4 +1,4 @@
-package core.event.events;
+package core.event;
 
 import arcane.Events;
 import data.map.asset.AssetType;
@@ -55,17 +55,12 @@ public class PlayerEvent {
     }
 
     //TODO: deprecate this.
-    public static final class blockSelected {
-        public final AssetType selectedType;
-
-        public blockSelected(AssetType selectedType) {
-            this.selectedType = selectedType;
-        }
+        public record blockSelected(AssetType selectedType) {
 
         public static void fire(AssetType selectedType) {
-            Events.fire(new blockSelected(selectedType));
+                Events.fire(new blockSelected(selectedType));
+            }
         }
-    }
 
 
 

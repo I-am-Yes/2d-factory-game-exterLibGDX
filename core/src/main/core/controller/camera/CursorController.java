@@ -9,7 +9,7 @@ public class CursorController {
 
     private Cursor defaultCursor;
 
-    public void loadCursor() {
+    public CursorController loadCursor() {
         Pixmap source = new Pixmap(Gdx.files.internal("unpacked/cursor/cursor2.png"));
 
         int size = 32; // only 16, 32, 64 etc... works
@@ -24,9 +24,11 @@ public class CursorController {
         Gdx.graphics.setCursor(defaultCursor);
         source.dispose();
         scaled.dispose();
+
+        return this;
     }
 
-    public void disposeCursor() {
+    public void dispose() {
         if (defaultCursor != null) {
             defaultCursor.dispose();
         }

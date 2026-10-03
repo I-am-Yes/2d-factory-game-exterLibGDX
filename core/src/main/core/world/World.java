@@ -1,6 +1,8 @@
 package core.world;
 
-import core.app.vars.Cores;
+import arcane.GameCore;
+import arcane.Cores;
+import core.app.vars.Vars;
 import core.controller.camera.CameraController;
 import core.controller.camera.CameraViewMode;
 import core.world.chunk.Chunk;
@@ -21,7 +23,7 @@ import core.assets.AssetsHandler;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 
-public class World {
+public class World extends GameCore {
 
     private static final String FLOOR_LAYER_NAME = "Floor Layer";
     private static final String BUILDING_LAYER_NAME = "Building Layer";
@@ -196,7 +198,10 @@ public class World {
 //            ghostGrid);
 //    }
 
+    @Override
     public void update() {
+        drawCached(Vars.cameraControl);
+
         int cameraTileX = MathUtils.floor(Cores.camera.position.x / getTileSize());
         int cameraTileY = MathUtils.floor(Cores.camera.position.y / getTileSize());
 
@@ -253,6 +258,7 @@ public class World {
         );
     }
 
+    @Override
     public void dispose() {
         placementService.dispose();
 

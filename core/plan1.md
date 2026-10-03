@@ -139,7 +139,7 @@ core/
 
 Important boundaries:
 
-- Simulation must work without `SpriteBatch`, textures, or `Artist`.
+- Simulation must work without `SpriteBatch`, textures, or `ArtistEx`.
 - Presentation reads simulation results; it cannot change inventory or acceptance.
 - `FactorySystem` coordinates these components; it does not implement conveyor, chest, or furnace behavior.
 - Use one authoritative machine registry. Your existing `MachineRegistry` should eventually replace the separate registry inside `FactorySystem`, rather than maintaining two owners.
@@ -478,7 +478,7 @@ core/
 
 Important boundaries:
 
-- Simulation must work without `SpriteBatch`, textures, or `Artist`.
+- Simulation must work without `SpriteBatch`, textures, or `ArtistEx`.
 - Presentation reads simulation results; it cannot change inventory or acceptance.
 - `FactorySystem` coordinates these components; it does not implement conveyor, chest, or furnace behavior.
 - Use one authoritative machine registry. Your existing `MachineRegistry` should eventually replace the separate registry inside `FactorySystem`, rather than maintaining two owners.

@@ -4,14 +4,14 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
-import core.Window;
 
-import arcane.AppListener;
-import arcane.GameCore;
+import arcane.*;
+import arcane.graphics.Window;
+import arcane.ApplicationListener;
+import arcane.input.InputHandler;
 import core.app.cores.Update;
-import core.app.vars.Cores;
 import core.assets.AssetsHandler;
-import core.InputHandler;
+import core.render.PlanRenderer;
 import core.system.systems.*;
 import core.world.World;
 import data.map.MapConfig;
@@ -29,8 +29,8 @@ public class GameStart extends GameCore {
         Cores.window.setVSync(false);
         Cores.window.setForegroundFPS(0);
 
-        Cores.assets = new AssetsHandler();
-        Cores.assets.queueLoad();
+        assets = new AssetsHandler();
+        assets.queueLoad();
     }
 
     public void finishGameStart() {
@@ -41,7 +41,7 @@ public class GameStart extends GameCore {
         mapConfig = MapConfig.createPresetMap(PresetMap.PLAIN);
         //TODO: change to better seed system later
         mapConfig.seed = System.currentTimeMillis();
-        world = World.generateWorld(mapConfig, Cores.assets);
+        world = World.generateWorld(mapConfig, assets);
 
         Cores.viewport = new ExtendViewport(
             world.getWorldWidth(),
@@ -52,10 +52,12 @@ public class GameStart extends GameCore {
 
         Cores.input = new InputHandler();
 
+        add(world);
+        add(new PlanRenderer());
+
         add(new Update());
-        add(new RenderSystem());
         add(new PlayerSystem());
-        add(new CameraSystem());
+        add(new PlayerSystem());
         add(new EntrySystem());
         add(new FactorySystem());
 
@@ -68,7 +70,7 @@ public class GameStart extends GameCore {
 
     }
 
-    public void add(AppListener child) {
+    public void add(ApplicationListener child) {
         super.add(child);
     }
 }

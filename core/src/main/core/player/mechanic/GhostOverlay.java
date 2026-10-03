@@ -1,13 +1,14 @@
 package core.player.mechanic;
 
+import arcane.graphics.Artist;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.MathUtils;
-import core.app.cores.Time;
+import arcane.Time;
 import core.helper.RenderUtils;
 import core.machine.state.Direction;
 import core.player.PlayerAction;
 import core.system.systems.PlayerSystem;
-import core.utils.Artist;
+import core.utils.ArtistEx;
 import data.map.asset.AssetType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -15,7 +16,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import ui.PlayerHotbar;
 
-import static core.app.vars.Cores.*;
+import static arcane.Cores.*;
 import static core.app.vars.Vars.*;
 
 public class GhostOverlay {

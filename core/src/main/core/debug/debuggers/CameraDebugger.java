@@ -22,7 +22,7 @@ public final class CameraDebugger {
     private CameraDebugSnapshot previous;
     private float logTimer;
 
-    private static boolean printCameraDebugToConsole = false;
+    private static final boolean printCameraDebugToConsole = false;
 
     private int cameraFrame;
 

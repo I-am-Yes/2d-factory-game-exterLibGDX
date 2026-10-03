@@ -3,11 +3,11 @@ package core.player.mechanic;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.MathUtils;
-import core.app.cores.Time;
-import core.event.events.PlayerEvent.*;
+import arcane.Time;
+import core.event.PlayerEvent.*;
 import core.player.Player;
 
-import static core.app.vars.Cores.*;
+import static arcane.Cores.*;
 
 public class PlayerController {
 

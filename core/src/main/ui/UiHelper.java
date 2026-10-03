@@ -136,7 +136,7 @@ public class UiHelper {
             .add(closeButton)
             .size(width, height)
             .padRight(-panel.getPadRight())
-            .padTop((height * 1.0f) -panel.getPadTop());
+            .padTop((height) -panel.getPadTop());
         closeButton.setTouchable(Touchable.enabled);
         closeButton.addListener(new ClickListener() {
             @Override

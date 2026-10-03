@@ -1,4 +1,4 @@
-package core.event.events;
+package core.event;
 
 import arcane.Events;
 
@@ -42,6 +42,18 @@ public class AppEvent {
     public static class GamePaused extends AppEvent {
         public static void fire() {
             Events.fire(new GamePaused());
+        }
+    }
+
+    public static class PauseGame extends  AppEvent {
+        public static void fire() {
+            Events.fire(new PauseGame());
+        }
+    }
+
+    public static class ResumeGame extends  AppEvent {
+        public static void fire() {
+            Events.fire(new ResumeGame());
         }
     }
 

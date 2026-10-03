@@ -1,25 +1,30 @@
 package core.system.systems;
 
-import arcane.AppListener;
+import arcane.ApplicationListener;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import core.app.vars.Cores;
+import arcane.Cores;
+import core.config.ScriptConfigLoader;
+import core.config.api.CameraScriptApi;
+import core.config.camera.CameraSettings;
+import core.controller.camera.CameraController;
+import core.controller.camera.CursorController;
 import core.player.*;
-import core.player.mechanic.GhostOverlay;
-import core.player.mechanic.Overlay;
-import core.player.mechanic.OverlayHelper;
-import core.player.mechanic.PlayerController;
-import core.render.RenderLayer;
+import core.player.mechanic.*;
+
+import java.util.Map;
 
 import static core.app.vars.Vars.*;
 
-public class PlayerSystem implements AppListener {
+public class PlayerSystem implements ApplicationListener {
 
-    private PlayerAction action;
-    private PlayerController controller;
-    private Overlay overlay;
-    private GhostOverlay ghostOverlay;
+    private final PlayerAction action;
+    private final PlayerController controller;
+    private final Overlay overlay;
+    private final GhostOverlay ghostOverlay;
+
+    private CursorController cursor;
 
     public static final float HOVER_THRESHOLD = 0.15f;
     private final Vector3 mouseWorld = new Vector3();
@@ -27,22 +32,35 @@ public class PlayerSystem implements AppListener {
     private boolean hoverTargetInitialized;
 
     public PlayerSystem() {
+        InitCamera();
 
         this.controller = new PlayerController();
-
         this.action = new PlayerAction();
 
         player = new Player(controller, action);
-
 
         this.overlay = new Overlay(action);
         this.ghostOverlay = new GhostOverlay();
 
     }
 
+    public void InitCamera() {
+        CameraSettings cameraSettings = new CameraSettings();
+        this.cursor = new CursorController().loadCursor();
+
+        ScriptConfigLoader.loadAll(
+            "scripts",
+            Map.of("camera", new CameraScriptApi(cameraSettings))
+        );
+
+        cameraControl = new CameraController(cameraSettings);
+    }
+
     @Override
     public void update() {
         updateHoverThreshold();
+
+        cameraControl.update();
 
         player.update();
         action.update();
@@ -53,26 +71,6 @@ public class PlayerSystem implements AppListener {
 
         drawBatch();
         drawShapeRenderer();
-    }
-
-    @Override
-    public void init() {
-        AppListener.super.init();
-    }
-
-    @Override
-    public void resize(int width, int height) {
-        AppListener.super.resize(width, height);
-    }
-
-    @Override
-    public void pause() {
-        AppListener.super.pause();
-    }
-
-    @Override
-    public void resume() {
-        AppListener.super.resume();
     }
 
     public void drawBatch() {
@@ -94,6 +92,7 @@ public class PlayerSystem implements AppListener {
     @Override
     public void dispose() {
         action.dispose();
+        cursor.dispose();
     }
 
     public void updateHoverThreshold() {
@@ -124,10 +123,5 @@ public class PlayerSystem implements AppListener {
     public static Vector2 getHoverTileThreshold() {
         return hoverTileThreshold;
     }
-
-    public RenderLayer renderLayer() {
-        return RenderLayer.PLAYER_LAYER;
-    }
-
 
 }

@@ -19,7 +19,7 @@ public class PerformanceDebugger {
     }
 
     private final ObjectMap<String, Metric> metrics = new ObjectMap<>();
-    private ObjectSet<String> enabled = new  ObjectSet<>();
+    private final ObjectSet<String> enabled = new  ObjectSet<>();
 
     public void register(String id, float intervalSec, Runnable print) {
         Metric metric = new Metric();

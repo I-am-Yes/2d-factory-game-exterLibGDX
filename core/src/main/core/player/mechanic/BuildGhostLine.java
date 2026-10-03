@@ -1,12 +1,11 @@
 package core.player.mechanic;
 
-import core.utils.Artist;
+import arcane.graphics.Artist;
 import data.map.asset.AssetType;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
@@ -14,15 +13,15 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import core.assets.AssetsHandler;
-import core.InputHandler;
+import arcane.input.InputHandler;
 import core.player.Player;
 import core.player.PlayerAction;
 import core.entities.plan.PlanBuilder;
 import core.world.World;
-import core.event.events.GameEvent;
+import core.event.GameEvent;
 import core.helper.TileAlgorithm;
 
-import static core.app.vars.Cores.*;
+import static arcane.Cores.*;
 
 public class BuildGhostLine {
 
@@ -49,7 +48,7 @@ public class BuildGhostLine {
 
     private final float DEBUG_LINE_WIDTH;
     private float GHOST_LINE_THICKNESS;
-    private Color color;
+    private final Color color;
 
     private final float tileSize;
 
@@ -67,7 +66,7 @@ public class BuildGhostLine {
         BRESENHAM_LINE,
         THICK_LINE
     }
-    private PlacingAlgorithm placingAlgorithm = PlacingAlgorithm.THICK_LINE;
+    private final PlacingAlgorithm placingAlgorithm = PlacingAlgorithm.THICK_LINE;
 
     public BuildGhostLine(World world, Player player, Viewport viewport, PlayerAction playerAction, InputHandler input, AssetsHandler assetsHandler) {
         this.world = world;

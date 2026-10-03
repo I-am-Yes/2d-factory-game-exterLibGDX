@@ -1,12 +1,10 @@
 package core.utils;
 
-import com.badlogic.gdx.utils.ObjectMap;
-import com.badlogic.gdx.utils.Timer;
+import arcane.utils.ObjectMap;
+import arcane.utils.Timer;
 
 public final class TimeUtils {
     private static final ObjectMap<String, Measurement> measurements = new ObjectMap<>();
-
-    private TimeUtils() {}
 
     public static void runAfter(float delay, Runnable runnable) {
         Timer.schedule(new Timer.Task(){

@@ -4,10 +4,10 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.Input;
-import core.InputHandler;
+import arcane.input.InputHandler;
 
-import core.app.cores.Time;
-import core.app.vars.Cores;
+import arcane.Time;
+import arcane.Cores;
 import core.config.camera.CameraSettings;
 import core.world.chunk.ChunkRenderDetail;
 

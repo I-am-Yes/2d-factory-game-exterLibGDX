@@ -7,7 +7,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.ScreenUtils;
 import arcane.Events;
-import core.event.events.AppEvent;
+import core.event.AppEvent;
 import ui.Style;
 
 public class LoadingScreen implements Disposable {

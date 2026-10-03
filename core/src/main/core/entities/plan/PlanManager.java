@@ -1,29 +1,27 @@
 package core.entities.plan;
 
-import data.map.asset.AssetType;
-import com.badlogic.gdx.utils.Queue;
+import arcane.utils.Queue;
 import arcane.Events;
-import core.event.events.GameEvent;
-import core.world.World;
+import core.event.GameEvent;
+
+import static core.app.vars.Vars.world;
 
 public class PlanManager {
 
-    private final World world;
     private boolean isConstructing;
     private final Queue<PlanBuilder<?>> planRenderQueue = new Queue<>();
 
-    public PlanManager(World world) {
-        this.world = world;
+    public PlanManager() {
 
         Events.on(GameEvent.PlanBuilderRenderRequest.class, request -> {
             //TODO: fix this warning
-            addPlanToRenderQueue(request.planBuilder);
+            addPlanToRenderQueue(request.planBuilder());
         });
 
         Events.on(GameEvent.PlanBuilderRequest.class, request -> {
 
-            for (int i = 0; i < request.planBuilder.getPlanQueue().size; i++) {
-                PlanEntity<?> currentPlanEntity = request.planBuilder.getPlanEntityAt(i);
+            for (int i = 0; i < request.planBuilder().getPlanQueue().size; i++) {
+                PlanEntity<?> currentPlanEntity = request.planBuilder().getPlanEntityAt(i);
                 world.getPlacementService().placeGhost(
                     currentPlanEntity.getX(),
                     currentPlanEntity.getY(),
@@ -35,13 +33,11 @@ public class PlanManager {
 
         Events.on(GameEvent.PlanConstructRequest.class, request -> {
             PlanConstructor<?> constructor =
-                new PlanConstructor<>(world, request.planBuilder);
+                new PlanConstructor<>(world, request.planBuilder());
 
             isConstructing = constructor.construct();
         });
     }
-
-    public void update() {}
 
     public boolean isConstructing() {
         return isConstructing;
@@ -51,7 +47,7 @@ public class PlanManager {
         return planRenderQueue;
     }
 
-    public void addPlanToRenderQueue(PlanBuilder<AssetType> planBuilder) {
+    public void addPlanToRenderQueue(PlanBuilder<?> planBuilder) {
         if (planBuilder == null) return;
         planRenderQueue.addFirst(planBuilder);
     }

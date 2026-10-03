@@ -6,10 +6,8 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
-import core.app.cores.Time;
-import core.app.extras.TimeEx;
-import core.player.PlayerAction;
-import ui.InterfaceSystem;
+import arcane.Time;
+import arcane.extra.TimeEx;
 import core.system.systems.PlayerSystem;
 import core.world.chunk.Chunk;
 import ui.Style;
@@ -17,7 +15,7 @@ import ui.UiHelper;
 import java.util.List;
 import java.util.Locale;
 
-import static core.app.vars.Cores.*;
+import static arcane.Cores.*;
 import static core.app.vars.Vars.*;
 
 public class GameUI {
@@ -56,14 +54,14 @@ public class GameUI {
     private final Label worldMouseTileNameLabel;
     private final Label worldTileRotationLabel;
 
-    private Table WorldInfoList = new Table();
-    private Table PerformanceList = new Table();
-    private List<Table> panelsList = List.of(
+    private final Table WorldInfoList = new Table();
+    private final Table PerformanceList = new Table();
+    private final List<Table> panelsList = List.of(
         WorldInfoList,
         PerformanceList
     );
 
-    private Vector2 hoverThreshold = new Vector2();
+    private final Vector2 hoverThreshold = new Vector2();
     private final int memoryUpdateDelay = 1000;
 
     private enum DebugInfoModes {
@@ -149,33 +147,6 @@ public class GameUI {
 
     public boolean isDebugInfoVisible() {
         return panelsList.stream().allMatch(Actor::isVisible);
-    }
-
-    ////Deprecated
-    private void updateUiScaling() {
-        float oldScale = 0.0f;
-        float scale = InterfaceSystem.getUiScale();
-//        if (scale < 1) {
-//            throw new IllegalStateException("UI scale must be >= than 1. Current scale: " + scale);
-//        }
-//        if (WorldInfoList.getChild(0) != null) {
-//            oldScale = WorldInfoList.getChild(0).getScaleX();
-//            if (scale == oldScale) return;
-//        }
-//
-//        WorldInfoList.setScale(scale);
-//        for (Actor actor : WorldInfoList.getChildren()) {
-//            if (actor instanceof Label label) {
-//                label.setFontScale(oldScale*scale);;
-//            }
-//        }
-//
-//        PerformanceList.setScale(scale);
-//        for (Actor actor : PerformanceList.getChildren()) {
-//            if (actor instanceof Label label) {
-//                label.setFontScale(oldScale*scale);
-//            }
-//        }
     }
 
     //check if the label actually needs to be updated,

@@ -1,22 +1,19 @@
 package core.app.extras.test;
 
-import arcane.AppListener;
+import arcane.ApplicationListener;
 import core.entities.plan.PlanBuilder;
 import core.entities.plan.PlanManager;
-import core.event.events.GameEvent;
-import core.app.cores.GameSysCycle;
+import core.event.GameEvent;
 import data.map.asset.AssetType;
 import data.map.asset.BuildingType;
 
-import static core.app.vars.Vars.*;
-
-public class GameTest implements AppListener, GameSysCycle {
+public class GameTest implements ApplicationListener {
 
     public static final GameTest instance = new GameTest();
 
     public GameTest() {
 
-        PlanManager planManager = new PlanManager(world);
+        PlanManager planManager = new PlanManager();
         PlanBuilder<AssetType> planBuilder = new PlanBuilder<>();
 
         float divideTest = 1f;
@@ -66,41 +63,25 @@ public class GameTest implements AppListener, GameSysCycle {
 
     @Override
     public void init() {
-        AppListener.super.init();
     }
 
     @Override
     public void update() {
-        AppListener.super.update();
-    }
-
-    @Override
-    public void create() {
-        AppListener.super.create();
-    }
-
-    @Override
-    public void render() {
-        AppListener.super.render();
     }
 
     @Override
     public void resize(int width, int height) {
-        AppListener.super.resize(width, height);
     }
 
     @Override
     public void pause() {
-        AppListener.super.pause();
     }
 
     @Override
     public void resume() {
-        AppListener.super.resume();
     }
 
     @Override
     public void dispose() {
-        AppListener.super.dispose();
     }
 }

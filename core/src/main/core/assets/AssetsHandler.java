@@ -1,7 +1,7 @@
 package core.assets;
 
 import com.badlogic.gdx.assets.AssetManager;
-import core.event.events.AppEvent;
+import core.event.AppEvent;
 import data.map.asset.AssetType;
 import data.map.asset.FloorType;
 import data.map.MapConfig;

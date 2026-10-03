@@ -1,19 +1,19 @@
 package core.app.launcher;
 
-
-import arcane.AppListener;
-import arcane.GameCore;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.utils.ScreenUtils;
+
+import arcane.*;
+import arcane.graphics.Artist;
 import core.app.GameStart;
 import core.app.extras.LoadingScreen;
-import core.app.vars.Cores;
-import core.controller.camera.ScreenshotCapture;
-import core.event.events.AppEvent;
+import core.event.AppEvent;
 
+//TODO: make this ss an event caller
+import core.controller.camera.ScreenshotCapture;
+
+import static arcane.Cores.*;
+import static core.app.vars.Apps.*;
 import static core.app.vars.Vars.*;
-import static core.app.vars.Cores.*;
 
 public class GameLauncher extends GameCore {
 
@@ -25,6 +25,8 @@ public class GameLauncher extends GameCore {
         start = new GameStart();
         start.startGame();
         add(start);
+
+        super.init();
     }
 
     @Override
@@ -39,19 +41,40 @@ public class GameLauncher extends GameCore {
             return;
         }
 
-        drawScreen();
+        Artist.screenClear(viewport);
 
-        world.update();
+        batch.setProjectionMatrix(camera.combined);
+        shape.setProjectionMatrix(camera.combined);
 
         super.update();
 
-        Cores.input.endFrame();
+        input.endFrame();
+
+        ScreenshotCapture.captureIfRequested();
+    }
+
+    @Override
+    public void pause() {
+        Events.on(AppEvent.GamePaused.class, event -> {
+            Time.pause();
+            super.pause();
+        });
+    }
+
+    @Override
+    public void resume() {
+        Events.on(AppEvent.ResumeGame.class, event -> {
+            Time.resume();
+            super.resume();
+        });
     }
 
     @Override
     public void resize(int width, int height) {
         if (viewport != null)
             viewport.update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false);
+
+        super.resize(width, height);
     }
 
     @Override
@@ -60,38 +83,8 @@ public class GameLauncher extends GameCore {
         super.dispose();
     }
 
-    private void drawScreen() {
-        ScreenUtils.clear(0.15f, 0.15f, 0.2f, 1f);
-        viewport.apply();
-
-        world.drawCached(cameraControl);
-
-        //BEGIN batch
-        batch.setProjectionMatrix(camera.combined);
-        batch.begin();
-
-
-
-        batch.end();
-        //END batch
-
-
-        //BEGIN shapeRender
-        shape.setProjectionMatrix(camera.combined);
-        shape.begin(ShapeRenderer.ShapeType.Filled);
-        //Note: add another ShapeType if needed.
-
-        //TODO: this
-
-        shape.end();
-        //END shapeRender
-
-        ScreenshotCapture.captureIfRequested();
-
-    }
-
     @Override
-    public void add(AppListener child) {
+    public void add(ApplicationListener child) {
         super.add(child);
     }
 }

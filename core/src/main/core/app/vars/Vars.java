@@ -1,8 +1,9 @@
 package core.app.vars;
 
 import core.UiInputGate;
-import core.app.GameStart;
+import core.assets.AssetsHandler;
 import core.controller.camera.CameraController;
+import core.entities.plan.PlanManager;
 import core.player.Player;
 import core.world.World;
 import data.map.MapConfig;
@@ -14,10 +15,10 @@ public class Vars {
     public static final int MAX_FACTORY_COUNT = Integer.MAX_VALUE;
     public static final float ITEM_SIZE = 0.8f;
 
-    public static GameStart start;
-
     public static MapConfig mapConfig;
     public static World world;
+
+    public static AssetsHandler assets;
 
     public static UiInputGate uiInputGate;
 
@@ -25,5 +26,7 @@ public class Vars {
     public static CameraController cameraControl;
 
     public static InterfaceSystem ui;
+
+    public static PlanManager planManager = new PlanManager();
 
 }

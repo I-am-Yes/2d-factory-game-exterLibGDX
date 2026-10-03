@@ -1,8 +1,8 @@
 package ui.game;
 
 import com.badlogic.gdx.scenes.scene2d.ui.*;
-import core.app.GameLoop;
-import core.app.cores.Time;
+import arcane.Time;
+import core.event.AppEvent;
 import ui.UiHelper;
 import ui.Style;
 
@@ -52,7 +52,7 @@ public class SettingsPanel extends Window {
         setVisible(true);
 
         if (pauseOnOpen && !Time.isPaused()) {
-            GameLoop.pause();
+            AppEvent.PauseGame.fire();
             pauseBySettingsPanel = true;
         }
     }
@@ -60,7 +60,7 @@ public class SettingsPanel extends Window {
         setVisible(false);
 
         if (pauseBySettingsPanel) {
-            GameLoop.resume();
+            AppEvent.ResumeGame.fire();
             pauseBySettingsPanel = false;
         }
     }

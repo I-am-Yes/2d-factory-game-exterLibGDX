@@ -1,7 +1,8 @@
 package core.player;
 
+import arcane.graphics.Artist;
 import core.player.mechanic.PlayerController;
-import core.utils.Artist;
+import core.utils.ArtistEx;
 import data.PlayerData;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.Texture;

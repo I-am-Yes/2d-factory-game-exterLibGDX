@@ -7,7 +7,8 @@ import com.badlogic.gdx.math.Vector2;
 
 public class PlanEntity<T extends AssetType> {
 
-    private int x, y;
+    private final int x;
+    private final int y;
     private final Direction direction;
     private final GhostType<T> ghostType;
 

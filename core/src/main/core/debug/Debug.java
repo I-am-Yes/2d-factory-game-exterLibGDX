@@ -1,9 +1,9 @@
 package core.debug;
 
 import arcane.Events;
-import core.app.cores.Time;
+import arcane.Time;
 import core.debug.debuggers.*;
-import core.event.events.GameEvent;
+import core.event.GameEvent;
 import data.debug.DebugConfig;
 import data.debug.DebugType;
 import data.map.asset.FloorType;
@@ -12,7 +12,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
-import static core.app.vars.Cores.*;
+import static arcane.Cores.*;
 import static core.app.vars.Vars.*;
 
 public class Debug {
@@ -42,8 +42,8 @@ public class Debug {
 
 
         Events.on(GameEvent.MapGenerated.class, e -> {
-            pendingMapConfig = e.mapConfig;
-            pendingGrid = e.floorGrid;
+            pendingMapConfig = e.mapConfig();
+            pendingGrid = e.floorGrid();
             mapGenReportPending = true;
         });
 

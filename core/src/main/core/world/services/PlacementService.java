@@ -1,7 +1,7 @@
 package core.world.services;
 
 import arcane.Events;
-import core.event.events.GameEvent;
+import core.event.GameEvent;
 import core.machine.state.Direction;
 import core.world.World;
 import core.world.chunk.Chunk;

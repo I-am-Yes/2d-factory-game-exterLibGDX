@@ -9,11 +9,11 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import core.world.World;
 import core.player.mechanic.BuildGhostLine;
-import core.event.events.GameEvent;
+import core.event.GameEvent;
 import ui.PlayerHotbar;
 
 import static com.badlogic.gdx.Input.Keys.*;
-import static core.app.vars.Cores.*;
+import static arcane.Cores.*;
 import static core.app.vars.Vars.*;
 
 public class PlayerAction {
@@ -151,7 +151,6 @@ public class PlayerAction {
                 placementDirection = placementDirection.rotateClockwise();
             }
 
-            return;
         }
     }
 

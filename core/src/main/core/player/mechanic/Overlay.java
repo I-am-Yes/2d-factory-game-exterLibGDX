@@ -1,17 +1,17 @@
 package core.player.mechanic;
 
+import arcane.graphics.Artist;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import core.app.cores.Time;
+import arcane.Time;
 import core.player.PlayerAction;
 import core.system.systems.PlayerSystem;
-import core.utils.Artist;
 
-import static core.app.vars.Cores.*;
+import static arcane.Cores.*;
 import static core.app.vars.Vars.*;
 
 public class Overlay {
@@ -23,7 +23,7 @@ public class Overlay {
 
     private float SLIDE_SPEED = 32f;
     private float PADDING = 0.06f;
-    private float BRACKET_RESIZE_SPEED = 8f;
+    private final float BRACKET_RESIZE_SPEED = 8f;
 
     private float cornerBracketThickness = 6f;
     private float cornerBracketGapRatio = 0.27f;
@@ -34,7 +34,7 @@ public class Overlay {
         INSIDE,    // bracket sits inside tile
         CENTER       // centered on tile edge (half in, half out)
     }
-    private BracketPaddingMode defaultPaddingMode = BracketPaddingMode.CENTER;
+    private final BracketPaddingMode defaultPaddingMode = BracketPaddingMode.CENTER;
     private BracketPaddingMode bracketPaddingMode = defaultPaddingMode;
 
     private float bracketSize;
@@ -78,11 +78,7 @@ public class Overlay {
             bracketAnimate.set(targetX, targetY);
         }
 
-        if (world.isGhostAtWorld(input.getMouseWorldPos(viewport))) {
-            setExpandBracket(true, 0.1f);
-        } else {
-            setExpandBracket(false, 0.1f);
-        }
+        setExpandBracket(world.isGhostAtWorld(input.getMouseWorldPos(viewport)), 0.1f);
 
         if (playerAction != null && playerAction.getSelectedType() != null) {
 //            Gdx.app.log(

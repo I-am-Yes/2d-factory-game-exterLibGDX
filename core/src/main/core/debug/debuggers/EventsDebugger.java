@@ -1,8 +1,8 @@
 package core.debug.debuggers;
 
 import arcane.Events;
-import core.event.events.GameEvent;
-import core.event.events.PlayerEvent;
+import core.event.GameEvent;
+import core.event.PlayerEvent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +31,7 @@ public class EventsDebugger {
 
             if (event instanceof GameEvent.MapGenerated mapGenerated) {
 
-                println("MapGenerated with seed: " + mapGenerated.mapConfig.seed);
+                println("MapGenerated with seed: " + mapGenerated.mapConfig().seed);
 
             }
 
@@ -47,7 +47,7 @@ public class EventsDebugger {
             }
 
             if (event instanceof PlayerEvent.blockSelected blockSelected) {
-                println("Selected tile: "  + blockSelected.selectedType);
+                println("Selected tile: "  + blockSelected.selectedType());
             }
 
 //            if (event instanceof GameEvent.BlockPlaceRequest blockPlaceRequest) {
@@ -57,7 +57,7 @@ public class EventsDebugger {
 
             if (event instanceof GameEvent.BlockPlaced blockPlaced) {
                 println("BlockPlaced: " + blockPlaced.getClass().getSimpleName()
-                    + " at x: " + blockPlaced.tileX + " y: " + blockPlaced.tileY);
+                    + " at x: " + blockPlaced.tileX() + " y: " + blockPlaced.tileY());
             }
 
         });

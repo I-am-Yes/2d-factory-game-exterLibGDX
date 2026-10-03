@@ -1,6 +1,6 @@
 package ui;
 
-import arcane.AppListener;
+import arcane.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -8,18 +8,16 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import core.UiInputGate;
-import core.app.cores.Time;
-import core.app.cores.UpdateDomain;
-import core.app.vars.Cores;
+import arcane.Time;
+import arcane.Cores;
 import arcane.Events;
-import core.render.RenderLayer;
-import data.map.asset.AssetType;
+import core.app.vars.Vars;
 import ui.game.GameUI;
 import ui.game.SettingsPanel;
 
 import static core.app.vars.Vars.*;
 
-public class InterfaceSystem implements AppListener {
+public class InterfaceSystem implements ApplicationListener {
 
     private final Skin skin;
     private final InterfaceAction UIaction;
@@ -54,7 +52,7 @@ public class InterfaceSystem implements AppListener {
 
         playerHotbar = new PlayerHotbar(
             Cores.window, Cores.uiStage, skin, UIaction, aldrichFont,
-            Cores.input, Cores.assets
+            Cores.input, Vars.assets
         );
 
 
@@ -65,37 +63,22 @@ public class InterfaceSystem implements AppListener {
         Cores.uiStage.addActor(settingsPanel);
 
         Events.run(Events.Trigger.tickUpdate,
-            this::tickUpdate
+            () -> gameUI.tickUpdate()
 
+        );
+
+        Events.run(Events.Trigger.update,
+            this::UiUpdate
         );
 
     }
 
-    @Override
-    public void update() {
-        act();
+    private void UiUpdate() {
+        Cores.uiStage.act(Time.delta());
+
         gameUI.update();
         playerHotbar.update();
 
-        render();
-    }
-
-
-    //TODO: make tick system actually have whitelist
-    public void tickUpdate() {
-
-        gameUI.tickUpdate();
-    }
-
-    public void render() {
-        draw();
-    }
-
-    public void act() {
-        Cores.uiStage.act(Time.delta());
-    }
-
-    public void draw() {
         Cores.uiStage.draw();
     }
 
@@ -122,23 +105,6 @@ public class InterfaceSystem implements AppListener {
 
     public void toggleDebug() {
         gameUI.setDebugInfoVisible(!gameUI.isDebugInfoVisible());
-    }
-
-    public RenderLayer renderLayer() {
-        return RenderLayer.UI_LAYER_3;
-    }
-
-    //game UI should be real time update
-    public UpdateDomain updateDomain() {
-        return UpdateDomain.REAL_TIME;
-    }
-
-    public boolean updateWhenPaused() {
-        return true;
-    }
-
-    public AssetType getSelectedType() {
-        return playerHotbar.getSelectedType();
     }
 
     public static void setUiScale(float scale) {

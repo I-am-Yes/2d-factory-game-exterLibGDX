@@ -1,11 +1,11 @@
 package core.system.systems;
 
-import arcane.AppListener;
+import arcane.ApplicationListener;
 import com.badlogic.gdx.utils.LongMap;
-import core.app.cores.Time;
+import arcane.Time;
 import core.blocks.Blocks;
 import arcane.Events;
-import core.event.events.GameEvent;
+import core.event.GameEvent;
 import core.machine.*;
 import core.machine.machines.definition.Block;
 import core.machine.render.RenderManager;
@@ -14,7 +14,7 @@ import core.machine.state.ItemType;
 import core.utils.TimeUtils;
 import data.map.asset.BuildingType;
 
-public class FactorySystem implements AppListener {
+public class FactorySystem implements ApplicationListener {
 
     private final MachineGroup machineGroup;
     private final RenderManager renderManager = new RenderManager();
@@ -32,25 +32,25 @@ public class FactorySystem implements AppListener {
         this.machineGroup = new MachineGroup(this::getBuildingAt, this::reportTransfer);
 
         Events.on(GameEvent.BlockPlaced.class, event -> {
-            if (!(event.type instanceof BuildingType buildingType)) return;
+            if (!(event.type() instanceof BuildingType buildingType)) return;
 
             Block definition = Blocks.get(buildingType);
             if (definition == null) return;
 
             Machine building = definition.init(
-                event.tileX,
-                event.tileY,
-                event.direction
+                event.tileX(),
+                event.tileY(),
+                event.direction()
             );
 
-            buildings.put(tileKey(event.tileX, event.tileY), building);
+            buildings.put(tileKey(event.tileX(), event.tileY()), building);
             machineGroup.register(building);
 
 //            System.out.println("FactorySystem: Added building at (" + event.tileX + ", " + event.tileY + ") of type " + machineType);
 
             if (getBuildingCount() % 1000 == 0) {
                 System.out.println("Building count: " + getBuildingCount());
-                System.out.println("Built: " + getBuildingAt(event.tileX, event.tileY).type);
+                System.out.println("Built: " + getBuildingAt(event.tileX(), event.tileY()).type);
             }
             //            System.out.println("Direction: " + getBuildingDirectionAt(event.tileX, event.tileY));
         });
@@ -59,9 +59,9 @@ public class FactorySystem implements AppListener {
             //TODO: implement Block class for general logic on class that extends Block
             // for it's dedicated removal logic
             // the cases in switch should be auto detected
-            if (!(event.type instanceof BuildingType)) return;
+            if (!(event.type() instanceof BuildingType)) return;
 
-            Machine removed = buildings.remove(tileKey(event.tileX, event.tileY));
+            Machine removed = buildings.remove(tileKey(event.tileX(), event.tileY()));
             if (removed == null) return;
             machineGroup.unregister(removed);
             removed.onDestroyed();
@@ -102,13 +102,13 @@ public class FactorySystem implements AppListener {
 
     }
 
-    public void tickUpdate() {
+    private void tickUpdate() {
             machineGroup.tickUpdate();
 
             machineGroup.removeInactive();
     }
 
-    public void drawBatch() {
+    private void drawBatch() {
 
         machineGroup.drawBatch();
 

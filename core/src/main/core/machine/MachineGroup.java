@@ -1,14 +1,14 @@
 package core.machine;
 
 import com.badlogic.gdx.utils.Array;
-import core.app.cores.Time;
+import arcane.Time;
 import core.machine.category.Delting;
 import core.machine.category.Tickable;
 import core.machine.state.ItemType;
 import core.machine.transport.OutputEmitter;
 import core.machine.transport.TransferBatch;
 import core.machine.transport.TransferResolver;
-import core.utils.Artist;
+import core.utils.ArtistEx;
 
 public final class MachineGroup {
 
@@ -84,7 +84,7 @@ public final class MachineGroup {
     public void drawBatch() {
         for (Machine machine : activeMachines) {
 
-            Artist.DrawItem(machine.item);
+            ArtistEx.DrawItem(machine.item);
 
         }
     }
