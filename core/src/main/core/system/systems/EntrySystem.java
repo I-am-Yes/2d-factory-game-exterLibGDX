@@ -1,13 +1,11 @@
 package core.system.systems;
 
-import arcane.Cores;
-import arcane.ApplicationListener;
-import arcane.input.InputHandler;
-import com.badlogic.gdx.Input;
+import arcane.*;
+import arcane.input.*;
 
-import core.controller.camera.ScreenshotCapture;
+import core.event.*;
 
-import static core.app.vars.Vars.*;
+import static core.app.Vars.*;
 
 public class EntrySystem extends InputHandler implements ApplicationListener {
 
@@ -27,18 +25,11 @@ public class EntrySystem extends InputHandler implements ApplicationListener {
         }
 
         if (!isKeyPressed(Input.Keys.SHIFT_LEFT) && isKeyJustPressed(Input.Keys.F12)) {
-            ScreenshotCapture.requestCapture();
+            AppEvent.ScreenShoot.captureScreen();
         }
 
         if (isKeyPressed(Input.Keys.SHIFT_LEFT) && isKeyJustPressed(Input.Keys.F12)) {
-            ScreenshotCapture.captureMapArea(
-                world,
-                (int) -world.getWorldWidth(),
-                (int) -world.getWorldHeight(),
-                (int) world.getWorldWidth(),
-                (int) world.getWorldHeight(),
-                4
-            );
+            AppEvent.ScreenShoot.captureWorld();
         }
 
     }

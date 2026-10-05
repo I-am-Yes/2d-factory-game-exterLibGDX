@@ -3,8 +3,8 @@ package core.world.chunk;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.MathUtils;
 import core.world.map.MapGenerator;
-import data.map.MapConfig;
-import data.map.asset.FloorType;
+import core.assets.map.MapConfig;
+import core.assets.textures.FloorType;
 
 import java.util.Collection;
 import java.util.HashMap;

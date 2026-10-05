@@ -1,23 +1,20 @@
 package core.system.systems;
 
-import arcane.ApplicationListener;
-import com.badlogic.gdx.utils.LongMap;
-import arcane.Time;
-import core.blocks.Blocks;
-import arcane.Events;
-import core.event.GameEvent;
+import arcane.*;
+import arcane.utils.TimeUtils;
+import com.badlogic.gdx.utils.*;
+import core.blocks.*;
+import core.event.*;
 import core.machine.*;
-import core.machine.machines.definition.Block;
-import core.machine.render.RenderManager;
-import core.machine.state.Direction;
-import core.machine.state.ItemType;
-import core.utils.TimeUtils;
-import data.map.asset.BuildingType;
+import core.blocks.definition.Block;
+import core.machine.render.ItemRen;
+import core.machine.state.*;
+import core.assets.textures.BuildingType;
 
 public class FactorySystem implements ApplicationListener {
 
     private final MachineGroup machineGroup;
-    private final RenderManager renderManager = new RenderManager();
+    private final ItemRen renderManager = new ItemRen();
 
     private final LongMap<Machine> buildings = new LongMap<>();
 

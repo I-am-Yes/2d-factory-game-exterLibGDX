@@ -1,22 +1,23 @@
 package ui.game;
 
-import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.Touchable;
-import com.badlogic.gdx.utils.Align;
-import com.badlogic.gdx.scenes.scene2d.ui.*;
-import arcane.Time;
-import arcane.extra.TimeEx;
-import core.system.systems.PlayerSystem;
-import core.world.chunk.Chunk;
-import ui.Style;
-import ui.UiHelper;
 import java.util.List;
 import java.util.Locale;
 
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.scenes.scene2d.*;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.utils.Align;
+
+import core.system.systems.*;
+import core.world.chunk.Chunk;
+import ui.*;
+
+import arcane.*;
+import arcane.math.*;
+import arcane.extra.*;
+
 import static arcane.Cores.*;
-import static core.app.vars.Vars.*;
+import static core.app.Vars.*;
 
 public class GameUI {
     private final Skin skin;

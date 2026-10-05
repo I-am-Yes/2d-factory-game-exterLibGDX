@@ -1,11 +1,11 @@
 package core.machine.machines.cores;
 
 import com.badlogic.gdx.math.MathUtils;
-import core.machine.machines.definition.Block;
+import core.blocks.definition.Block;
 import core.machine.Machine;
 import core.machine.category.Delting;
 import core.machine.category.Tickable;
-import core.machine.render.RenderManager;
+import core.machine.render.ItemRen;
 import core.machine.state.Direction;
 import core.machine.category.ExposeInfo;
 import core.machine.state.MachineType;
@@ -46,8 +46,8 @@ public class Conveyor extends Block implements ExposeInfo {
         public void update(float delta) {
             if (this.item == null) return;
 
-            if (RenderManager.SMOOTH_ANI) {
-                float smoothAlpha = 1f - (float) Math.exp((-RenderManager.VISUAL_SMOOTHNESS) * delta);
+            if (ItemRen.SMOOTH_ANI) {
+                float smoothAlpha = 1f - (float) Math.exp((-ItemRen.VISUAL_SMOOTHNESS) * delta);
 
                 updateItemSmoothVisual(smoothAlpha);
             } else {

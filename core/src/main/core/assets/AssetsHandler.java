@@ -1,21 +1,20 @@
 package core.assets;
 
 import com.badlogic.gdx.assets.AssetManager;
-import core.event.AppEvent;
-import data.map.asset.AssetType;
-import data.map.asset.FloorType;
-import data.map.MapConfig;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.maps.tiled.TiledMapTile;
-import com.badlogic.gdx.maps.tiled.TiledMapTileSet;
-import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.Disposable;
-import com.badlogic.gdx.utils.ObjectMap;
+import com.badlogic.gdx.graphics.*;
+import com.badlogic.gdx.graphics.g2d.*;
+import com.badlogic.gdx.maps.tiled.*;
+import com.badlogic.gdx.maps.tiled.tiles.*;
 
-public class AssetsHandler implements Disposable {
+import core.event.*;
+import core.assets.map.*;
+import core.assets.textures.*;
+
+import arcane.*;
+import arcane.math.*;
+import arcane.utils.*;
+
+public class AssetsHandler extends GameCore {
 
     private static final MapConfig mapConfig = new MapConfig();
     private static final int TILE_PIXEL = mapConfig.getTilePixel();

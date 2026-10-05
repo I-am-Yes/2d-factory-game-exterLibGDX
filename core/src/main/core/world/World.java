@@ -1,27 +1,20 @@
 package core.world;
 
-import arcane.GameCore;
-import arcane.Cores;
-import core.app.vars.Vars;
-import core.controller.camera.CameraController;
-import core.controller.camera.CameraViewMode;
-import core.world.chunk.Chunk;
-import core.world.chunk.ChunkManager;
-import core.world.chunk.ChunkRenderDetail;
-import core.world.chunk.ChunkRenderer;
-import core.world.services.PlacementService;
-import data.map.asset.BuildingType;
-import data.map.asset.FloorType;
-import data.map.MapConfig;
-import data.map.asset.GhostType;
-import data.map.asset.AssetType;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.math.Vector2;
-import core.assets.AssetsHandler;
+import com.badlogic.gdx.maps.tiled.*;
 
-import com.badlogic.gdx.maps.tiled.TiledMap;
-import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
+import core.assets.*;
+import core.client.*;
+import core.assets.map.*;
+import core.world.chunk.*;
+import core.client.camera.*;
+import core.world.services.*;
+import core.assets.textures.*;
+
+import arcane.*;
+import arcane.math.*;
+import arcane.graphics.*;
+
+import static core.app.Vars.*;
 
 public class World extends GameCore {
 
@@ -200,7 +193,7 @@ public class World extends GameCore {
 
     @Override
     public void update() {
-        drawCached(Vars.cameraControl);
+        drawCached(cameraControl);
 
         int cameraTileX = MathUtils.floor(Cores.camera.position.x / getTileSize());
         int cameraTileY = MathUtils.floor(Cores.camera.position.y / getTileSize());
@@ -250,7 +243,7 @@ public class World extends GameCore {
 //        mapRenderer.render();
     }
 
-    public void drawCached(CameraController cameraController) {
+    public void drawCached(CameraControl cameraController) {
         CameraViewMode viewMode = cameraController.getCurrentViewMode();
         ChunkRenderDetail renderDetail = cameraController.getMapRenderDetail();
         chunkRenderer.drawCached(

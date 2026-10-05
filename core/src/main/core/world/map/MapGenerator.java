@@ -1,9 +1,9 @@
 package core.world.map;
 
-import data.map.FloorDefinition;
-import data.map.asset.FloorType;
-import data.map.MapConfig;
-import data.map.MapGenMode;
+import core.assets.map.FloorDefinition;
+import core.assets.textures.FloorType;
+import core.assets.map.MapConfig;
+import core.assets.map.MapGenMode;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import core.assets.AssetsHandler;

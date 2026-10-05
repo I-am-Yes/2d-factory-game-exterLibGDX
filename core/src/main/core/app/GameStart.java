@@ -14,11 +14,11 @@ import core.assets.AssetsHandler;
 import core.render.PlanRenderer;
 import core.system.systems.*;
 import core.world.World;
-import data.map.MapConfig;
-import data.map.PresetMap;
+import core.assets.map.MapConfig;
+import core.assets.map.PresetMap;
 import ui.InterfaceSystem;
 
-import static core.app.vars.Vars.*;
+import static core.app.Vars.*;
 
 public class GameStart extends GameCore {
 

@@ -11,6 +11,52 @@ public class AppEvent {
 
     }
 
+    public static final class ScreenShoot extends AppEvent {
+        public enum Type {
+            WINDOW, MAP_AREA, WORLD
+        }
+
+        public record MapArea(
+            int tileX, int tileY,
+            int widthTiles, int heightTiles,
+            int pixelsPerTile
+        ) {}
+
+        public final Type type;
+        public final MapArea area;
+
+        private ScreenShoot(Type type, MapArea area) {
+            this.type = type;
+            this.area = area;
+        }
+
+        public static void fire() {
+            captureScreen();
+        }
+
+        public static void captureScreen() {
+            Events.fire(new ScreenShoot(Type.WINDOW, null));
+        }
+
+        public static void captureWorld() {
+            Events.fire(new ScreenShoot(Type.WORLD, null));
+        }
+
+        public static void captureMap(
+            int tileX, int tileY,
+            int widthTiles, int heightTiles,
+            int pixelsPerTile
+        ) {
+            Events.fire(new ScreenShoot(
+                Type.MAP_AREA,
+                new MapArea(
+                    tileX, tileY,
+                    widthTiles, heightTiles,
+                    pixelsPerTile
+                )
+            ));
+        }
+    }
     public static class LoadingScreenEvent extends AppEvent{
         public Object content;
         public String title;

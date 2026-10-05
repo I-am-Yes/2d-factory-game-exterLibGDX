@@ -7,7 +7,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import core.world.World;
-import core.player.Player;
+import core.client.Player;
 
 public final class CameraDebugger {
 

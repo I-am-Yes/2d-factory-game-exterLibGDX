@@ -1,21 +1,16 @@
 package ui;
 
-import arcane.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.*;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
-import core.UiInputGate;
-import arcane.Time;
-import arcane.Cores;
-import arcane.Events;
-import core.app.vars.Vars;
-import ui.game.GameUI;
-import ui.game.SettingsPanel;
 
-import static core.app.vars.Vars.*;
+import arcane.*;
+import ui.game.*;
+import arcane.input.*;
+
+import static core.app.Vars.*;
 
 public class InterfaceSystem implements ApplicationListener {
 
@@ -42,7 +37,7 @@ public class InterfaceSystem implements ApplicationListener {
         UiViewPort.setUnitsPerPixel(UiViewPort.getUnitsPerPixel() / getUiScale());
         Cores.uiStage = new Stage(UiViewPort);
 
-        uiInputGate = new UiInputGate(Cores.uiStage);
+        uiInputGate = new UiInputGate();
         this.uiHelper = new UiHelper();
         this.UIaction = new InterfaceAction();
 
@@ -52,7 +47,7 @@ public class InterfaceSystem implements ApplicationListener {
 
         playerHotbar = new PlayerHotbar(
             Cores.window, Cores.uiStage, skin, UIaction, aldrichFont,
-            Cores.input, Vars.assets
+            Cores.input, assets
         );
 
 
@@ -84,7 +79,7 @@ public class InterfaceSystem implements ApplicationListener {
 
     @Override
     public void resize(int width, int height) {
-        Cores.uiStage.getViewport().update(width, height, true);
+        Cores.viewport.update(width, height, true);
     }
 
     @Override

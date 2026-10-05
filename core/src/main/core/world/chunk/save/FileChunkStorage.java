@@ -4,7 +4,7 @@
 //import com.badlogic.gdx.files.FileHandle;
 //import core.world.chunk.Chunk;
 //import core.world.chunk.save.ChunkStorage;
-//import data.map.asset.*;
+//import data.map.textures.*;
 //
 //import java.io.*;
 //import java.util.zip.GZIPInputStream;

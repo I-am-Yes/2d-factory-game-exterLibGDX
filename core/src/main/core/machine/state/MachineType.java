@@ -1,6 +1,6 @@
 package core.machine.state;
 
-import data.map.asset.BuildingType;
+import core.assets.textures.BuildingType;
 
 public enum MachineType {
     CONVEYOR(1, 0),

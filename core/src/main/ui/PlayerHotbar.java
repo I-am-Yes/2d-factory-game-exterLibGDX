@@ -19,9 +19,9 @@ import com.badlogic.gdx.utils.Scaling;
 import core.assets.AssetsHandler;
 import arcane.input.InputHandler;
 import arcane.graphics.Window;
-import data.map.asset.AssetType;
-import data.map.asset.BuildingType;
-import data.map.asset.FloorType;
+import core.assets.textures.AssetType;
+import core.assets.textures.BuildingType;
+import core.assets.textures.FloorType;
 
 public class PlayerHotbar {
     private final Window window;

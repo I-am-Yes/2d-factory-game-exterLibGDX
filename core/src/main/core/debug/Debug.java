@@ -4,16 +4,16 @@ import arcane.Events;
 import arcane.Time;
 import core.debug.debuggers.*;
 import core.event.GameEvent;
-import data.debug.DebugConfig;
-import data.debug.DebugType;
-import data.map.asset.FloorType;
-import data.map.MapConfig;
+import core.assets.debug.DebugConfig;
+import core.assets.debug.DebugType;
+import core.assets.textures.FloorType;
+import core.assets.map.MapConfig;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
 import static arcane.Cores.*;
-import static core.app.vars.Vars.*;
+import static core.app.Vars.*;
 
 public class Debug {
 

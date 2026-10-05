@@ -1,6 +1,6 @@
 package core.machine.state;
 
-import data.map.asset.AssetType;
+import core.assets.textures.AssetType;
 
 public enum ItemType implements AssetType {
     TEST_ITEM("packed/items/test/" , "stone_bar_item", "Test Item"),

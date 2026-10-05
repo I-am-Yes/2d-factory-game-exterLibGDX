@@ -9,13 +9,12 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.ObjectMap;
 import core.assets.AssetsHandler;
-import core.machine.state.Direction;
 import core.world.chunk.Chunk;
 import core.world.chunk.ChunkManager;
 import core.world.chunk.ChunkRenderDetail;
 import core.world.chunk.meshes.ChunkMeshBuilder;
 import core.world.chunk.meshes.MeshPart;
-import data.map.asset.FloorType;
+import core.assets.textures.FloorType;
 
 public final class ChunkOverviewCache implements Disposable {
 

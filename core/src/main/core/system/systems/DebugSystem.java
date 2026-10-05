@@ -1,21 +1,22 @@
 package core.system.systems;
 
-import arcane.ApplicationListener;
+import arcane.*;
+
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import core.debug.Debug;
-import data.debug.DebugConfig;
+import core.debug.*;
+import core.assets.debug.*;
 
 public class DebugSystem implements ApplicationListener {
 
     private final Debug debug;
-    private final ShapeRenderer debugShapeRenderer;
+    private final ShapeRenderer debugShape;
 
     public DebugSystem() {
 
-        this.debugShapeRenderer = new ShapeRenderer();
+        this.debugShape = new ShapeRenderer();
 
         this.debug = new Debug(
-            DebugConfig.createDefaultConfig(), debugShapeRenderer
+            DebugConfig.createDefaultConfig(), debugShape
         );
     }
 
@@ -28,7 +29,7 @@ public class DebugSystem implements ApplicationListener {
 
     @Override
     public void dispose() {
-        debugShapeRenderer.dispose();
+        debugShape.dispose();
     }
 
 }

@@ -4,7 +4,7 @@ import arcane.utils.Queue;
 import arcane.Events;
 import core.event.GameEvent;
 
-import static core.app.vars.Vars.world;
+import static core.app.Vars.world;
 
 public class PlanManager {
 

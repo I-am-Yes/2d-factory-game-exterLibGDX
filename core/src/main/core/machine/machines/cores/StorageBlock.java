@@ -1,6 +1,6 @@
 package core.machine.machines.cores;
 
-import core.machine.machines.definition.Block;
+import core.blocks.definition.Block;
 import core.machine.Machine;
 import core.machine.state.Direction;
 import core.machine.state.MachineType;

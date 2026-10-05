@@ -4,8 +4,8 @@ import arcane.ApplicationListener;
 import arcane.graphics.Artist;
 import arcane.utils.Queue;
 
-import core.helper.RenderUtils;
-import data.map.asset.AssetType;
+import core.utils.RenderUtils;
+import core.assets.textures.AssetType;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
@@ -13,7 +13,7 @@ import core.entities.plan.PlanBuilder;
 import core.entities.plan.PlanEntity;
 
 import static arcane.Cores.*;
-import static core.app.vars.Vars.*;
+import static core.app.Vars.*;
 
 public class PlanRenderer implements ApplicationListener {
 

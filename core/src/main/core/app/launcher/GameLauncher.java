@@ -1,19 +1,17 @@
 package core.app.launcher;
 
-import com.badlogic.gdx.Gdx;
-
 import arcane.*;
-import arcane.graphics.Artist;
-import core.app.GameStart;
-import core.app.extras.LoadingScreen;
-import core.event.AppEvent;
+import arcane.graphics.*;
+
+import core.client.utils.*;
+import core.event.*;
+import core.app.*;
+import core.app.extras.*;
 
 //TODO: make this ss an event caller
-import core.controller.camera.ScreenshotCapture;
 
 import static arcane.Cores.*;
-import static core.app.vars.Apps.*;
-import static core.app.vars.Vars.*;
+import static core.app.Vars.*;
 
 public class GameLauncher extends GameCore {
 
@@ -34,7 +32,7 @@ public class GameLauncher extends GameCore {
         if (!loaded) {
             if (assets.updateLoading()) {
                 start.finishGameStart();
-                viewport.update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false);
+                viewport.update(Window.getWidth(), Window.getHeight(), false);
                 AppEvent.GameLoaded.fire();
                 loaded = true;
             }
@@ -72,14 +70,13 @@ public class GameLauncher extends GameCore {
     @Override
     public void resize(int width, int height) {
         if (viewport != null)
-            viewport.update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false);
+            viewport.update(Window.getWidth(), Window.getHeight(), false);
 
         super.resize(width, height);
     }
 
     @Override
     public void dispose() {
-        if (assets != null) assets.dispose();
         super.dispose();
     }
 

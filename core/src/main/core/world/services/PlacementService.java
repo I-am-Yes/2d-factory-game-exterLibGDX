@@ -7,10 +7,10 @@ import core.world.World;
 import core.world.chunk.Chunk;
 import core.world.chunk.ChunkManager;
 import core.world.chunk.ChunkRenderer;
-import data.map.asset.AssetType;
-import data.map.asset.BuildingType;
-import data.map.asset.FloorType;
-import data.map.asset.GhostType;
+import core.assets.textures.AssetType;
+import core.assets.textures.BuildingType;
+import core.assets.textures.FloorType;
+import core.assets.textures.GhostType;
 import java.util.function.Consumer;
 
 public final class PlacementService {

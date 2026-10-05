@@ -4,8 +4,8 @@ import arcane.ApplicationListener;
 import core.entities.plan.PlanBuilder;
 import core.entities.plan.PlanManager;
 import core.event.GameEvent;
-import data.map.asset.AssetType;
-import data.map.asset.BuildingType;
+import core.assets.textures.AssetType;
+import core.assets.textures.BuildingType;
 
 public class GameTest implements ApplicationListener {
 

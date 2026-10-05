@@ -1,8 +1,6 @@
 package core.app.cores;
 
-import arcane.ApplicationListener;
-import arcane.Events;
-import arcane.Time;
+import arcane.*;
 
 public class Update implements ApplicationListener {
 

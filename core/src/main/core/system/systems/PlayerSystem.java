@@ -1,21 +1,21 @@
 package core.system.systems;
 
-import arcane.ApplicationListener;
-import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.math.Vector2;
+import arcane.*;
+import arcane.math.*;
+
 import com.badlogic.gdx.math.Vector3;
-import arcane.Cores;
-import core.config.ScriptConfigLoader;
-import core.config.api.CameraScriptApi;
-import core.config.camera.CameraSettings;
-import core.controller.camera.CameraController;
-import core.controller.camera.CursorController;
-import core.player.*;
-import core.player.mechanic.*;
+import core.client.*;
+import core.client.player.*;
+import core.client.player.mechanic.*;
+
+import core.config.*;
+import core.config.api.*;
+import core.config.camera.*;
+import core.client.camera.*;
 
 import java.util.Map;
 
-import static core.app.vars.Vars.*;
+import static core.app.Vars.*;
 
 public class PlayerSystem implements ApplicationListener {
 
@@ -53,7 +53,7 @@ public class PlayerSystem implements ApplicationListener {
             Map.of("camera", new CameraScriptApi(cameraSettings))
         );
 
-        cameraControl = new CameraController(cameraSettings);
+        cameraControl = new CameraControl(cameraSettings);
     }
 
     @Override

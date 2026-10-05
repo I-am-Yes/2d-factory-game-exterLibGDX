@@ -1,7 +1,7 @@
 package core.machine.machines.cores;
 
 import com.badlogic.gdx.math.MathUtils;
-import core.machine.machines.definition.Block;
+import core.blocks.definition.Block;
 import core.machine.Machine;
 import core.machine.category.Delting;
 import core.machine.category.Tickable;

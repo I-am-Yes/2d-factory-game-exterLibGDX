@@ -602,9 +602,9 @@ Each of these exists in Mindustry at production quality — treat the repo as re
 | `core/src/main/core/controller/CameraController.java` | Follow lerp, zoom modes, middle-mouse pan, world clamp |
 | `core/src/main/core/render/OverlayRenderer.java` | Tile hover corner brackets + slide animation |
 | `core/src/main/core/InputHandler.java` | Keyboard + scroll input |
-| `core/src/main/data/map` | Map size, seed, presets, `tilePixel`, floor definitions |
-| `core/src/main/data/map/asset` | Floor/building/ghost asset types and states |
-| `core/src/main/data/debug` | Debug mode flags (PERFORMANCE, RENDER, CAMERA, …) |
+| `src/main/core/assets/data` | Map size, seed, presets, `tilePixel`, floor definitions |
+| `src/main/core/assets/data` | Floor/building/ghost asset types and states |
+| `src/main/core/assets/data` | Debug mode flags (PERFORMANCE, RENDER, CAMERA, …) |
 | `core/src/main/core/debug/Debug.java` | Debug mode orchestration (update/render per type) |
 | `core/src/main/core/debug/PerformanceDebugger.java` | FPS / heap metrics (register + per-metric interval) |
 | `core/src/main/core/debug/RenderDebugger.java` | Visible tile grid when `DebugType.RENDER` |

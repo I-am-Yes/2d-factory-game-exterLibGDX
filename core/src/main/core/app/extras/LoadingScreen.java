@@ -1,14 +1,14 @@
 package core.app.extras;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.utils.Disposable;
-import com.badlogic.gdx.utils.ScreenUtils;
-import arcane.Events;
-import core.event.AppEvent;
-import ui.Style;
+import com.badlogic.gdx.graphics.g2d.*;
+
+import arcane.*;
+import arcane.utils.*;
+import arcane.graphics.*;
+
+import core.event.*;
+import ui.*;
 
 public class LoadingScreen implements Disposable {
 
@@ -58,7 +58,7 @@ public class LoadingScreen implements Disposable {
 
     //TODO: add image/video to this
     public void render(float progress, String text) {
-        ScreenUtils.clear(Color.BLACK);
+        Artist.screenClear();
 
         //TODO: later add tip & trick text
         batch.begin();

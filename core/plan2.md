@@ -46,7 +46,7 @@ All project paths in this document are relative to the repository root.
 | `core/src/main/core/machine/machines/cores/Conveyor.java` | One-item conveyor behavior and logical/visual progress. |
 | `core/src/main/core/machine/machines/cores/ItemSource.java` | Source production and output. |
 | `core/src/main/core/machine/machines/cores/StorageBlock.java` | Finite and unlimited storage acceptance. |
-| `core/src/main/core/machine/machines/definition/Block.java` | Existing definition/runtime construction boundary. |
+| `src/main/core/blocks/definition` | Existing definition/runtime construction boundary. |
 | `core/src/main/core/machine/state/ItemType.java` | Current item enum; relevant to future dynamic content registration. |
 | `core/src/main/core/system/systems/FactorySystem.java` | Placement integration, machine lookup, ticking and presentation events. |
 | `core/src/main/core/machine/render/RenderManager.java` | Transfer presentation. |

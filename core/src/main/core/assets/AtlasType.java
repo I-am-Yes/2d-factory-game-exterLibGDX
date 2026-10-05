@@ -32,7 +32,7 @@ public enum AtlasType {
         }
 
         throw new IllegalStateException(
-            "No atlas configured for asset folder: " + folder
+            "No atlas configured for textures folder: " + folder
         );
     }
 }

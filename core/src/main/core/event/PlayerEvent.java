@@ -1,8 +1,8 @@
 package core.event;
 
 import arcane.Events;
-import data.map.asset.AssetType;
-import core.player.Player;
+import core.assets.textures.AssetType;
+import core.client.Player;
 
 public class PlayerEvent {
     public PlayerEvent() {}

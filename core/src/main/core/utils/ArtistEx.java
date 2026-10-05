@@ -3,8 +3,8 @@ package core.utils;
 import arcane.graphics.Artist;
 import core.machine.utils.Item;
 
-import static arcane.Cores.batch;
-import static core.app.vars.Vars.*;
+import static arcane.Cores.*;
+import static core.app.Vars.*;
 
 public final class ArtistEx {
     private static final float tileSize = world.getTileSize();

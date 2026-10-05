@@ -1,9 +1,7 @@
 package core.machine;
 
-import core.machine.state.Direction;
-import core.machine.state.ItemType;
-import core.machine.state.MachineType;
-import core.machine.utils.Item;
+import core.machine.state.*;
+import core.machine.utils.*;
 
 import java.util.List;
 

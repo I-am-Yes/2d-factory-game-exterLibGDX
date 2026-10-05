@@ -8,7 +8,7 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ObjectMap;
 import core.assets.AssetsHandler;
-import core.controller.camera.CameraViewMode;
+import core.client.camera.CameraViewMode;
 import core.world.chunk.cache.ChunkOverviewCache;
 import core.world.chunk.cache.ChunkRenderCache;
 

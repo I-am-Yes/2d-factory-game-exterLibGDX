@@ -1,12 +1,12 @@
 package core.blocks;
 
 import com.badlogic.gdx.utils.ObjectMap;
-import core.machine.machines.definition.Block;
+import core.blocks.definition.Block;
 import core.blocks.creative.CreativeSource;
 import core.blocks.transport.NormalChest;
 import core.machine.machines.cores.Conveyor;
 import core.blocks.transport.FastConveyor;
-import data.map.asset.BuildingType;
+import core.assets.textures.BuildingType;
 
 public class Blocks {
     private static final ObjectMap<BuildingType, Block> definitions = new ObjectMap<>();

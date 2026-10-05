@@ -14,8 +14,8 @@ import core.world.chunk.Chunk;
 import core.world.chunk.ChunkRenderDetail;
 import core.world.chunk.meshes.ChunkMeshBuilder;
 import core.world.chunk.meshes.MeshPart;
-import data.map.asset.AssetType;
-import data.map.asset.GhostType;
+import core.assets.textures.AssetType;
+import core.assets.textures.GhostType;
 
 public class ChunkRenderCache implements Disposable {
 

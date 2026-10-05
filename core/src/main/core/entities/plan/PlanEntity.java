@@ -1,8 +1,8 @@
 package core.entities.plan;
 
 import core.machine.state.Direction;
-import data.map.asset.AssetType;
-import data.map.asset.GhostType;
+import core.assets.textures.AssetType;
+import core.assets.textures.GhostType;
 import com.badlogic.gdx.math.Vector2;
 
 public class PlanEntity<T extends AssetType> {

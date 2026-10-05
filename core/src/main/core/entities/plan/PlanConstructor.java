@@ -1,6 +1,6 @@
 package core.entities.plan;
 
-import data.map.asset.AssetType;
+import core.assets.textures.AssetType;
 import core.event.GameEvent;
 import core.world.World;
 
