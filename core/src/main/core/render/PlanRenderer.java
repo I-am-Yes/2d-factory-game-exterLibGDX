@@ -1,16 +1,15 @@
 package core.render;
 
-import arcane.ApplicationListener;
-import arcane.graphics.Artist;
-import arcane.utils.Queue;
-
-import core.utils.RenderUtils;
-import core.assets.textures.AssetType;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
-import core.entities.plan.PlanBuilder;
-import core.entities.plan.PlanEntity;
+
+import core.utils.*;
+import core.entities.plan.*;
+import core.assets.textures.*;
+
+import arcane.*;
+import arcane.utils.*;
+import arcane.graphics.*;
 
 import static arcane.Cores.*;
 import static core.app.Vars.*;

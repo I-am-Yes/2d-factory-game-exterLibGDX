@@ -1,10 +1,12 @@
 package core.debug.debuggers;
 
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.math.MathUtils;
+
 import core.world.World;
+
+import arcane.graphics.*;
+import arcane.math.*;
 
 public final class RenderDebugger {
 

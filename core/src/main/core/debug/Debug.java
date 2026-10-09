@@ -1,17 +1,15 @@
 package core.debug;
 
-import arcane.Events;
-import arcane.Time;
-import core.debug.debuggers.*;
-import core.event.GameEvent;
-import core.assets.debug.DebugConfig;
-import core.assets.debug.DebugType;
-import core.assets.textures.FloorType;
-import core.assets.map.MapConfig;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
+import core.event.*;
+import core.assets.map.*;
+import core.assets.debug.*;
+import core.debug.debuggers.*;
+import core.assets.textures.*;
+
+import arcane.*;
 import static arcane.Cores.*;
 import static core.app.Vars.*;
 

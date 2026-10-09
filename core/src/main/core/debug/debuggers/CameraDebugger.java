@@ -1,13 +1,14 @@
 package core.debug.debuggers;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import core.world.World;
 import core.client.Player;
+
+import arcane.graphics.Color;
 
 public final class CameraDebugger {
 

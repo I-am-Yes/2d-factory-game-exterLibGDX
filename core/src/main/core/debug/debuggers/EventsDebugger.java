@@ -1,8 +1,7 @@
 package core.debug.debuggers;
 
 import arcane.Events;
-import core.event.GameEvent;
-import core.event.PlayerEvent;
+import core.event.*;
 
 import java.util.ArrayList;
 import java.util.List;

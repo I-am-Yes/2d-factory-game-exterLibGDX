@@ -248,7 +248,7 @@ public class GameUI {
 
     private void updateFPSLabel() {
         if (shouldUpdate(FPSLabel)) {
-            FPSLabel.setText("FPS: " + window.getLatestFrameRateAfterDelay(400));
+            FPSLabel.setText("FPS: " + window.getFrameRate());
         }
         if (shouldUpdate(avgFPSLabel)) {
             avgFPSLabel.setText("Avg FPS: " + (int) window.getAverageFrameRate(1000));

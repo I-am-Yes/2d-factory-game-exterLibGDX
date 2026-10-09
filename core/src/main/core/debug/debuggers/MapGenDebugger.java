@@ -1,11 +1,8 @@
 package core.debug.debuggers;
 
-import core.assets.map.FloorDefinition;
-import core.assets.map.MapConfig;
-import core.assets.map.MapGenMode;
-import core.world.map.MapGenerator;
-import core.world.map.NoiseHelper;
-import core.assets.textures.FloorType;
+import core.world.map.*;
+import core.assets.map.*;
+import core.assets.textures.*;
 
 public final class MapGenDebugger {
 

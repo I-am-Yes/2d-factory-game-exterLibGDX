@@ -12,7 +12,7 @@ import core.assets.textures.*;
 
 import arcane.*;
 import arcane.math.*;
-import arcane.graphics.*;
+import arcane.maps.renderers.*;
 
 import static core.app.Vars.*;
 
@@ -122,18 +122,6 @@ public class World extends GameCore {
         this.chunkRenderer = new ChunkRenderer(assets);
         this.chunkManager = new ChunkManager(mapConfig);
         this.placementService = new PlacementService(this, chunkManager, chunkRenderer);
-    }
-
-    public static class ColoredCell extends TiledMapTileLayer.Cell {
-        private final Color color = new Color(Color.WHITE);
-
-        public ColoredCell(Color color) {
-            this.color.set(color);
-        }
-
-        public Color getColor() {
-            return color;
-        }
     }
 
     public static World generateWorld(MapConfig mapConfig, AssetsHandler assets) {

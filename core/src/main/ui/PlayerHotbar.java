@@ -1,27 +1,28 @@
 package ui;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.math.Interpolation;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.*;
-import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Scaling;
-import core.assets.AssetsHandler;
-import arcane.input.InputHandler;
+
+import core.assets.*;
+import core.assets.textures.*;
+
+import arcane.math.*;
+import arcane.utils.*;
 import arcane.graphics.Window;
-import core.assets.textures.AssetType;
-import core.assets.textures.BuildingType;
-import core.assets.textures.FloorType;
+import arcane.input.InputHandler;
+
+import static arcane.graphics.Color.*;
+import static arcane.input.Input.*;
 
 public class PlayerHotbar {
     private final Window window;
@@ -49,9 +50,9 @@ public class PlayerHotbar {
     private static final int HOTBAR_SLOT_COUNT = 9;
 
     private static final int[] HOTBAR_KEYS = {
-        Input.Keys.NUM_1, Input.Keys.NUM_2, Input.Keys.NUM_3,
-        Input.Keys.NUM_4, Input.Keys.NUM_5, Input.Keys.NUM_6,
-        Input.Keys.NUM_7, Input.Keys.NUM_8, Input.Keys.NUM_9
+        Keys.NUM_1, Keys.NUM_2, Keys.NUM_3,
+        Keys.NUM_4, Keys.NUM_5, Keys.NUM_6,
+        Keys.NUM_7, Keys.NUM_8, Keys.NUM_9
     };
 
     private static final AssetType[] HOTBAR_ASSETS = new AssetType[HOTBAR_SLOT_COUNT];
@@ -87,7 +88,7 @@ public class PlayerHotbar {
         hotbarStyle.over = hotbarBoxSelected;
 
         hotbarStyle.font = aldrichFont;
-        hotbarStyle.fontColor = Color.WHITE;
+        hotbarStyle.fontColor = WHITE;
 
         selectionBorder = new Image(hotbarBoxBorder);
         selectionBorder.setTouchable(Touchable.disabled);
@@ -156,7 +157,7 @@ public class PlayerHotbar {
                         return;
                     }
 
-                    Vector2 borderTarget = slot.localToStageCoordinates(
+                    Vector2 borderTarget = (Vector2) slot.localToStageCoordinates(
                         new Vector2(0f, 0f)
                     );
 
@@ -193,7 +194,7 @@ public class PlayerHotbar {
 
                     if (button.isChecked()) {
 
-                        Vector2 target = slot.localToStageCoordinates(new Vector2(0f, 0f));
+                        Vector2 target = (Vector2) slot.localToStageCoordinates(new Vector2(0f, 0f));
 
                         UiAction.moveTo(selectionBorder, target.x, target.y + 4f, generalDuration);
                     }
@@ -204,7 +205,7 @@ public class PlayerHotbar {
                     iconContainer.addAction(Actions.moveTo(0f, 0f, generalDuration));
 
                     if (button.isChecked()) {
-                        Vector2 target = slot.localToStageCoordinates(new Vector2(0f, 0f));
+                        Vector2 target = (Vector2) slot.localToStageCoordinates(new Vector2(0f, 0f));
 
                         UiAction.moveTo(selectionBorder, target.x, target.y, generalDuration);
                     }

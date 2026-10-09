@@ -1,8 +1,9 @@
 package core.debug.debuggers;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.utils.ObjectMap;
-import com.badlogic.gdx.utils.ObjectSet;
+import arcane.*;
+import arcane.utils.*;
+
+import static arcane.Cores.*;
 
 public class PerformanceDebugger {
     public PerformanceDebugger() {
@@ -35,7 +36,7 @@ public class PerformanceDebugger {
         Runtime runtime = Runtime.getRuntime();
 
         register("fps", 0.5f, () ->
-            System.out.printf("FPS: %d%n", Gdx.graphics.getFramesPerSecond())
+            System.out.printf("FPS: %d%n", window.getFrameRate())
         );
 
         register("ram", 0.5f, () -> {
@@ -43,7 +44,6 @@ public class PerformanceDebugger {
             System.out.printf("used RAM: %d MB%n", (runtime.totalMemory() - runtime.freeMemory()) / (1024 * 1024));
             System.out.printf("max RAM: %d MB%n", runtime.maxMemory() / (1024 * 1024));
         });
-
 
     }
 

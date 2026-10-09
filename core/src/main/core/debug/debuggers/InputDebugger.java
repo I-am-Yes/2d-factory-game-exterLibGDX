@@ -1,23 +1,25 @@
 package core.debug.debuggers;
 
-import com.badlogic.gdx.Input;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.IntSet;
-import arcane.input.InputHandler;
+
+import arcane.math.*;
+import arcane.input.*;
+
+import static arcane.input.Input.*;
 
 public class InputDebugger {
 
     private static final int[] TRACKED_KEYS = {
-        Input.Keys.W, Input.Keys.A, Input.Keys.S, Input.Keys.D,
-        Input.Keys.UP, Input.Keys.DOWN, Input.Keys.LEFT, Input.Keys.RIGHT,
-        Input.Keys.F1, Input.Keys.F3, Input.Keys.ESCAPE, Input.Keys.ENTER,
+        Keys.W, Keys.A, Keys.S, Keys.D,
+        Keys.UP, Keys.DOWN, Keys.LEFT, Keys.RIGHT,
+        Keys.F1, Keys.F3, Keys.ESCAPE, Keys.ENTER,
 
     };
 
     private static final int[] TRACKED_MOUSEBUTTONS = {
-        Input.Buttons.LEFT,
-        Input.Buttons.RIGHT,
-        Input.Buttons.MIDDLE,
+        Buttons.LEFT,
+        Buttons.RIGHT,
+        Buttons.MIDDLE,
 
     };
 

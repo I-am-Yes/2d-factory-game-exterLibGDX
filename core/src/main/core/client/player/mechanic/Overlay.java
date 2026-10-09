@@ -11,6 +11,7 @@ import arcane.math.*;
 import arcane.graphics.*;
 
 import static arcane.Cores.*;
+import static arcane.graphics.Color.*;
 import static core.app.Vars.*;
 
 public class Overlay {
@@ -148,7 +149,7 @@ public class Overlay {
     private void drawBracketShape(float x, float y, float size,
                                   float gap, float thick, boolean walkAble) {
         float x2 = x + size, y2 = y + size;
-        Color color = walkAble ? Color.WHITE : Color.RED;
+        Color color = walkAble ? WHITE : RED;
 
         Artist.DrawRect(x, y2 - thick, gap, thick, color);
         Artist.DrawRect(x, y2 - gap, thick, gap, color);

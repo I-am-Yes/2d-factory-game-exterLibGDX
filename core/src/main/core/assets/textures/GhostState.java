@@ -1,6 +1,6 @@
 package core.assets.textures;
 
-import com.badlogic.gdx.graphics.Color;
+import arcane.graphics.Color;
 
 public enum GhostState {
     DEFAULT(new Color(0.5f, 0.5f, 0.8f, 0.4f)),

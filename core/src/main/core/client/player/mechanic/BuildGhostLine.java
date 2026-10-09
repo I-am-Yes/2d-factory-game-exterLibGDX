@@ -1,27 +1,27 @@
 package core.client.player.mechanic;
 
-import arcane.graphics.Artist;
-import core.assets.textures.AssetType;
-import com.badlogic.gdx.Input;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
-import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import core.assets.AssetsHandler;
-import arcane.input.InputHandler;
-import core.client.Player;
-import core.client.player.PlayerAction;
-import core.entities.plan.PlanBuilder;
+
+import core.assets.*;
+import core.helper.*;
 import core.world.World;
+import core.client.Player;
+import core.client.player.*;
+import core.assets.textures.*;
+import core.entities.plan.PlanBuilder;
 import core.event.GameEvent;
-import core.helper.TileAlgorithm;
+
+import arcane.graphics.*;
+import arcane.input.*;
+import arcane.math.*;
+import arcane.utils.*;
 
 import static arcane.Cores.*;
+import static arcane.graphics.Color.*;
+import static arcane.input.Input.*;
 
 public class BuildGhostLine {
 
@@ -78,7 +78,7 @@ public class BuildGhostLine {
 
         this.GHOST_LINE_THICKNESS = Float.MIN_NORMAL;
         this.DEBUG_LINE_WIDTH = 0.05f;
-        this.color = Color.WHITE;
+        this.color = WHITE;
         this.tileSize = world.getTileSize();
     }
 
@@ -128,8 +128,9 @@ public class BuildGhostLine {
             return;
         }
 
-        if (input.isMousePressed(Input.Buttons.LEFT)
-            && input.isMousePressed(Input.Buttons.RIGHT)) {
+
+        if (input.isMousePressed(Buttons.LEFT)
+            && input.isMousePressed(Buttons.RIGHT)) {
             drawLineMode = DrawLineMode.NONE;
             clearTiledLine(tiledLine);
             return;
@@ -144,7 +145,7 @@ public class BuildGhostLine {
                 tiledLine = thickLineTileArray();
         }
 
-        if (input.isMouseReleased(Input.Buttons.LEFT)) {
+        if (input.isMouseReleased(Buttons.LEFT)) {
             if (tiledLine != null) {
                 //request place current tiledLine to ghost layer
                 GameEvent.PlanBuilderRequest.fire(
@@ -158,18 +159,18 @@ public class BuildGhostLine {
             return;
         }
 
-        if (!input.isMousePressed(Input.Buttons.LEFT)) {
+        if (!input.isMousePressed(Buttons.LEFT)) {
             return;
         }
 
-        if (input.isMousePressed(Input.Buttons.LEFT)
+        if (input.isMousePressed(Buttons.LEFT)
             && getCurrentLineMode() != DrawLineMode.NONE) {
             drawLineMode = getCurrentLineMode();
         }
 
         mouseScreenTarget.set(input.getMousePos(), 0);
 
-        if (input.isMouseJustPressed(Input.Buttons.LEFT)
+        if (input.isMouseJustPressed(Buttons.LEFT)
             && getCurrentLineMode() != DrawLineMode.NONE) {
             drawLineMode = getCurrentLineMode();
 
@@ -221,14 +222,13 @@ public class BuildGhostLine {
         if (tiledTile == null) return;
 
         TextureRegion region = tiledTile.getTextureRegion();
-        Color color = new Color(0.8f, 0.8f, 0.8f, 0.5f);
 
         for (Vector2 tile : tiledLine) {
             Artist.DrawBatch(spriteBatch, region, tile.x * tileSize, tile.y * tileSize,
                 //keep rotation in the center of the tile
                 tileSize / 2, tileSize / 2,
                 tileSize, tileSize,
-                1f, 1f, rotation, color
+                1f, 1f, rotation, PREVIEW_GRAY
             );
         }
 
