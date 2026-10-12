@@ -169,29 +169,31 @@ public class GameUI {
         var camera = (OrthographicCamera) viewport.getCamera();
         var loadedBounds = chunkManager.getLoadedMapBounds();
 
-        if (shouldUpdate(worldSeedLabel)) worldSeedLabel.setText("Seed: " + world.getSeed());
+        if (shouldUpdate(worldSeedLabel) && worldSeedLabel.isVisible()) {
+            worldSeedLabel.setText("Seed: " + world.getSeed());
+        }
 
-        if (shouldUpdate(worldVisibleTileslabel))
+        if (shouldUpdate(worldVisibleTileslabel) && worldVisibleTileslabel.isVisible())
             worldVisibleTileslabel.setText(
                 "Visible Tiles: " + formatNumber(chunkManager.getVisibleTileCount(camera, world.getTileSize()))
             );
-        if (shouldUpdate(worldVisibleChunksLabel)) {
+        if (shouldUpdate(worldVisibleChunksLabel) && worldVisibleChunksLabel.isVisible()) {
             worldVisibleChunksLabel.setText(
                 "Visible Chunks: " + formatNumber(chunkManager.getVisibleChunkCount(camera, world.getTileSize()))
             );
         }
-        if (shouldUpdate(worldLoadedChunkLabel)) {
+        if (shouldUpdate(worldLoadedChunkLabel) && worldLoadedChunkLabel.isVisible()) {
             worldLoadedChunkLabel.setText("Loaded Chunks: " + formatNumber(chunkManager.getChunkCounts()));
         }
-        if (shouldUpdate(worldChunkSizeLabel)) {
+        if (shouldUpdate(worldChunkSizeLabel) && worldChunkSizeLabel.isVisible()) {
             worldChunkSizeLabel.setText("Chunk Size: " + Chunk.SIZE);
         }
-        if (shouldUpdate(worldSizeLabel)) {
+        if (shouldUpdate(worldSizeLabel) && worldSizeLabel.isVisible()) {
             worldSizeLabel.setText(
                 "World Size: " + loadedBounds.widthInTiles() + "x" + loadedBounds.heightInTiles()
             );
         }
-        if (shouldUpdate(worldChunkBoundsLabel)) {
+        if (shouldUpdate(worldChunkBoundsLabel) && worldChunkBoundsLabel.isVisible()) {
             worldChunkBoundsLabel.setText(
                 "Chunk Bounds: "
                     + loadedBounds.widthInChunks()
@@ -200,13 +202,13 @@ public class GameUI {
             );
         }
 
-        if (shouldUpdate(worldMouseTileLabel)) {
+        if (shouldUpdate(worldMouseTileLabel) && worldMouseTileLabel.isVisible()) {
             worldMouseTileLabel.setText(
                 "Mouse Tile: " + world.getTileAssetName(PlayerSystem.getHoverTileThreshold())
             );
         }
 
-        if (shouldUpdate(worldMouseTileNameLabel)) {
+        if (shouldUpdate(worldMouseTileNameLabel) && worldMouseTileNameLabel.isVisible()) {
             worldMouseTileNameLabel.setText(
                 "Tile Name: " + world.getTileName(PlayerSystem.getHoverTileThreshold())
             );
@@ -215,19 +217,19 @@ public class GameUI {
         worldMousePosLabel.setText(
             "mouse Tile: " + world.worldToTileX((int) input.getMouseWorldPos(viewport).x) + "x, " + world.worldToTileY((int) input.getMouseWorldPos(viewport).y) + "y"
         );
-        if (shouldUpdate(worldMousePosLabel)) {
+        if (shouldUpdate(worldMousePosLabel) && worldMousePosLabel.isVisible()) {
             worldMousePosLabel.setText(
                 "mouse Tile: " + world.worldToTileX((int) input.getMouseWorldPos(viewport).x) + "x, " + world.worldToTileY((int) input.getMouseWorldPos(viewport).y) + "y"
             );
         }
 
-        if (shouldUpdate(worldMouseHoverPosLabel)) {
+        if (shouldUpdate(worldMouseHoverPosLabel) && worldMouseHoverPosLabel.isVisible()) {
             worldMouseHoverPosLabel.setText(
                 "Hover Tile: " + PlayerSystem.getHoverTileThresholdX() + "x, " + PlayerSystem.getHoverTileThresholdY() + "y"
             );
         }
 
-        if (shouldUpdate(worldTileRotationLabel)) {
+        if (shouldUpdate(worldTileRotationLabel) && worldTileRotationLabel.isVisible()) {
             worldTileRotationLabel.setText(
                 "Tile Rotation: " + player.getAction().getPlacementDirection()
             );
@@ -235,42 +237,45 @@ public class GameUI {
     }
 
     private void updateVSyncLabel() {
-        if (shouldUpdate(VSyncLabel)) {
+        if (shouldUpdate(VSyncLabel) && VSyncLabel.isVisible()) {
             VSyncLabel.setText("V-Sync: " + (window.isVSync() ? "on" : "off"));
         }
     }
 
     private void updateUPSLabel() {
-        if (shouldUpdate(UPSLabel)) {
+        if (shouldUpdate(UPSLabel) && UPSLabel.isVisible()) {
             UPSLabel.setText("UPS: " + TimeEx.ups() + "/" + Time.getTargetUPS());
         }
     }
 
     private void updateFPSLabel() {
-        if (shouldUpdate(FPSLabel)) {
+        if (shouldUpdate(FPSLabel) && FPSLabel.isVisible()) {
             FPSLabel.setText("FPS: " + window.getFrameRate());
         }
-        if (shouldUpdate(avgFPSLabel)) {
+        if (shouldUpdate(avgFPSLabel) && avgFPSLabel.isVisible()) {
             avgFPSLabel.setText("Avg FPS: " + (int) window.getAverageFrameRate(1000));
         }
     }
 
     private void updateTimerLabel() {
-        if (shouldUpdate(gameSpeedlabel))
+        if (shouldUpdate(gameSpeedlabel) && gameSpeedlabel.isVisible()) {
             gameSpeedlabel.setText("Game Speed: " + Time.getGameSpeed() + "x");
-        if (shouldUpdate(gameTimelabel))
+        }
+        if (shouldUpdate(gameTimelabel) && gameTimelabel.isVisible()) {
             gameTimelabel.setText("Game Time: " + formatTime(TimeEx.totalGameTime()));
-        if (shouldUpdate(realTimelabel))
+        }
+        if (shouldUpdate(realTimelabel) && realTimelabel.isVisible()) {
             realTimelabel.setText("Real Time: " + formatTime(TimeEx.totalRealTime()));
+        }
 
     }
 
     private void updateMemoriesLabel() {
-        if (shouldUpdate(usedMemoryLabel))
+        if (shouldUpdate(usedMemoryLabel) && usedMemoryLabel.isVisible())
             usedMemoryLabel.setText("Used Mem: " + formatMemoryMB(window.getUsedMemory()));
-        if (shouldUpdate(totalMemoryLabel))
+        if (shouldUpdate(totalMemoryLabel) && totalMemoryLabel.isVisible())
             totalMemoryLabel.setText("Total Mem: " + formatMemoryMB(window.getTotalMemory()));
-        if (shouldUpdate(maxMemoryLabel))
+        if (shouldUpdate(maxMemoryLabel) && maxMemoryLabel.isVisible())
             maxMemoryLabel.setText("Max Mem: " + formatMemoryMB(window.getMaxMemory()));
 
     }
