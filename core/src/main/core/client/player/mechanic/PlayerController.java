@@ -19,6 +19,7 @@ public class PlayerController {
     private float playerMovingEventTimer = 0f;
     private static final float MOVE_NOTICE_DELAY = 0.2f;
 
+    //TODO: control specific player
     public void moveCharacter(Player player, Sprite sprite, float speed, float worldW, float worldH) {
         float inputX = 0f;
         float inputY = 0f;
