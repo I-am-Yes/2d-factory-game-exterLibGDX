@@ -214,10 +214,16 @@ public class AssetsHandler extends GameCore {
             folder = folder.substring(0, folder.length() - 1);
         }
 
-        int lastSlash = folder.lastIndexOf('/');
-        String category = folder.substring(lastSlash + 1);
+        String atlasFolder = AtlasType.fromAssetFolder(folder).getFolderPath();
+        String relativeFolder = folder.substring(atlasFolder.length());
 
-        return category + "/" + type.getNamePNG();
+        if (relativeFolder.startsWith("/")) {
+            relativeFolder = relativeFolder.substring(1);
+        }
+
+        return relativeFolder.isEmpty()
+            ? type.getNamePNG()
+            : relativeFolder + "/" + type.getNamePNG();
     }
 
     public TextureAtlas getAtlas(AtlasType atlasType) {

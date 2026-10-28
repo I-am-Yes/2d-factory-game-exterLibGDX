@@ -1,16 +1,19 @@
 package core.app.extras.test;
 
 import arcane.ApplicationListener;
+import arcane.math.MathUtils;
+import core.assets.textures.FloorType;
 import core.entities.plan.PlanBuilder;
 import core.entities.plan.PlanManager;
 import core.event.GameEvent;
 import core.assets.textures.AssetType;
 import core.assets.textures.BuildingType;
+import core.machine.state.ItemType;
+import ui.InterfaceSystem;
+
+import static core.app.Vars.*;
 
 public class GameTest implements ApplicationListener {
-
-    public static final GameTest instance = new GameTest();
-
     public GameTest() {
 
         PlanManager planManager = new PlanManager();
@@ -34,7 +37,7 @@ public class GameTest implements ApplicationListener {
 //        planManager.addPlanToRenderQueue(planBuilder);
 
 
-        int amount = 100;
+        int amount = 10;
         for (int y = 0; y < amount; y++) {
             GameEvent.BlockPlaceRequest.fire(0, y, BuildingType.CREATIVE_SOURCE);
 
@@ -43,6 +46,37 @@ public class GameTest implements ApplicationListener {
 
             GameEvent.BlockPlaceRequest.fire(amount, y, BuildingType.STORAGE_CHEST_2);
         }
+
+        InterfaceSystem.playerHotbar.
+            setHotbarItems(
+                1, BuildingType.CONVEYOR_BELT_2,
+                2, BuildingType.CREATIVE_SOURCE,
+                3, BuildingType.STORAGE_CHEST_2,
+                4, FloorType.STONE,
+                5, FloorType.MARBLE,
+                6, FloorType.WATER,
+                7, ItemType.SPAWN_BOT_ITEM,
+                8, BuildingType.STORAGE_CHEST_2
+        );
+
+        int amount2 = 10000;
+        int columns = (int) Math.ceil(Math.sqrt(amount2));
+        float tileSize = world.getTileSize();
+        float spawnX = tileSize;
+        float spawnY = tileSize;
+
+        for (int i = 0; i < amount2; i++) {
+            botManager.spawnBot(spawnX, spawnY, 90f);
+
+            if ((i + 1) % columns == 0) {
+                spawnX = tileSize;
+                spawnY += MathUtils.random(4, 8) * tileSize;
+            } else {
+                spawnX += MathUtils.random(4, 8) * tileSize;
+            }
+        }
+
+        botManager.setBotsFollow(true);
 
 
 //        Gdx.app.log(

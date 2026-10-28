@@ -3,7 +3,10 @@ package core.assets;
 public enum AtlasType {
     TILES_ATLAS("packed/tiles/tiles/tile atlas.atlas"),
     MACHINE_ATLAS("packed/machines/machine atlas.atlas"),
-    ITEM_ATLAS("packed/items/item atlas.atlas");
+    ITEM_ATLAS("packed/items/item atlas.atlas"),
+    UNIT_ATLAS("packed/units/unit atlas.atlas"),
+
+    ;
 
     private final String path;
 

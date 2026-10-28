@@ -4,8 +4,6 @@ import arcane.*;
 import arcane.utils.*;
 
 import core.machine.state.ItemType;
-import core.machine.utils.Item;
-import core.utils.ArtistEx;
 
 public class ItemRen {
     public static final float VISUAL_SMOOTHNESS = 20f;
@@ -36,12 +34,6 @@ public class ItemRen {
 
             visual.visualX += dx / distance * move;
             visual.visualY += dy / distance * move;
-        }
-    }
-
-    public void drawBatch(Item item) {
-        for (IntakeVisual visual : intakes) {
-            ArtistEx.DrawItem(item, visual.visualX, visual.visualY);
         }
     }
 

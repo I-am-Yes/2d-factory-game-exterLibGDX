@@ -4,7 +4,7 @@ import core.assets.textures.AssetType;
 
 public enum ItemType implements AssetType {
     TEST_ITEM("packed/items/test/" , "stone_bar_item", "Test Item"),
-
+    SPAWN_BOT_ITEM("packed/items/test/", "spawn_bot_item", "Spawn Bot Item")
 
     ;
     private final String assetFolder;

@@ -229,17 +229,6 @@ public class PlayerHotbar {
         selectionLabel.setAlignment(Align.center);
 
 
-        setHotbarItems(
-            1, BuildingType.CONVEYOR_BELT_2,
-            2, BuildingType.CREATIVE_SOURCE,
-            3, BuildingType.STORAGE_CHEST_2,
-            4, FloorType.STONE,
-            5, FloorType.MARBLE,
-            6, FloorType.WATER,
-            7, FloorType.GRASS,
-            8, BuildingType.STORAGE_CHEST_2
-        );
-
 //        System.out.println(Arrays.toString(getAllHotbarItems()));
 
     }

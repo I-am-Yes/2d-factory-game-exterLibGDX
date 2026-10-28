@@ -59,5 +59,12 @@ public final class AssetPacker {
             "assets/packed/ui/hotbar",
             "hotbar atlas"
         );
+
+        TexturePacker.process(
+            settings,
+            "assets/unpacked/units",
+            "assets/packed/units",
+            "unit atlas"
+        );
     }
 }

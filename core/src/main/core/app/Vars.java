@@ -2,9 +2,12 @@ package core.app;
 
 import arcane.input.*;
 import core.app.extras.*;
+import core.app.extras.test.GameTest;
 import core.assets.*;
 import core.client.*;
 import core.entities.plan.*;
+import core.entities.unit.UnitManager;
+import core.entities.unit.bot.BotManager;
 import core.world.*;
 import core.assets.map.*;
 import ui.*;
@@ -28,8 +31,11 @@ public class Vars {
     public static InterfaceSystem ui;
 
     public static PlanManager planManager = new PlanManager();
+    public static BotManager botManager;
 
     public static GameStart start;
     public static LoadingScreen loadingScreen;
+
+    public static GameTest gameTest;
 
 }
