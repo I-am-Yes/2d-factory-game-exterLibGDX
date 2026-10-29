@@ -8,6 +8,7 @@ import core.client.*;
 import core.entities.plan.*;
 import core.entities.unit.UnitManager;
 import core.entities.unit.bot.BotManager;
+import core.items.Items;
 import core.world.*;
 import core.assets.map.*;
 import ui.*;

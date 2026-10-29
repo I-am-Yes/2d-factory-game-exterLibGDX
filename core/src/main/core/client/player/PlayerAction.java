@@ -3,6 +3,8 @@ package core.client.player;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
+import core.items.Items;
+import core.items.types.usable.UsableItem;
 import core.machine.state.*;
 import core.system.systems.PlayerSystem;
 import core.assets.textures.*;
@@ -44,7 +46,11 @@ public class PlayerAction {
             return;
         }
 
+
         updateRotateBlock();
+
+        useTools();
+
         buildGhostLine.update(getSelectedType());
         updateRemovingBlock();
         updatePlacingBlock();
@@ -56,6 +62,20 @@ public class PlayerAction {
 
     public void dispose() {
         buildGhostLine.dispose();
+    }
+
+    private void useTools() {
+        if (!(selectedType instanceof ItemType type)) return;
+        if (!(Items.get(type) instanceof UsableItem usableItem)) return;
+        if (!usableItem.usable || !input.isMouseJustPressed(Input.Buttons.RIGHT)) return;
+
+        Vector2 mousePos = input.getMouseWorldPos(viewport);
+        usableItem.active = true;
+        try {
+            usableItem.use(mousePos.x, mousePos.y);
+        } finally {
+            usableItem.active = false;
+        }
     }
 
     private void updateRemovingBlock() {

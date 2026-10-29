@@ -14,6 +14,8 @@ import core.app.extras.test.GameTest;
 import core.assets.AssetsHandler;
 import core.entities.unit.UnitRenderer;
 import core.entities.unit.bot.BotManager;
+import core.items.ItemBase;
+import core.items.Items;
 import core.render.PlanRenderer;
 import core.system.systems.*;
 import core.world.World;
@@ -56,6 +58,9 @@ public class GameStart extends GameCore {
         Cores.input = new InputHandler();
 
         botManager = new BotManager();
+
+        Items.load();
+
 
         add(world);
         add(new PlanRenderer());
