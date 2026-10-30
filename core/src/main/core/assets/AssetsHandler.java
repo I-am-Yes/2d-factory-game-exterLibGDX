@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.maps.tiled.*;
 import com.badlogic.gdx.maps.tiled.tiles.*;
 
+import core.assets.textures.types.FloorType;
 import core.event.*;
 import core.assets.map.*;
 import core.assets.textures.*;

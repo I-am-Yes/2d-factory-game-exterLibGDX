@@ -3,11 +3,11 @@ package core.debug;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
+import core.assets.textures.types.FloorType;
 import core.event.*;
 import core.assets.map.*;
 import core.assets.debug.*;
 import core.debug.debuggers.*;
-import core.assets.textures.*;
 
 import arcane.*;
 import static arcane.Cores.*;

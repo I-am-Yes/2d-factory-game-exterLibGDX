@@ -543,7 +543,7 @@ dispose()
 
 **Order matters** (matches Mindustry’s dependency chain):
 
-1. **Item types + stack counts** — `Item` / stack size (Mindustry: `core/src/mindustry/type/`)
+1. **Item types + stack counts** — `ItemConveyor` / stack size (Mindustry: `core/src/mindustry/type/`)
 2. **Inventories** on storage and machines
 3. **Router / inserter logic** — each tick, move 1 item A → B if allowed
 4. **Conveyors last** — directional lanes, item slots on belt segments (Mindustry: conveyor blocks)

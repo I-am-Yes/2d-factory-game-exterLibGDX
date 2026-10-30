@@ -3,6 +3,7 @@ package ui.game;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import arcane.Time;
 import core.event.AppEvent;
+import core.utils.unit.UnitRenderer;
 import ui.UiHelper;
 import ui.Style;
 
@@ -35,7 +36,14 @@ public class SettingsPanel extends Window {
             () -> setPauseOnOpen(false)
         );
 
+        CheckBox hitBoxVisible = uiHelper.createCheckbox(
+            skin, "Show Unit hitboxes",
+            () -> UnitRenderer.hitBoxesVisible = true,
+            () -> UnitRenderer.hitBoxesVisible = false
+        );
+
         settingsContent.add(pauseCheck).row();
+        settingsContent.add(hitBoxVisible).row();
 
         settingsContent.add(uiHelper.createTextLabel("Settings content goes here", textStyle1)).left().pad(10f).row();
 
