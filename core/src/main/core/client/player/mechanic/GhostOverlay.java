@@ -42,10 +42,10 @@ public class GhostOverlay {
     private AssetType type;
 
     public GhostOverlay() {
-        this.buildGhostLine = player.getAction().getBuildGhostLine();
-        this.action = player.getAction();
+        this.buildGhostLine = PlayerSystem.action.getBuildGhostLine();
+        this.action = PlayerSystem.action;
 
-        this.animate.set(player.getPos());
+        this.animate.set(player.getX(), player.getY());
     }
 
     public void update() {

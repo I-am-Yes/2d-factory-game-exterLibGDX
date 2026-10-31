@@ -12,6 +12,8 @@ import core.config.*;
 import core.config.api.*;
 import core.config.camera.*;
 import core.client.camera.*;
+import core.utils.unit.PlayerController;
+import core.utils.unit.units.PlayerUnit;
 
 import java.util.Map;
 
@@ -19,8 +21,9 @@ import static core.app.Vars.*;
 
 public class PlayerSystem implements ApplicationListener {
 
-    private final PlayerAction action;
-    private final PlayerController controller;
+    public static final PlayerAction action = new PlayerAction();
+    public static final PlayerController controller = new PlayerController();
+
     private final Overlay overlay;
     private final GhostOverlay ghostOverlay;
 
@@ -33,11 +36,6 @@ public class PlayerSystem implements ApplicationListener {
 
     public PlayerSystem() {
         InitCamera();
-
-        this.controller = new PlayerController();
-        this.action = new PlayerAction();
-
-        player = new Player(controller, action);
 
         this.overlay = new Overlay(action);
         this.ghostOverlay = new GhostOverlay();
@@ -62,7 +60,6 @@ public class PlayerSystem implements ApplicationListener {
 
         cameraControl.update();
 
-        player.update();
         action.update();
         overlay.update();
         ghostOverlay.update();
@@ -80,7 +77,7 @@ public class PlayerSystem implements ApplicationListener {
         //END batch
 
         ghostOverlay.drawBatch();
-        player.draw();
+
 
     }
 

@@ -1,9 +1,13 @@
 package core.utils.unit;
 
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import core.assets.textures.AssetType;
 
 public enum UnitType implements AssetType {
-    BOT_UNIT("packed/units", "bot_unit_01", "Bot Unit");
+    BOT_UNIT("packed/units", "bot_unit_01", "Bot Unit"),
+    PLAYER_UNIT("packed/units", "player_unit", "Player Unit")
+
+    ;
 
     private final String assetFolder;
     private final String namePNG;
@@ -13,6 +17,10 @@ public enum UnitType implements AssetType {
         this.assetFolder = assetFolder;
         this.namePNG = namePNG;
         this.name = name;
+    }
+
+    public TextureRegion getRegion() {
+        return core.app.Vars.assets.getRegion(this);
     }
 
     @Override

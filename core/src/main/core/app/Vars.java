@@ -6,7 +6,9 @@ import core.app.extras.test.GameTest;
 import core.assets.*;
 import core.client.*;
 import core.entities.plan.*;
+import core.utils.unit.*;
 import core.utils.unit.bot.BotManager;
+import core.utils.unit.units.PlayerUnit;
 import core.world.*;
 import core.assets.map.*;
 import ui.*;
@@ -24,13 +26,14 @@ public class Vars {
 
     public static UiInputGate uiInputGate;
 
-    public static Player player;
+    public static PlayerUnit player;
     public static CameraControl cameraControl;
 
     public static InterfaceSystem ui;
 
     public static PlanManager planManager = new PlanManager();
     public static BotManager botManager;
+    public static UnitManager unitManager;
 
     public static GameStart start;
     public static LoadingScreen loadingScreen;

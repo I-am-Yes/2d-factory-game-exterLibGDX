@@ -60,7 +60,7 @@ public class GameTest implements ApplicationListener {
                 8, BuildingType.STORAGE_CHEST_2
         );
 
-        int amount2 = 10000;
+        int amount2 = 10;
         int columns = (int) Math.ceil(Math.sqrt(amount2));
         float tileSize = world.getTileSize();
         float spawnX = tileSize;

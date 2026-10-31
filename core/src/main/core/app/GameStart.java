@@ -12,6 +12,7 @@ import arcane.input.InputHandler;
 import core.app.cores.Update;
 import core.app.extras.test.GameTest;
 import core.assets.AssetsHandler;
+import core.utils.unit.UnitManager;
 import core.utils.unit.UnitRenderer;
 import core.utils.unit.bot.BotManager;
 import core.utils.item.Items;
@@ -57,9 +58,13 @@ public class GameStart extends GameCore {
         Cores.input = new InputHandler();
 
         botManager = new BotManager();
+        unitManager = new UnitManager();
+        player = unitManager.spawnPlayer(
+            world.getWorldWidth() / 10,
+            world.getWorldHeight() / 10
+        );
 
         Items.load();
-
 
         add(world);
         add(new PlanRenderer());
@@ -67,6 +72,7 @@ public class GameStart extends GameCore {
 
         add(new Update());
         add(new PlayerSystem());
+
         add(new EntrySystem());
         add(new FactorySystem());
 

@@ -1,11 +1,11 @@
 package core.assets.data;
 
+
 public class PlayerData {
 
-    private static float PLAYER_WIDTH = 4f;
-    private static float PLAYER_HEIGHT = 5f;
-    private static float PLAYER_SPEED = 16f;
-
+    private static float PLAYER_WIDTH = 1f;
+    private static float PLAYER_HEIGHT = 1f;
+    private static float PLAYER_SPEED = 2f;
 
     public static float getPlayerWidth() {
         return PLAYER_WIDTH;

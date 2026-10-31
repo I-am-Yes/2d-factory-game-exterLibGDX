@@ -6,7 +6,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import core.world.World;
-import core.client.Player;
+import core.utils.unit.units.PlayerUnit;
 
 import arcane.graphics.Color;
 
@@ -30,7 +30,7 @@ public final class CameraDebugger {
     public CameraDebugger() {}
 
 
-    public void update(Viewport viewport, Player player, World world) {
+    public void update(Viewport viewport, PlayerUnit player, World world) {
         capture(viewport, player, world);
         analyze(snapshot);
     }
@@ -41,11 +41,11 @@ public final class CameraDebugger {
 
 
     //private, internal methods for debugging camera
-    private void capture(Viewport viewport, Player player, World world) {
+    private void capture(Viewport viewport, PlayerUnit player, World world) {
         OrthographicCamera camera = (OrthographicCamera) viewport.getCamera();
 
-        float followX = player.getSprite().getX() + player.getSprite().getWidth() / 2f;
-        float followY = player.getSprite().getY() + player.getSprite().getHeight() / 2f;
+        float followX = player.getX() + player.getWidth() / 2f;
+        float followY = player.getY() + player.getHeight() / 2f;
 
         snapshot.frame = ++cameraFrame;
 

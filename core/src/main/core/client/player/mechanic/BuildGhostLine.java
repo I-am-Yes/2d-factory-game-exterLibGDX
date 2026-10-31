@@ -8,7 +8,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import core.assets.*;
 import core.helper.*;
 import core.world.World;
-import core.client.Player;
+import core.utils.unit.units.PlayerUnit;
 import core.client.player.*;
 import core.assets.textures.*;
 import core.entities.plan.PlanBuilder;
@@ -25,7 +25,7 @@ import static arcane.input.Input.*;
 
 public class BuildGhostLine {
 
-    private final Player player;
+    private final PlayerUnit player;
     private final World world;
     private final InputHandler input;
     private final Viewport viewport;
@@ -68,7 +68,7 @@ public class BuildGhostLine {
     }
     private final PlacingAlgorithm placingAlgorithm = PlacingAlgorithm.THICK_LINE;
 
-    public BuildGhostLine(World world, Player player, Viewport viewport, PlayerAction playerAction, InputHandler input, AssetsHandler assetsHandler) {
+    public BuildGhostLine(World world, PlayerUnit player, Viewport viewport, PlayerAction playerAction, InputHandler input, AssetsHandler assetsHandler) {
         this.world = world;
         this.player = player;
         this.input = input;

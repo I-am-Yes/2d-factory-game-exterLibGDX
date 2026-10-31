@@ -2,54 +2,54 @@ package core.event;
 
 import arcane.Events;
 import core.assets.textures.AssetType;
-import core.client.Player;
+import core.utils.unit.units.PlayerUnit;
 
 public class PlayerEvent {
     public PlayerEvent() {}
 
     public static final class playerStartedMoving {
-        public final Player player;
+        public final PlayerUnit player;
         public final float x, y;
 
-        public playerStartedMoving(Player player) {
+        public playerStartedMoving(PlayerUnit player) {
             this.player = player;
-            this.x = player.getPlayerPositionX();
-            this.y = player.getPlayerPositionY();
+            this.x = player.getX();
+            this.y = player.getY();
 
         }
 
-        public static void fire(Player player) {
+        public static void fire(PlayerUnit player) {
             Events.fire(new playerStartedMoving(player));
         }
 
     }
 
     public static final class playerIsMoving {
-        public final Player player;
+        public final PlayerUnit player;
         public final float x, y;
 
-        public playerIsMoving(Player player) {
+        public playerIsMoving(PlayerUnit player) {
             this.player = player;
-            this.x = player.getPlayerPositionX();
-            this.y = player.getPlayerPositionY();
+            this.x = player.getX();
+            this.y = player.getY();
         }
 
-        public static void fire(Player player) {
+        public static void fire(PlayerUnit player) {
             Events.fire(new playerIsMoving(player));
         }
     }
 
     public static final class playerStoppedMoving {
-        public final Player player;
+        public final PlayerUnit player;
         public final float x, y;
 
-        public playerStoppedMoving(Player player) {
+        public playerStoppedMoving(PlayerUnit player) {
             this.player = player;
-            this.x = player.getPlayerPositionX();
-            this.y = player.getPlayerPositionY();
+            this.x = player.getX();
+            this.y = player.getY();
         }
 
-        public static void fire(Player player) {
+        public static void fire(PlayerUnit player) {
             Events.fire(new playerStoppedMoving(player));
         }
     }

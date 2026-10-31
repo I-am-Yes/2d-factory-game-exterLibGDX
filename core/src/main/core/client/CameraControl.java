@@ -10,6 +10,7 @@ import core.client.camera.*;
 import core.client.utils.ScreenshotCapture;
 import core.config.camera.*;
 import core.event.*;
+import core.system.systems.PlayerSystem;
 import core.world.chunk.*;
 
 import static core.app.Vars.*;
@@ -87,11 +88,11 @@ public class CameraControl {
     public void update() {
         this.delta = Time.delta();
 
-        followX = player.getSprite().getX() + player.getSprite().getWidth() / 2f;
-        followY = player.getSprite().getY() + player.getSprite().getHeight() / 2f;
+        followX = player.getX() + player.getWidth() / 2f;
+        followY = player.getY() + player.getHeight() / 2f;
 
         //TODO: later migrate to EntrySystem
-        if (!Cores.input.isMousePressed(Input.Buttons.MIDDLE) && player.isPlayerMoving()) {
+        if (!Cores.input.isMousePressed(Input.Buttons.MIDDLE) && PlayerSystem.controller.isPlayerMoving()) {
             cameraFollowPlayer = true;
         }
 

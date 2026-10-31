@@ -1,7 +1,6 @@
-package core.client.player.mechanic;
+package core.utils.unit;
 
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import core.client.Player;
 
 import arcane.*;
 import arcane.math.*;
@@ -15,17 +14,12 @@ public class PlayerController {
     private static final float ACCEL = 40f;   // how fast you speed up
     private static final float FRICTION = 25f; // how fast you slow down
 
-    private boolean playerMovingEventFired = false;
-    private float playerMovingEventTimer = 0f;
-    private static final float MOVE_NOTICE_DELAY = 0.2f;
-
     //TODO: control specific player
-    public void moveCharacter(Player player, Sprite sprite, float speed, float worldW, float worldH) {
+    public void moveCharacter(Sprite sprite, float speed) {
         float inputX = 0f;
         float inputY = 0f;
         float delta = Time.delta();
 
-        boolean wasMoving = isPlayerMoving();
 
         if (input.isKeyPressed(A)) inputX -= 1f;
         if (input.isKeyPressed(D)) inputX += 1f;
@@ -39,32 +33,11 @@ public class PlayerController {
 
         sprite.translate(vx * delta, vy * delta);
 
-        boolean nowMoving = isPlayerMoving();
-
-        if (!wasMoving && nowMoving) {
-            playerMovingEventTimer = 0;
-            playerMovingEventFired = false;
-        }
-
-        if (nowMoving) {
-            playerMovingEventTimer += delta;
-            if (!playerMovingEventFired && playerMovingEventTimer >= MOVE_NOTICE_DELAY) {
-                playerMovingEventFired = true;
-            }
-        } else {
-            playerMovingEventTimer = 0f;
-            playerMovingEventFired = false;
-        }
 
     }
 
     public boolean isPlayerMoving() {
         return Math.abs(vx) > 0.01f || Math.abs(vy) > 0.01f;
     }
-
-    public float getSpeed() {
-        return vx;
-    }
-
 
 }

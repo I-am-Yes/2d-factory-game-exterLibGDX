@@ -42,7 +42,7 @@ public final class HitBoxCursor {
         for (int i = units.size - 1; i >= 0; i--) {
             Unit unit = units.get(i);
 
-            if (unit != null && unit.region != null
+            if (unit != null && unit.sprite != null
                 && unit.getHitBox().contains(mouseX, mouseY)) {
                 return unit;
             }

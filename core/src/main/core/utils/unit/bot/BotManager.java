@@ -53,12 +53,12 @@ public class BotManager extends UnitManager {
     private void followUpdate() {
         if (!follow) return;
 
-        float targetX = player.getPlayerPositionX();
-        float targetY = player.getPlayerPositionY();
+        float targetX = player.getX();
+        float targetY = player.getY();
         for (BotUnit bot : bots) {
-            bot.moveTo(targetX, targetY);
             if (bot.getX() != targetX || bot.getY() != targetY) {
-                bot.rotateTo(MathUtils.angleTo(bot.getX(), bot.getY(), targetX, targetY));
+//                bot.rotateTo(MathUtils.angleTo(bot.getX(), bot.getY(), targetX, targetY));
+                bot.moveAndDirTo(targetX, targetY, MathUtils.angleTo(bot.getX(), bot.getY(), targetX, targetY));
             }
         }
     }

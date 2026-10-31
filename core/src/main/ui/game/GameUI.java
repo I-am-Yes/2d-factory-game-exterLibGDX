@@ -231,7 +231,7 @@ public class GameUI {
 
         if (shouldUpdate(worldTileRotationLabel) && worldTileRotationLabel.isVisible()) {
             worldTileRotationLabel.setText(
-                "Tile Rotation: " + player.getAction().getPlacementDirection()
+                "Tile Rotation: " + PlayerSystem.action.getPlacementDirection()
             );
         }
     }

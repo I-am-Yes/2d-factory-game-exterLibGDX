@@ -1,13 +1,11 @@
 package core.utils.blocks;
 
-import com.badlogic.gdx.utils.ObjectMap;
-import core.assets.textures.types.*;
 import core.utils.Registry;
-import core.utils.blocks.creative.CreativeSource;
+import core.assets.textures.types.*;
+import core.utils.blocks.creative.*;
+import core.utils.blocks.transport.*;
+import core.utils.machine.machines.cores.*;
 import core.utils.blocks.definition.Block;
-import core.utils.blocks.transport.FastConveyor;
-import core.utils.blocks.transport.NormalChest;
-import core.utils.machine.machines.cores.Conveyor;
 
 public class Blocks {
     private static final Registry<BuildingType, Block> definitions =

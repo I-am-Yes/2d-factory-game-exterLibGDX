@@ -698,7 +698,7 @@ Track progress at a glance. Check items only when they work in a runnable build.
 
 ### Player & world view
 
-- ✅ **M3** — `Player` sprite, WASD, movement uses `delta` time (+ velocity lerp)
+- ✅ **M3** — `PlayerUnit` sprite, WASD, movement uses `delta` time (+ velocity lerp)
 - ⬜ **M4** — Player clamped inside world bounds (add back to `PlayerController`)
 - ✅ **M4** — `viewport.unproject()` for **tile hover** (`Overlay`)
 - ⬜ **M4** — Click-to-move or placement click
@@ -761,6 +761,6 @@ Track progress at a glance. Check items only when they work in a runnable build.
 - ✅ Packages under `core/src/main/core/`; Gradle source root configured
 - ✅ Run via `gradlew lwjgl3:run` with working directory `assets/`
 - ⬜ Window size set in `Lwjgl3Launcher` only (not duplicated in `Main.create()`)
-- ✅ `Player` uses injected `PlayerController` from `GameLauncher` (not `new Controller()`)
+- ✅ `PlayerUnit` uses injected `PlayerController` from `GameLauncher` (not `new Controller()`)
 
 **Current focus:** **M8** — finish building placement on grid: occupancy, confirmation, and plan construction wiring; then start M9 fixed 60 UPS simulation.

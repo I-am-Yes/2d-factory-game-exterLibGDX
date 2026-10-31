@@ -1,15 +1,34 @@
 package core.utils.unit;
 
-import arcane.utils.Array;
+import arcane.*;
+import arcane.utils.*;
+import core.utils.unit.units.*;
 
 import static core.app.Vars.*;
 
 public class UnitManager {
-    public static UnitManager botManager;
+    private final Array<Unit> units = new Array<>(false, 1024);
 
-    private float tileSize = world.getTileSize();
+    public UnitManager() {
+        Events.run(Events.Trigger.tickUpdate, () -> {
 
-    private Array<Unit> units = new Array<>(false, 1024);
+            TimeUtils.measureAndPrint("UnitManager update: ", Time.UPDATE_INTERVAL, 1f,
+                () -> {
+                    updateUnits();
+                });
+
+        });
+    }
+
+    public void updateUnits() {
+        if (units.contains(player, true)) {
+            player.update();
+        }
+    }
+
+    public PlayerUnit spawnPlayer(float x, float y) {
+        return (PlayerUnit) spawnUnit(new PlayerUnit(), x, y, 0f);
+    }
 
     public Unit spawnUnit(float x, float y, float direction) {
         return spawnUnit(null, x, y, direction);
@@ -24,10 +43,6 @@ public class UnitManager {
         return unit;
     }
 
-    public void unitAimTo(Unit unit) {
-
-    }
-
     public void addUnit(Unit unit) {
         if (unit != null && !units.contains(unit, true)) {
             units.add(unit);
@@ -38,12 +53,12 @@ public class UnitManager {
         return units.contains(unit, true) ? unit : null;
     }
 
-    public Array<Unit> getUnits() {
-        return units;
-    }
-
     public void removeUnit(Unit unit) {
         units.removeValue(unit, true);
+    }
+
+    public Array<Unit> getUnits() {
+        return units;
     }
 
 }
