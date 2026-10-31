@@ -1,7 +1,7 @@
 package core.client.player.mechanic;
 
-import core.helper.utils.RenderUtils;
-import core.utils.machine.state.Direction;
+import core.utils.*;
+import core.machine.state.Direction;
 import core.client.player.*;
 import core.system.systems.*;
 import core.assets.textures.*;

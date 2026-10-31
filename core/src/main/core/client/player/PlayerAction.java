@@ -3,13 +3,11 @@ package core.client.player;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
-import core.assets.textures.types.ItemType;
-import core.client.player.mechanic.HitBoxCursor;
-import core.utils.item.Items;
-import core.utils.item.types.usable.UsableItem;
+import core.items.Items;
+import core.items.types.usable.UsableItem;
+import core.machine.state.*;
 import core.system.systems.PlayerSystem;
 import core.assets.textures.*;
-import core.utils.machine.state.Direction;
 import core.world.World;
 import core.client.player.mechanic.BuildGhostLine;
 import core.event.*;
@@ -24,7 +22,6 @@ import static arcane.input.Input.Keys.*;
 
 public class PlayerAction {
     private final BuildGhostLine buildGhostLine;
-    private final HitBoxCursor hitBoxCursor;
 
     private final Vector3 tmp = new Vector3();
     private Direction placementDirection = Direction.EAST; //default startup direction
@@ -40,12 +37,9 @@ public class PlayerAction {
 
     public PlayerAction() {
         this.buildGhostLine = new BuildGhostLine(world, player, viewport, this, input, assets);
-        this.hitBoxCursor = new HitBoxCursor();
     }
 
     public void update() {
-
-        hitBoxCursor.update();
 
         if (uiInputGate.isPointerOverGUI()) {
             placeMode = PlaceMode.none;

@@ -9,7 +9,7 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.ObjectMap;
 import core.assets.AssetsHandler;
-import core.utils.machine.state.Direction;
+import core.machine.state.Direction;
 import core.world.chunk.Chunk;
 import core.world.chunk.ChunkRenderDetail;
 import core.world.chunk.meshes.ChunkMeshBuilder;

@@ -2,8 +2,8 @@ package core.event;
 
 import arcane.CancellableEvent;
 import arcane.Events;
-import core.utils.machine.state.Direction;
-import core.assets.textures.types.FloorType;
+import core.machine.state.Direction;
+import core.assets.textures.FloorType;
 import core.assets.map.MapConfig;
 import core.assets.textures.AssetType;
 import com.badlogic.gdx.math.Vector2;

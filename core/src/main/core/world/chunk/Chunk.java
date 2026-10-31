@@ -1,9 +1,9 @@
 package core.world.chunk;
 
-import core.utils.machine.state.Direction;
+import core.machine.state.Direction;
 import core.assets.textures.AssetType;
-import core.assets.textures.types.BuildingType;
-import core.assets.textures.types.FloorType;
+import core.assets.textures.BuildingType;
+import core.assets.textures.FloorType;
 import core.assets.textures.GhostType;
 
 public class Chunk {

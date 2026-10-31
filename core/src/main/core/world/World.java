@@ -3,8 +3,6 @@ package core.world;
 import com.badlogic.gdx.maps.tiled.*;
 
 import core.assets.*;
-import core.assets.textures.types.BuildingType;
-import core.assets.textures.types.FloorType;
 import core.client.*;
 import core.assets.map.*;
 import core.world.chunk.*;

@@ -86,7 +86,7 @@ Use three distinct concepts:
 | Transported load | Item type, owner/path, progress | Yes |
 | Item visual | Display position, animation/path-following state | No |
 
-Do not create one moving `ItemConveyor` object for every item inside a chest.
+Do not create one moving `Item` object for every item inside a chest.
 
 A visual record is also **not a ground item**. It has no inventory ownership, collision, or pickup behavior.
 
@@ -425,7 +425,7 @@ Use three distinct concepts:
 | Transported load | Item type, owner/path, progress | Yes |
 | Item visual | Display position, animation/path-following state | No |
 
-Do not create one moving `ItemConveyor` object for every item inside a chest.
+Do not create one moving `Item` object for every item inside a chest.
 
 A visual record is also **not a ground item**. It has no inventory ownership, collision, or pickup behavior.
 

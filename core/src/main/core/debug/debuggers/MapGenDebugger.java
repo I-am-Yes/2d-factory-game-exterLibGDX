@@ -1,8 +1,8 @@
 package core.debug.debuggers;
 
-import core.assets.textures.types.FloorType;
 import core.world.map.*;
 import core.assets.map.*;
+import core.assets.textures.*;
 
 public final class MapGenDebugger {
 

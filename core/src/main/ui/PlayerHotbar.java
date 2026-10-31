@@ -17,9 +17,9 @@ import core.assets.*;
 import core.assets.textures.*;
 
 import arcane.math.*;
+import arcane.utils.*;
 import arcane.graphics.Window;
 import arcane.input.InputHandler;
-import core.utils.item.Item;
 
 import static arcane.graphics.Color.*;
 import static arcane.input.Input.*;
@@ -295,15 +295,12 @@ public class PlayerHotbar {
                     "Expected an integer slot number."
                 );
             }
-
-            //TODO: temporary
-            if (values[i + 1] instanceof Item item) {
-                setHotbarItem(slotNumber - 1, item.texture);
-
-            } else if (values[i + 1] instanceof AssetType item) {
-
-                setHotbarItem(slotNumber - 1, item);
+            if (!(values[i + 1] instanceof AssetType type)) {
+                throw new IllegalArgumentException(
+                    "Expected an AssetType."
+                );
             }
+            setHotbarItem(slotNumber - 1, type);
         }
     }
 
