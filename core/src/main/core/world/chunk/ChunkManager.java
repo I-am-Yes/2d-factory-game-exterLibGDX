@@ -4,7 +4,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.MathUtils;
 import core.world.map.MapGenerator;
 import core.assets.map.MapConfig;
-import core.assets.textures.FloorType;
+import core.assets.textures.types.FloorType;
 
 import java.util.Collection;
 import java.util.HashMap;

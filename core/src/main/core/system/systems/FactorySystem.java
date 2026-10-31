@@ -3,13 +3,15 @@ package core.system.systems;
 import arcane.*;
 import arcane.utils.TimeUtils;
 import com.badlogic.gdx.utils.*;
-import core.blocks.*;
+import core.assets.textures.types.ItemType;
 import core.event.*;
-import core.machine.*;
-import core.blocks.definition.Block;
-import core.machine.render.ItemRen;
-import core.machine.state.*;
-import core.assets.textures.BuildingType;
+import core.utils.blocks.Blocks;
+import core.utils.blocks.definition.Block;
+import core.utils.machine.Machine;
+import core.utils.machine.MachineGroup;
+import core.utils.machine.render.ItemRen;
+import core.assets.textures.types.BuildingType;
+import core.utils.machine.state.Direction;
 
 public class FactorySystem implements ApplicationListener {
 
@@ -62,7 +64,7 @@ public class FactorySystem implements ApplicationListener {
             if (removed == null) return;
             machineGroup.unregister(removed);
             removed.onDestroyed();
-            // Decide later whether held items should disappear or drop.
+            // Decide later whether held item should disappear or drop.
             removed.item = null;
         });
 

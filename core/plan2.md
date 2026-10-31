@@ -37,19 +37,19 @@ All project paths in this document are relative to the repository root.
 
 | Current file | Relevant responsibility |
 | --- | --- |
-| `core/src/main/core/machine/MachineGroup.java` | Active-machine collection, frame updates, ticks, output collection, resolver calls, drawing, wake/deactivation. |
-| `core/src/main/core/machine/transport/TransferBatch.java` | Pooled offers, presentation snapshots, selected state and cycle traversal state. |
-| `core/src/main/core/machine/transport/TransferResolver.java` | Sorted immediate selection, vacancy propagation, cycle selection, extraction, acceptance and observer notification. |
-| `core/src/main/core/machine/transport/InputAdmission.java` | Reservation eligibility contract. |
-| `core/src/main/core/machine/transport/OutputEmitter.java` | Output collection contract. |
-| `core/src/main/core/machine/Machine.java` | Runtime inventory, item ownership, acceptance, extraction and group attachment. |
-| `core/src/main/core/machine/machines/cores/Conveyor.java` | One-item conveyor behavior and logical/visual progress. |
-| `core/src/main/core/machine/machines/cores/ItemSource.java` | Source production and output. |
-| `core/src/main/core/machine/machines/cores/StorageBlock.java` | Finite and unlimited storage acceptance. |
-| `src/main/core/blocks/definition` | Existing definition/runtime construction boundary. |
-| `core/src/main/core/machine/state/ItemType.java` | Current item enum; relevant to future dynamic content registration. |
+| `src/main/core/utils/machine` | Active-machine collection, frame updates, ticks, output collection, resolver calls, drawing, wake/deactivation. |
+| `src/main/core/utils/machine` | Pooled offers, presentation snapshots, selected state and cycle traversal state. |
+| `src/main/core/utils/machine` | Sorted immediate selection, vacancy propagation, cycle selection, extraction, acceptance and observer notification. |
+| `src/main/core/utils/machine` | Reservation eligibility contract. |
+| `src/main/core/utils/machine` | Output collection contract. |
+| `src/main/core/utils/machine` | Runtime inventory, item ownership, acceptance, extraction and group attachment. |
+| `src/main/core/utils/machine` | One-item conveyor behavior and logical/visual progress. |
+| `src/main/core/utils/machine` | Source production and output. |
+| `src/main/core/utils/machine` | Finite and unlimited storage acceptance. |
+| `src/main/core/utils/blocks` | Existing definition/runtime construction boundary. |
+| `src/main/core/utils/machine` | Current item enum; relevant to future dynamic content registration. |
 | `core/src/main/core/system/systems/FactorySystem.java` | Placement integration, machine lookup, ticking and presentation events. |
-| `core/src/main/core/machine/render/RenderManager.java` | Transfer presentation. |
+| `src/main/core/utils/machine` | Transfer presentation. |
 | `core/src/main/core/app/GameTest.java` | Existing manual test scene. |
 | `core/src/main/core/app/GameLoop.java` | Simulation timing integration. |
 

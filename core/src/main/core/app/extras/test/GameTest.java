@@ -2,13 +2,14 @@ package core.app.extras.test;
 
 import arcane.ApplicationListener;
 import arcane.math.MathUtils;
-import core.assets.textures.FloorType;
+import core.assets.textures.types.FloorType;
 import core.entities.plan.PlanBuilder;
 import core.entities.plan.PlanManager;
 import core.event.GameEvent;
 import core.assets.textures.AssetType;
-import core.assets.textures.BuildingType;
-import core.machine.state.ItemType;
+import core.assets.textures.types.BuildingType;
+import core.utils.item.Items;
+import core.utils.unit.units.SmallBot;
 import ui.InterfaceSystem;
 
 import static core.app.Vars.*;
@@ -55,7 +56,7 @@ public class GameTest implements ApplicationListener {
                 4, FloorType.STONE,
                 5, FloorType.MARBLE,
                 6, FloorType.WATER,
-                7, ItemType.SPAWN_BOT_ITEM,
+                7, Items.spawnBotItem,
                 8, BuildingType.STORAGE_CHEST_2
         );
 
@@ -67,6 +68,7 @@ public class GameTest implements ApplicationListener {
 
         for (int i = 0; i < amount2; i++) {
             botManager.spawnBot(spawnX, spawnY, 90f);
+            botManager.spawnBot(new SmallBot(), spawnX, spawnY, 90f);
 
             if ((i + 1) % columns == 0) {
                 spawnX = tileSize;

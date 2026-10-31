@@ -2,14 +2,14 @@ package core.world.services;
 
 import arcane.Events;
 import core.event.GameEvent;
-import core.machine.state.Direction;
+import core.utils.machine.state.Direction;
 import core.world.World;
 import core.world.chunk.Chunk;
 import core.world.chunk.ChunkManager;
 import core.world.chunk.ChunkRenderer;
 import core.assets.textures.AssetType;
-import core.assets.textures.BuildingType;
-import core.assets.textures.FloorType;
+import core.assets.textures.types.BuildingType;
+import core.assets.textures.types.FloorType;
 import core.assets.textures.GhostType;
 import java.util.function.Consumer;
 

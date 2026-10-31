@@ -3,7 +3,7 @@ package core.render;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
 
-import core.utils.*;
+import core.helper.utils.RenderUtils;
 import core.entities.plan.*;
 import core.assets.textures.*;
 

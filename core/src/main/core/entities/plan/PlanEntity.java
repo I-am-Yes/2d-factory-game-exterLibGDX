@@ -1,6 +1,6 @@
 package core.entities.plan;
 
-import core.machine.state.Direction;
+import core.utils.machine.state.Direction;
 import core.assets.textures.AssetType;
 import core.assets.textures.GhostType;
 import com.badlogic.gdx.math.Vector2;

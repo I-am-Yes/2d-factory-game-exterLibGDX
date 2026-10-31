@@ -14,7 +14,7 @@ import core.world.chunk.ChunkManager;
 import core.world.chunk.ChunkRenderDetail;
 import core.world.chunk.meshes.ChunkMeshBuilder;
 import core.world.chunk.meshes.MeshPart;
-import core.assets.textures.FloorType;
+import core.assets.textures.types.FloorType;
 
 public final class ChunkOverviewCache implements Disposable {
 
