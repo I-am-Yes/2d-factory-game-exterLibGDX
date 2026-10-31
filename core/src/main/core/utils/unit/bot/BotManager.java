@@ -10,7 +10,7 @@ import core.utils.unit.UnitManager;
 import static core.app.Vars.*;
 
 public class BotManager extends UnitManager {
-    private Array<BotUnit> bots = new Array<>(false, 1024);
+    private final Array<BotUnit> bots = new Array<>(false, 1024);
 
     private boolean follow = false;
 

@@ -12,16 +12,14 @@ public class UnitManager {
     public UnitManager() {
         Events.run(Events.Trigger.tickUpdate, () -> {
 
-            TimeUtils.measureAndPrint("UnitManager update: ", Time.UPDATE_INTERVAL, 1f,
-                () -> {
-                    updateUnits();
-                });
+            updateUnits();
 
         });
     }
 
     public void updateUnits() {
         if (units.contains(player, true)) {
+            //TODO: fix player camera with rendering issue
             player.update();
         }
     }
